@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ../:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      # - mongo  # Uncomment if using local mongo container
+    env_file:
+      - ../.env
+
+  celery:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    command: celery -A apps.tasks worker --loglevel=info
+    volumes:
+      - ../:/app
+    depends_on:
+      - redis
+    env_file:
+      - ../.env
+
+  redis:
+    image: "redis:alpine"
+
+  # mongo:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"

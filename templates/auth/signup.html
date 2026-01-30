@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - OneClick DataScrape</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#00d4c5',
+                            hover: '#00b8aa',
+                        },
+                        dark: {
+                            bg: '#0a0f1c', // Left side bg
+                            form: '#0f172a', // Right side bg (slightly lighter/bluer)
+                            input: '#1e293b',
+                            border: '#334155',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-dark-bg text-gray-300">
+
+    <!-- Left Side (Brand & Info) -->
+    <div class="hidden lg:flex w-1/2 flex-col justify-between p-12 relative overflow-hidden">
+        <!-- Background Glow -->
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-brand/5 to-transparent pointer-events-none"></div>
+        <div class="absolute -top-20 -left-20 w-96 h-96 bg-brand/10 rounded-full blur-[100px]"></div>
+
+        <!-- Logo -->
+        <div class="relative z-10">
+            <a href="/" class="flex items-center gap-2 group w-fit">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white font-bold">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <span class="text-xl font-bold text-white tracking-tight">OneClick</span>
+                <span class="ml-2 text-[10px] bg-brand/20 text-brand px-2 py-0.5 rounded-full border border-brand/20 font-medium">AI-POWERED</span>
+            </a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="relative z-10 max-w-lg">
+            <h1 class="text-5xl font-bold text-white mb-6 leading-tight">
+                Extract web data <br>
+                with <span class="text-brand">AI precision.</span>
+            </h1>
+            <p class="text-gray-400 text-lg mb-10 leading-relaxed">
+                Join the next generation of data-driven teams using automated neural scraping to transform the web into your own structured API.
+            </p>
+
+            <!-- Feature Cards -->
+            <div class="space-y-4">
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4 hover:bg-white/10 transition-colors cursor-default">
+                    <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand shrink-0">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold mb-1">Self-Healing Selectors</h3>
+                        <p class="text-sm text-gray-400">AI monitors site changes and automatically updates scrape logic.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4 hover:bg-white/10 transition-colors cursor-default">
+                    <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand shrink-0">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold mb-1">Instant Structuring</h3>
+                        <p class="text-sm text-gray-400">Convert raw HTML into clean JSON, CSV, or direct SQL exports.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testimonial -->
+        <div class="relative z-10 bg-black/20 backdrop-blur-sm rounded-2xl p-6 border border-white/5 mt-8">
+            <p class="text-gray-300 italic mb-4">"The AI-powered field detection is magical. It saved our engineering team months of manual configuration."</p>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gray-700 overflow-hidden">
+                    <img src="https://ui-avatars.com/api/?name=Alex+Rivera&background=random" alt="Alex Rivera">
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-sm">Alex Rivera</div>
+                    <div class="text-brand text-xs font-medium uppercase tracking-wider">Growth Lead @ TechFlow</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side (Form) -->
+    <div class="w-full lg:w-1/2 bg-dark-form flex flex-col justify-center items-center p-8 overflow-y-auto">
+        <div class="w-full max-w-md">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-white mb-2">Get Started Free</h2>
+                <p class="text-gray-400 text-sm">Scale your data extraction without writing a single line of code.</p>
+            </div>
+
+            <!-- Google Auth -->
+            <button class="w-full flex items-center justify-center gap-3 bg-transparent border border-dark-border hover:border-gray-500 hover:bg-white/5 text-white font-medium py-3 px-4 rounded-lg transition-all mb-8 group">
+                <i class="fa-brands fa-google text-lg group-hover:scale-110 transition-transform"></i>
+                Sign up with Google
+            </button>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-4 mb-8">
+                <div class="h-px bg-dark-border flex-1"></div>
+                <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">Or use email</span>
+                <div class="h-px bg-dark-border flex-1"></div>
+            </div>
+
+            <!-- Form -->
+            <form class="space-y-5" method="POST" action="{% url 'signup' %}">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="fullname" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Full Name</label>
+                    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" 
+                        class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
+                </div>
+
+                <div>
+                    <label for="email" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="work@company.com" 
+                        class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password" placeholder="••••••••" 
+                            class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
+                        <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-[1.02] shadow-[0_0_20px_rgba(0,212,197,0.2)] mt-2">
+                    Create Account
+                </button>
+            </form>
+
+            <p class="text-center text-sm text-gray-500 mt-8">
+                Already have an account? <a href="{% url 'login' %}" class="text-brand hover:underline font-medium">Log in</a>
+            </p>
+
+            <div class="mt-12 text-center">
+                <p class="text-xs text-gray-600">
+                    By creating an account, you agree to our 
+                    <a href="#" class="underline hover:text-gray-400">Terms of Service</a> and 
+                    <a href="#" class="underline hover:text-gray-400">Privacy Policy</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        const eyeIcon = document.querySelector('#eyeIcon');
+
+        togglePassword.addEventListener('click', function (e) {
+            // toggle the type attribute
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            
+            // toggle the eye slash icon
+            if (type === 'password') {
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            } else {
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            }
+        });
+    </script>
+</body>
+</html>

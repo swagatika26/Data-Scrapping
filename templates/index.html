@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}OneClick DataScrape - Web Scraping Made Easy{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pt-20 pb-32 overflow-hidden">
+    <!-- Background Glow -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-brand/10 rounded-full blur-[120px] -z-10"></div>
+
+    <div class="container mx-auto px-6 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-dark-card border border-dark-border mb-8 animate-fade-in-up">
+            <span class="w-2 h-2 rounded-full bg-brand"></span>
+            <span class="text-xs font-medium text-brand uppercase tracking-wider">New: AI Agents Available</span>
+        </div>
+
+        <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
+            Scrape Any Website with <br>
+            <span class="text-gradient">One Click</span>
+        </h1>
+        
+        <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Turn unstructured web data into clean CSVs or JSONs instantly. No coding required, powered by LLM agents that understand context.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+            <a href="{% url 'signup' %}" class="w-full sm:w-auto bg-brand hover:bg-brand-hover text-dark-bg font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-[0_0_30px_rgba(0,212,197,0.4)] flex items-center justify-center gap-2">
+                Start Scraping Now <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="w-full sm:w-auto bg-dark-card hover:bg-dark-border text-white font-semibold py-4 px-8 rounded-xl border border-dark-border transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-play text-brand"></i> Watch Demo
+            </a>
+        </div>
+
+        <!-- Dashboard Preview Placeholder -->
+        <div class="relative mx-auto max-w-5xl">
+            <div class="absolute -inset-1 bg-gradient-to-r from-brand to-blue-600 rounded-2xl blur opacity-20"></div>
+            <div class="relative bg-dark-card border border-dark-border rounded-2xl overflow-hidden shadow-2xl aspect-[16/9] flex items-center justify-center group">
+                <!-- UI Skeleton Mockup -->
+                <div class="w-full h-full p-4 md:p-8 flex flex-col gap-4">
+                    <!-- Fake Header -->
+                    <div class="h-12 w-full border-b border-dark-border flex items-center justify-between px-4">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        </div>
+                        <div class="w-1/3 h-6 bg-dark-bg rounded-full opacity-50"></div>
+                        <div class="w-8 h-8 rounded-full bg-dark-bg opacity-50"></div>
+                    </div>
+                    <!-- Fake Content -->
+                    <div class="flex-1 flex gap-6">
+                        <div class="w-1/4 h-full bg-dark-bg/50 rounded-lg"></div>
+                        <div class="flex-1 flex flex-col gap-4">
+                            <div class="w-full h-32 bg-dark-bg/50 rounded-lg"></div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="h-24 bg-dark-bg/50 rounded-lg"></div>
+                                <div class="h-24 bg-dark-bg/50 rounded-lg"></div>
+                                <div class="h-24 bg-dark-bg/50 rounded-lg"></div>
+                            </div>
+                            <div class="flex-1 bg-dark-bg/50 rounded-lg flex items-center justify-center">
+                                <div class="text-center">
+                                    <i class="fa-solid fa-chart-line text-4xl text-brand mb-2 opacity-50"></i>
+                                    <p class="text-gray-500 text-sm">Real-time Data Visualization</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Overlay on hover (optional) -->
+                <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="bg-brand text-dark-bg font-bold py-2 px-6 rounded-full">Interactive Demo</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trusted By Section -->
+<section class="py-10 border-y border-dark-border bg-dark-bg/50">
+    <div class="container mx-auto px-6">
+        <p class="text-center text-xs font-semibold text-gray-500 uppercase tracking-widest mb-8">Trusted by data teams at industry leaders</p>
+        <div class="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+            <!-- Placeholders for Logos -->
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-aws"></i> AMAZON</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-google"></i> Google</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-microsoft"></i> Microsoft</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-spotify"></i> Spotify</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-airbnb"></i> Airbnb</div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-24 relative">
+    <div class="container mx-auto px-6">
+        <div class="mb-16 md:max-w-2xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Powerful Features, <span class="text-brand">Zero Complexity</span></h2>
+            <p class="text-gray-400">Everything you need to turn the entire web into your personal, structured database.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-brand/50 transition-colors group">
+                <div class="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-brain text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">AI Detection</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Automatically identifies lists, tables, and pagination with human-like precision. No selector configuration needed.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-brand/50 transition-colors group">
+                <div class="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-cloud text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Cloud Processing</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Run heavy scraping tasks in the background across 1,000s of concurrent sessions without slowing down your computer.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-brand/50 transition-colors group">
+                <div class="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-file-export text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Universal Export</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    One-click export to Google Sheets, Excel, JSON, or via Webhooks to your own custom API or CRM.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="py-24 bg-dark-bg">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Transparent Pricing</h2>
+            <p class="text-gray-400">Scale from hobby projects to enterprise-grade data operations.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+            <!-- Starter -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border">
+                <h3 class="text-lg font-medium text-white mb-2">Starter</h3>
+                <div class="text-4xl font-bold text-white mb-6">$0 <span class="text-base font-normal text-gray-500">/mo</span></div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-400">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 500 Credits / month</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Standard AI Detection</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gray-600"></i> No API Access</li>
+                </ul>
+                <a href="#" class="block w-full py-3 border border-dark-border rounded-lg text-center text-white hover:bg-dark-border transition-colors">Get Started</a>
+            </div>
+
+            <!-- Pro (Highlighted) -->
+            <div class="relative bg-dark-card p-8 rounded-2xl border border-brand shadow-[0_0_40px_rgba(0,212,197,0.1)] transform md:-translate-y-4">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand text-dark-bg text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Most Popular</div>
+                <h3 class="text-lg font-medium text-white mb-2">Pro</h3>
+                <div class="text-4xl font-bold text-white mb-6">$49 <span class="text-base font-normal text-gray-500">/mo</span></div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-300">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 10,000 Credits / month</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Advanced AI (LLM Powered)</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Custom Webhooks</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 10 Concurrent Sessions</li>
+                </ul>
+                <a href="#" class="block w-full py-3 bg-brand text-dark-bg font-bold rounded-lg text-center hover:bg-brand-hover transition-colors shadow-lg shadow-brand/20">Go Pro Now</a>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border">
+                <h3 class="text-lg font-medium text-white mb-2">Enterprise</h3>
+                <div class="text-4xl font-bold text-white mb-6">Custom</div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-400">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Unlimited Credits</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Dedicated AI Models</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> SLA Guarantee</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> API Access</li>
+                </ul>
+                <a href="#" class="block w-full py-3 border border-dark-border rounded-lg text-center text-white hover:bg-dark-border transition-colors">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-24">
+    <div class="container mx-auto px-6">
+        <div class="bg-gradient-to-br from-brand to-teal-600 rounded-3xl p-12 md:p-20 text-center relative overflow-hidden">
+            <!-- Decorative circles -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full -ml-16 -mb-16 blur-2xl"></div>
+
+            <div class="relative z-10 max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Ready to automate your data workflow?</h2>
+                <p class="text-white/90 text-lg mb-10">Join 10,000+ data engineers and analysts who have replaced manual scraping with OneClick AI.</p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#" class="w-full sm:w-auto bg-white text-teal-700 font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-colors shadow-lg">
+                        Create Free Account
+                    </a>
+                    <a href="#" class="w-full sm:w-auto bg-teal-800/50 text-white font-semibold py-4 px-8 rounded-xl hover:bg-teal-800/70 transition-colors backdrop-blur-sm">
+                        Schedule Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Landing Page Verified -->
+{% endblock %}

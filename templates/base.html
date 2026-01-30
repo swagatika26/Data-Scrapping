@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OneClick DataScrape{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#00d4c5', // The specific teal from the image
+                            hover: '#00b8aa',
+                        },
+                        dark: {
+                            bg: '#0a0f1c', // Deep dark blue background
+                            card: '#111827', // Slightly lighter for cards
+                            border: '#1f2937',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-nav {
+            background: rgba(10, 15, 28, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #fff, #00d4c5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-gray-300 antialiased selection:bg-brand selection:text-white">
+
+    <!-- Navbar -->
+    <header class="fixed w-full top-0 z-50 glass-nav transition-all duration-300">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="/" class="flex items-center gap-2 group">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white font-bold">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <span class="text-xl font-bold text-white tracking-tight group-hover:text-brand transition-colors">OneClick</span>
+                </a>
+
+                <!-- Nav Links (Desktop) -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#features" class="text-sm font-medium hover:text-white transition-colors">Features</a>
+                    <a href="#pricing" class="text-sm font-medium hover:text-white transition-colors">Pricing</a>
+                    <a href="#" class="text-sm font-medium hover:text-white transition-colors">Documentation</a>
+                    <a href="#" class="text-sm font-medium hover:text-white transition-colors">API</a>
+                </nav>
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center gap-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="bg-brand hover:bg-brand-hover text-dark-bg font-semibold py-2 px-5 rounded-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(0,212,197,0.3)]">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-sm font-medium hover:text-white transition-colors">Log in</a>
+                        <a href="{% url 'signup' %}" class="bg-brand hover:bg-brand-hover text-dark-bg font-semibold py-2 px-5 rounded-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(0,212,197,0.3)]">
+                            Start Scraping
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 min-h-screen">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-dark-border bg-dark-bg pt-16 pb-8 mt-20">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <a href="/" class="flex items-center gap-2 mb-4">
+                        <div class="w-6 h-6 rounded bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white text-xs">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <span class="text-lg font-bold text-white">OneClick</span>
+                    </a>
+                    <p class="text-sm text-gray-500 mb-6">
+                        Turn unstructured web data into clean APIs instantly. Built for developers, designed for simplicity.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-brand transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-brand transition-colors"><i class="fa-brands fa-github"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-brand transition-colors"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-brand transition-colors">Extension</a></li>
+                        <li><a href="#" class="hover:text-brand transition-colors">API Reference</a></li>
+                        <li><a href="#" class="hover:text-brand transition-colors">Cloud Scraping</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-brand transition-colors">Community</a></li>
+                        <li><a href="#" class="hover:text-brand transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-brand transition-colors">Status</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-brand transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-brand transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-brand transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-dark-border pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
+                <p>&copy; 2026 OneClick DataScrape. All rights reserved.</p>
+                <div class="flex items-center gap-2 mt-4 md:mt-0">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span>All Systems Operational</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

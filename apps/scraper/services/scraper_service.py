@@ -5,7 +5,7 @@ import re
 import random
 import time
 import json
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -170,6 +170,26 @@ class ScraperService:
                (soup.title and soup.title.get_text() and "captcha" in soup.title.get_text().lower()):
                 raise Exception("Access Denied: Protected by DataDome/CAPTCHA. Please try a different URL or use a proxy service.")
 
+            parsed_url = urlparse(url)
+            if "linkedin.com" in parsed_url.netloc:
+                page_text = soup.get_text(" ", strip=True).lower()
+                title_text = soup.title.get_text(strip=True).lower() if soup.title else ""
+                if any(token in page_text for token in ["sign in", "sign up", "join linkedin", "user agreement", "cookie policy"]) or any(token in title_text for token in ["sign in", "linkedin login"]):
+                    return {
+                        "url": url,
+                        "title": "LinkedIn Login Wall",
+                        "products": [],
+                        "count": 0,
+                        "error": "LinkedIn restricts automated scraping. The page returned a login wall, so no usable data can be extracted."
+                    }
+                return {
+                    "url": url,
+                    "title": "LinkedIn Restricted",
+                    "products": [],
+                    "count": 0,
+                    "error": "LinkedIn restricts automated scraping. Please use an approved API or a public export for reliable data."
+                }
+
             products = []
             seen_urls = set()
             rank = 1
@@ -257,6 +277,40 @@ class ScraperService:
                     return bg_match.group(1)
                 return ""
 
+            # Helper to find phone
+            def find_phone(element):
+                if not element: return ""
+                # 1. Check for tel: links
+                tel_link = element.find('a', href=re.compile(r'^tel:'))
+                if tel_link:
+                    return tel_link['href'].replace('tel:', '').strip()
+                
+                text = element.get_text(" ", strip=True)
+                # 2. Regex for phone numbers
+                # Matches: +1-555-555-5555, (555) 555-5555, 555 555 5555
+                phone_match = re.search(r'(?:(?:\+|00)\d{1,3}[-\s.]?)?(?:\(?\d{3}\)?[-\s.]?)?\d{3}[-\s.]?\d{4}', text)
+                if phone_match:
+                    # Filter out simple dates or years like 2023-2024 if they match
+                    val = phone_match.group(0)
+                    if len(re.sub(r'\D', '', val)) < 7: return "" 
+                    return val
+                return ""
+
+            # Helper to find email
+            def find_email(element):
+                if not element: return ""
+                # 1. Check for mailto: links
+                mail_link = element.find('a', href=re.compile(r'^mailto:'))
+                if mail_link:
+                    return mail_link['href'].replace('mailto:', '').split('?')[0].strip()
+                
+                text = element.get_text(" ", strip=True)
+                # 2. Regex for email
+                email_match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
+                if email_match:
+                    return email_match.group(0)
+                return ""
+
             # Strategy 0: Next.js / JSON Data Blob Extraction (New)
             # Many modern React sites store state in a JSON script tag
             json_scripts = soup.find_all('script', type='application/json')
@@ -283,7 +337,9 @@ class ScraperService:
                                             'url': obj.get('url', obj.get('slug', '')),
                                             'image': obj.get('image', obj.get('thumbnail', '')),
                                             'rating': obj.get('rating', obj.get('stars', '')),
-                                            'reviews': obj.get('reviewCount', obj.get('reviews', ''))
+                                            'reviews': obj.get('reviewCount', obj.get('reviews', '')),
+                                            'phone': obj.get('telephone', obj.get('phone', '')),
+                                            'email': obj.get('email', '')
                                         })
                                 
                                 for k, v in obj.items():
@@ -309,6 +365,8 @@ class ScraperService:
                                 'price': str(item.get('price', '')),
                                 'rating': str(item.get('rating', '')),
                                 'reviews': str(item.get('reviews', '')),
+                                'phone': str(item.get('phone', '')),
+                                'email': str(item.get('email', '')),
                                 'id': f"NEXT-{rank:04d}",
                                 'status': "App Data",
                                 'url': str(item.get('url', url))
@@ -381,6 +439,12 @@ class ScraperService:
                                 if isinstance(image, list): image = image[0]
                                 if isinstance(image, dict): image = image.get('url', '')
                                 
+                                # Try to find phone and email
+                                phone = entity.get('telephone', '')
+                                if isinstance(phone, list): phone = phone[0]
+                                email = entity.get('email', '')
+                                if isinstance(email, list): email = email[0]
+
                                 # Try to find URL
                                 item_url = entity.get('url', '')
                                 if not item_url: item_url = url # Fallback to page URL if single item
@@ -395,6 +459,8 @@ class ScraperService:
                                     'price': price if price != "N/A" else "",
                                     'rating': rating,
                                     'reviews': reviews,
+                                    'phone': phone,
+                                    'email': email,
                                     'id': f"JSON-{rank:04d}",
                                     'status': "Structured Data",
                                     'url': item_url
@@ -412,9 +478,13 @@ class ScraperService:
                                     if isinstance(item_data, str):
                                         item_url = item_data
                                         name = "Item " + str(list_item.get('position', rank))
+                                        phone = ""
+                                        email = ""
                                     else:
                                         name = item_data.get('name', '')
                                         item_url = item_data.get('url', '')
+                                        phone = item_data.get('telephone', '')
+                                        email = item_data.get('email', '')
                                     
                                     if not name: continue
                                     
@@ -427,6 +497,8 @@ class ScraperService:
                                         'rank': rank,
                                         'name': name,
                                         'price': "",
+                                        'phone': phone,
+                                        'email': email,
                                         'id': f"LIST-{rank:04d}",
                                         'status': "Structured Data",
                                         'url': item_url or url
@@ -447,6 +519,48 @@ class ScraperService:
             if len(products) < 5 or quality_score < 0.5:
                 logger.info(f"Triggering AI Clustering. Existing items: {len(products)}, Quality: {quality_score:.2f}")
                 
+                # --- NEW: Try Gemini AI First ---
+                try:
+                    from apps.scraper.services.ai_service import AIService
+                    # Pass the raw HTML (soup object converted to string)
+                    ai_products = AIService.extract_structured_data(str(soup), schema_hint="products or items with name, price, image, link, date")
+                    
+                    if ai_products and isinstance(ai_products, list) and len(ai_products) > 0:
+                        logger.info(f"Gemini AI extracted {len(ai_products)} items.")
+                        
+                        # Add valid AI items to our products list
+                        for p in ai_products:
+                            # Normalize keys
+                            if not isinstance(p, dict): continue
+                            
+                            item = {
+                                'name': p.get('name') or p.get('title') or p.get('product_name') or 'Unknown Item',
+                                'price': p.get('price') or p.get('cost') or 'N/A',
+                                'image': p.get('image') or p.get('img') or p.get('image_url') or '',
+                                'link': p.get('link') or p.get('url') or p.get('href') or '',
+                                'date': p.get('date') or p.get('published_at') or p.get('time') or '',
+                                'rating': p.get('rating') or 'N/A',
+                                'reviews': p.get('reviews') or '0',
+                                'id': f"AI-{len(products)+1:04d}",
+                                'status': "AI Extracted"
+                            }
+                            
+                            # Ensure absolute URLs for links and images
+                            if item['link'] and not item['link'].startswith(('http', '//')):
+                                item['link'] = urljoin(url, item['link'])
+                            if item['image'] and not item['image'].startswith(('http', '//')):
+                                item['image'] = urljoin(url, item['image'])
+                                
+                            products.append(item)
+                            
+                        # If AI succeeded significantly, we can return early or skip heuristics
+                        if len(products) > 5:
+                            logger.info("AI extraction successful, skipping heuristic clustering.")
+                            return products
+                except Exception as ai_e:
+                    logger.error(f"AI Service integration error: {ai_e}")
+                # -------------------------------
+
                 # 1. Identify "Repeated Structures" - The hallmark of a list/grid
                 candidates = []
                 # Scan common containers
@@ -567,13 +681,15 @@ class ScraperService:
                     rating = find_rating(card)
                     reviews = find_reviews(card)
                     image = find_image(card)
+                    phone = find_phone(card)
+                    email = find_email(card)
                     
                     # New: If generic name and NO price, skip it (it's likely a category tile)
                     if not price and (len(name.split()) < 3 or "shop" in lower_name or "category" in lower_name):
                         continue
                     
                     # New: Mandatory Price OR Rating OR Image check for generic clusters
-                    if not price and not rating and not image and len(name) < 30:
+                    if not price and not rating and not image and not phone and not email and len(name) < 30:
                         continue
 
                     # Smart Merge: If URL exists but lacks data, update it!
@@ -590,6 +706,10 @@ class ScraperService:
                                  existing_p['reviews'] = reviews
                             if not existing_p.get('image') and image:
                                  existing_p['image'] = image
+                            if not existing_p.get('phone') and phone:
+                                 existing_p['phone'] = phone
+                            if not existing_p.get('email') and email:
+                                 existing_p['email'] = email
                         continue
                     
                     seen_urls.add(href)
@@ -600,6 +720,8 @@ class ScraperService:
                         'rating': rating,
                         'reviews': reviews,
                         'image': image,
+                        'phone': phone,
+                        'email': email,
                         'id': f"AI-CLUS-{rank:04d}", # Mark as AI-Clustered
                         'status': "AI Extracted",
                         'url': href
@@ -631,6 +753,8 @@ class ScraperService:
                             'rating': find_rating(card),
                             'reviews': find_reviews(card),
                             'image': find_image(card),
+                            'phone': find_phone(card),
+                            'email': find_email(card),
                             'id': f"CSS-{rank:04d}",
                             'status': "Found",
                             'url': href
@@ -684,6 +808,8 @@ class ScraperService:
                     rating = find_rating(link.parent)
                     reviews = find_reviews(link.parent)
                     image = find_image(link.parent)
+                    phone = find_phone(link.parent)
+                    email = find_email(link.parent)
                     
                     seen_urls.add(href)
                     products.append({
@@ -693,6 +819,8 @@ class ScraperService:
                         'rating': rating,
                         'reviews': reviews,
                         'image': image,
+                        'phone': phone,
+                        'email': email,
                         'id': f"LNK-{rank:04d}",
                         'status': "Found",
                         'url': href
@@ -723,6 +851,8 @@ class ScraperService:
                         price = ""
                         rating = ""
                         reviews = ""
+                        phone = ""
+                        email = ""
                         url_found = ""
                         
                         for i, text in enumerate(row_text):
@@ -738,6 +868,13 @@ class ScraperService:
                                 rating = text
                             elif not reviews and re.search(r'\d+\s*(?:reviews|ratings)', text, re.IGNORECASE):
                                 reviews = text
+                            
+                            # Phone and Email check
+                            p_check = find_phone(cols[i])
+                            if p_check: phone = p_check
+                            
+                            e_check = find_email(cols[i])
+                            if e_check: email = e_check
                         
                         if name:
                             if not url_found:
@@ -751,6 +888,8 @@ class ScraperService:
                                 'price': price,
                                 'rating': rating,
                                 'reviews': reviews,
+                                'phone': phone,
+                                'email': email,
                                 'id': f"TBL-{rank:04d}",
                                 'status': "Table Data",
                                 'url': url_found or url
@@ -792,6 +931,8 @@ class ScraperService:
                             'price': find_price(block),
                             'rating': find_rating(block),
                             'reviews': find_reviews(block),
+                            'phone': find_phone(block),
+                            'email': find_email(block),
                             'id': f"TXT-{rank:04d}",
                             'status': "Content",
                             'url': url

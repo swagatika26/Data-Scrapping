@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}OneClick DataScrape{% endblock %}</title>
+    <title>{% block title %}ScrapyX{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
-        tailwind.config = {
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
@@ -39,6 +40,7 @@
         }
         .text-gradient {
             background: linear-gradient(to right, #fff, #00d4c5);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -51,11 +53,26 @@
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
-                <a href="/" class="flex items-center gap-2 group">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white font-bold">
-                        <i class="fa-solid fa-bolt"></i>
+                <a href="/" class="flex items-center gap-3 group">
+                    <!-- Icon -->
+                    <div class="relative w-10 h-10 rounded-full bg-[#0B1120] border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-brand/50 transition-colors shadow-[0_0_15px_rgba(0,212,197,0.2)]">
+                        <!-- X Background -->
+                        <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                            <div class="w-[140%] h-[1px] bg-white rotate-45 absolute"></div>
+                            <div class="w-[140%] h-[1px] bg-white -rotate-45 absolute"></div>
+                        </div>
+                        <!-- Bars -->
+                        <div class="flex items-center gap-[4px] relative z-10">
+                            <div class="w-[4px] h-3 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_10px_rgba(0,212,197,0.4)]"></div>
+                            <div class="w-[4px] h-5 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_10px_rgba(0,212,197,0.4)]"></div>
+                            <div class="w-[4px] h-3 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_10px_rgba(0,212,197,0.4)]"></div>
+                        </div>
                     </div>
-                    <span class="text-xl font-bold text-white tracking-tight group-hover:text-brand transition-colors">OneClick</span>
+                    <!-- Text -->
+                    <div class="flex items-center font-display font-bold text-xl tracking-tight uppercase">
+                        <span class="text-white">Scrapy</span>
+                        <span class="text-brand">X</span>
+                    </div>
                 </a>
 
                 <!-- Nav Links (Desktop) -->
@@ -68,16 +85,9 @@
 
                 <!-- Auth Buttons -->
                 <div class="flex items-center gap-4">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'logout' %}" class="bg-brand hover:bg-brand-hover text-dark-bg font-semibold py-2 px-5 rounded-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(0,212,197,0.3)]">
-                            Logout
-                        </a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="text-sm font-medium hover:text-white transition-colors">Log in</a>
-                        <a href="{% url 'signup' %}" class="bg-brand hover:bg-brand-hover text-dark-bg font-semibold py-2 px-5 rounded-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(0,212,197,0.3)]">
-                            Start Scraping
-                        </a>
-                    {% endif %}
+                    <a href="{% url 'login' %}" class="bg-brand hover:bg-brand-hover text-dark-bg font-semibold py-2 px-5 rounded-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(0,212,197,0.3)]">
+                        Log in
+                    </a>
                 </div>
             </div>
         </div>
@@ -94,11 +104,25 @@
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
-                    <a href="/" class="flex items-center gap-2 mb-4">
-                        <div class="w-6 h-6 rounded bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white text-xs">
-                            <i class="fa-solid fa-bolt"></i>
+                    <a href="/" class="flex items-center gap-3 mb-4 group">
+                        <!-- Icon -->
+                        <div class="relative w-8 h-8 rounded-full bg-[#0B1120] border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-brand/50 transition-colors shadow-[0_0_15px_rgba(0,212,197,0.2)]">
+                            <!-- X Background -->
+                            <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                                <div class="w-[140%] h-[1px] bg-white rotate-45 absolute"></div>
+                                <div class="w-[140%] h-[1px] bg-white -rotate-45 absolute"></div>
+                            </div>
+                            <!-- Bars -->
+                            <div class="flex items-center gap-[3px] relative z-10">
+                                <div class="w-[3px] h-2.5 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_8px_rgba(0,212,197,0.4)]"></div>
+                                <div class="w-[3px] h-4 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_8px_rgba(0,212,197,0.4)]"></div>
+                                <div class="w-[3px] h-2.5 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_8px_rgba(0,212,197,0.4)]"></div>
+                            </div>
                         </div>
-                        <span class="text-lg font-bold text-white">OneClick</span>
+                        <div class="flex items-center font-display font-bold text-lg tracking-tight uppercase">
+                            <span class="text-white">Scrapy</span>
+                            <span class="text-brand">X</span>
+                        </div>
                     </a>
                     <p class="text-sm text-gray-500 mb-6">
                         Turn unstructured web data into clean APIs instantly. Built for developers, designed for simplicity.
@@ -142,7 +166,7 @@
             </div>
             
             <div class="border-t border-dark-border pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
-                <p>&copy; 2026 OneClick DataScrape. All rights reserved.</p>
+                <p>&copy; 2026 ScrapyX. All rights reserved.</p>
                 <div class="flex items-center gap-2 mt-4 md:mt-0">
                     <span class="w-2 h-2 rounded-full bg-green-500"></span>
                     <span>All Systems Operational</span>

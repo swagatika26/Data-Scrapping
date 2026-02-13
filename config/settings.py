@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     
     # Third-party apps
     'rest_framework',
@@ -91,17 +92,10 @@ DATABASES = {
     }
 }
 
-# Original MongoDB Configuration (Commented out)
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'djongo',
-#         'NAME': os.getenv('MONGO_DB_NAME', 'oneclick_datascrape_db'),
-#         'CLIENT': {
-#             'host': os.getenv('MONGO_URI', 'mongodb://localhost:27017/'),
-#         }
-#     }
-# }
-
+# Third Party API Keys
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+SERPAPI_KEY = os.getenv('SERPAPI_KEY')
+GOOGLE_CSE_ID = os.getenv('GOOGLE_CSE_ID')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -144,6 +138,10 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+# Media files (User uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -24,7 +24,6 @@ oneclick_datascrape/
 ### Prerequisites
 
 - Python 3.8+
-- MongoDB
 - Redis (for Celery)
 
 ### Installation
@@ -50,7 +49,7 @@ oneclick_datascrape/
     ```
 
 4.  **Environment Variables:**
-    Copy `.env` and update the values (especially `MONGO_URI`).
+    Copy `.env` and update the values.
 
 5.  **Run Migrations:**
     ```bash
@@ -70,6 +69,6 @@ oneclick_datascrape/
 ## Architecture
 
 - **Backend:** Django, Django REST Framework
-- **Database:** MongoDB
+- **Database:** SQLite
 - **Task Queue:** Celery + Redis
 - **Scraping:** Service layer pattern

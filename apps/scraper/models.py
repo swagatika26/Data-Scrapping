@@ -26,7 +26,7 @@ class ScrapedData(models.Model):
     Model to store scraped data.
     """
     job = models.ForeignKey(ScraperJob, on_delete=models.CASCADE, related_name='data')
-    content = models.JSONField() # Using JSONField for flexibility (MongoDB)
+    content = models.JSONField()
     scraped_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -1,540 +1,705 @@
+{% extends 'dashboard/base_dashboard.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scraping Progress - OneClick DataScrape</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+{% block title %}Scraping Progress - ScrapyX{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Specific Animations for Progress Page */
+    @keyframes scan {
+        0% { top: -10%; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { top: 110%; opacity: 0; }
+    }
+    .scan-line {
+        animation: scan 3s linear infinite;
+    }
     
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            DEFAULT: '#00d4c5',
-                            hover: '#00b8aa',
-                            glow: '#00d4c580',
-                        },
-                        dark: {
-                            bg: '#030712',       /* Deep almost black */
-                            sidebar: '#0B1121',  /* Slightly lighter */
-                            card: '#0f172a',     /* Card bg */
-                            border: 'rgba(255, 255, 255, 0.08)',
-                            surface: '#1e293b',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Space Grotesk', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    animation: {
-                        'blob': 'blob 7s infinite',
-                        'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'slide-up': 'slideUp 0.5s ease-out forwards',
-                        'shimmer': 'shimmer 2s infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        shimmer: {
-                            '0%': { transform: 'translateX(-100%)' },
-                            '100%': { transform: 'translateX(100%)' },
-                        },
-                        float: {
-                            '0%': { transform: 'translateY(0px) rotate(0deg)' },
-                            '50%': { transform: 'translateY(-20px) rotate(2deg)' },
-                            '100%': { transform: 'translateY(0px) rotate(0deg)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .font-display { font-family: 'Space Grotesk', sans-serif; }
-        
-        /* Glassmorphism Utilities */
-        .glass {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .glass-panel {
-            background: rgba(10, 15, 28, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #374151; }
-        
-        /* Background Blobs */
-        .bg-blob-1 {
-            position: fixed; top: -10%; left: -10%; width: 50%; height: 50%;
-            background: radial-gradient(circle, rgba(0, 212, 197, 0.15) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px); z-index: -1; animation: blob 15s infinite alternate;
-        }
-        .bg-blob-2 {
-            position: fixed; bottom: -10%; right: -10%; width: 50%; height: 50%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px); z-index: -1; animation: blob 20s infinite alternate-reverse;
-        }
+    .live-dot {
+        animation: pulse 2s infinite;
+    }
+    
+    /* Log Container Scrollbar */
+    .log-scroll::-webkit-scrollbar { width: 4px; }
+    .log-scroll::-webkit-scrollbar-track { background: transparent; }
+    .log-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+</style>
+{% endblock %}
 
-        /* Specific Animations for Progress Page */
-        @keyframes scan {
-            0% { top: -10%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 110%; opacity: 0; }
-        }
-        .scan-line {
-            animation: scan 3s linear infinite;
-        }
+{% block content %}
+<div class="p-6">
+    <!-- Breadcrumbs & Title Header -->
+    <div class="max-w-[1600px] mx-auto space-y-8">
         
-        .live-dot {
-            animation: pulse 2s infinite;
-        }
-    </style>
-</head>
-<body class="bg-dark-bg text-gray-300 font-sans antialiased overflow-hidden selection:bg-brand selection:text-white">
-
-    <!-- Background Effects -->
-    <div class="bg-blob-1"></div>
-    <div class="bg-blob-2"></div>
-
-    <div class="flex h-screen">
-        
-        <!-- Sidebar -->
-        <aside class="w-64 glass border-r-0 border-r border-dark-border flex flex-col justify-between shrink-0 transition-all duration-300 z-30 relative">
-            <!-- Logo & Menu -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 animate-slide-up">
             <div>
-                <!-- Logo -->
-                <div class="p-6 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white font-bold shadow-[0_0_15px_rgba(0,212,197,0.4)] relative group overflow-hidden">
-                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                        <i class="fa-solid fa-bolt text-lg relative z-10"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-display font-bold text-white leading-none tracking-tight">OneClick</h1>
-                        <p class="text-[10px] text-brand font-medium tracking-[0.2em] mt-1 uppercase">DataScrape AI</p>
-                    </div>
+                <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                    <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Projects</span>
+                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    <span class="text-brand">Web Scrape</span>
                 </div>
-
-                <!-- Navigation -->
-                <nav class="px-4 space-y-2 mt-4">
-                    <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-grid-2 text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="{% url 'new_scrape' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)] relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <i class="fa-solid fa-globe text-lg w-6 text-center relative z-10"></i>
-                        <span class="relative z-10">Scraper</span>
-                    </a>
-                    <a href="{% url 'history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-clock-rotate-left text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>History</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-code text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>API Reference</span>
-                    </a>
-                    <a href="{% url 'settings' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-gear text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>Settings</span>
-                    </a>
-                </nav>
-            </div>
-
-            <!-- Bottom Section (Usage & User) -->
-            <div class="p-4 space-y-4">
-                <!-- User Profile -->
-                <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center text-brand font-bold shadow-lg group-hover:shadow-brand/20 transition-all">
-                        {{ user.username|make_list|first|upper }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-white truncate group-hover:text-brand transition-colors">{{ user.username|default:"Alex Rivera" }}</p>
-                        <p class="text-xs text-gray-500 truncate font-mono">Pro Plan</p>
-                    </div>
-                    <i class="fa-solid fa-arrow-right-from-bracket text-gray-600 group-hover:text-red-400 transition-colors"></i>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-2 h-8 bg-brand rounded-full shadow-[0_0_15px_#00d4c5]"></div>
+                    <h1 class="text-4xl font-display font-bold text-white drop-shadow-md tracking-tight" id="status-text">Initializing Scraper...</h1>
+                </div>
+                <div class="flex items-center gap-2 text-gray-400 text-sm max-w-xl pl-5">
+                    <i class="fa-solid fa-link text-xs text-brand"></i>
+                    <a href="{{ target_url }}" target="_blank" class="hover:text-brand hover:underline truncate transition-colors font-mono opacity-80 hover:opacity-100">{{ target_url }}</a>
                 </div>
             </div>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto relative z-10 scroll-smooth p-6">
-            
-            <!-- Breadcrumbs & Title Header -->
-            <div class="max-w-[1600px] mx-auto space-y-8">
+            <!-- Controls -->
+            <div class="flex items-center gap-3">
+                <button id="pause-btn" onclick="togglePause()" class="group flex items-center gap-2 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 border border-yellow-500/20 px-6 py-2.5 rounded-xl text-sm font-medium transition-all hover:shadow-[0_0_20px_rgba(234,179,8,0.15)]">
+                    <i class="fa-solid fa-pause group-hover:scale-110 transition-transform"></i> Pause
+                </button>
+                <button id="resume-btn" onclick="togglePause()" class="hidden group flex items-center gap-2 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 px-6 py-2.5 rounded-xl text-sm font-medium transition-all hover:shadow-[0_0_20px_rgba(34,197,94,0.15)]">
+                    <i class="fa-solid fa-play group-hover:scale-110 transition-transform"></i> Resume
+                </button>
+                <button onclick="showCancelModal()" class="group flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-6 py-2.5 rounded-xl text-sm font-medium transition-all hover:shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+                    <i class="fa-solid fa-circle-xmark group-hover:scale-110 transition-transform"></i> Cancel Scrape
+                </button>
+            </div>
+        </div>
+
+        <!-- Top Row: Status & Time -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.1s;">
+            <!-- Overall Status -->
+            <div class="lg:col-span-2 glass-panel rounded-2xl p-8 relative overflow-hidden group border border-white/10 hover:border-brand/30 transition-all duration-500">
+                <!-- Background Glow -->
+                <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-brand/10 transition-colors duration-700 pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
                 
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 animate-slide-up">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 relative z-10 gap-6">
                     <div>
-                        <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                            <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Projects</span>
-                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            <span class="text-brand">Web Scrape</span>
-                        </div>
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="w-2 h-8 bg-brand rounded-full shadow-[0_0_15px_#00d4c5]"></div>
-                            <h1 class="text-4xl font-display font-bold text-white drop-shadow-md tracking-tight" id="status-text">Initializing Scraper...</h1>
-                        </div>
-                        <div class="flex items-center gap-2 text-gray-400 text-sm max-w-xl pl-5">
-                            <i class="fa-solid fa-link text-xs text-brand"></i>
-                            <a href="{{ target_url }}" target="_blank" class="hover:text-brand hover:underline truncate transition-colors font-mono opacity-80 hover:opacity-100">{{ target_url }}</a>
-                        </div>
-                    </div>
-
-                    <!-- Controls -->
-                    <div class="flex items-center gap-3">
-                        <button data-cancel-url="{% url 'new_scrape' %}" onclick="if(confirm('Are you sure you want to cancel?')) { window.location.href=this.dataset.cancelUrl }" class="group flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-6 py-2.5 rounded-xl text-sm font-medium transition-all hover:shadow-[0_0_20px_rgba(239,68,68,0.15)]">
-                            <i class="fa-solid fa-circle-xmark group-hover:scale-110 transition-transform"></i> Cancel Scrape
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Top Row: Status & Time -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.1s;">
-                    <!-- Overall Status -->
-                    <div class="lg:col-span-2 glass-panel rounded-2xl p-8 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-brand/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-brand/10 transition-colors duration-700"></div>
-                        
-                        <div class="flex justify-between items-start mb-6 relative z-10">
-                            <div>
-                                <h3 class="text-xs font-bold text-brand uppercase tracking-widest mb-2 flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
-                                    Overall Status
-                                </h3>
-                                <div class="flex items-end gap-4">
-                                    <span class="text-6xl font-bold text-white tracking-tighter" id="progress-percent">0%</span>
-                                    <div class="pb-2 space-y-1">
-                                        <p class="text-lg font-bold text-white" id="progress-stage">Starting engine...</p>
-                                        <p class="text-sm text-gray-400 flex items-center gap-2">
-                                            <i class="fa-solid fa-circle-info text-xs"></i>
-                                            <span id="progress-details">Connecting to target...</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-right bg-white/5 px-6 py-3 rounded-xl border border-white/5 backdrop-blur-sm">
-                                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Elapsed Time</span>
-                                <p class="text-2xl font-mono text-white mt-1 tracking-wider" id="timer">00:00:00</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Progress Bar -->
-                        <div class="relative z-10">
-                            <div class="w-full h-4 bg-white/5 rounded-full overflow-hidden border border-white/5">
-                                <div class="h-full bg-gradient-to-r from-brand to-blue-500 rounded-full relative transition-all duration-500 ease-out shadow-[0_0_20px_rgba(0,212,197,0.3)]" style="width: 0%" id="progress-bar">
-                                    <div class="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite] transform -skew-x-12"></div>
-                                </div>
-                            </div>
-                            <div class="flex justify-between mt-2 text-[10px] font-medium text-gray-500 uppercase tracking-wider">
-                                <span>Initialization</span>
-                                <span>Data Extraction</span>
-                                <span>Processing</span>
+                        <h3 class="text-xs font-bold text-brand uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
+                            </span>
+                            Overall Status
+                        </h3>
+                        <div class="flex items-baseline gap-4">
+                            <span class="text-7xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-400 tracking-tighter drop-shadow-sm" id="progress-percent">0%</span>
+                            <div class="flex flex-col">
+                                <p class="text-xl font-medium text-white flex items-center gap-2" id="progress-stage">
+                                    Starting engine...
+                                </p>
+                                <p class="text-sm text-gray-400 flex items-center gap-2 mt-1">
+                                    <i class="fa-solid fa-microchip text-brand/70 text-xs"></i>
+                                    <span id="progress-details" class="font-mono text-xs opacity-70">Connecting to target...</span>
+                                </p>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Estimated Remaining -->
-                    <div class="glass-panel rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden group animate-slide-up" style="animation-delay: 0.2s;">
-                        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand/50 to-transparent opacity-50"></div>
-                        <div>
-                            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Estimated Remaining</h3>
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full border-2 border-brand/20 flex items-center justify-center text-brand">
-                                    <i class="fa-regular fa-clock text-xl"></i>
-                                </div>
-                                <p class="text-5xl font-bold text-white font-mono tracking-tight" id="estimated-time">--:--</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3 text-gray-400 text-xs mt-6 bg-white/5 p-3 rounded-lg border border-white/5">
-                            <div class="w-4 h-4 rounded bg-brand/10 flex items-center justify-center text-brand">
-                                <i class="fa-solid fa-gauge-high text-[10px]"></i>
-                            </div>
-                            <span>Optimizing request rate...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bottom Row: Live View & Logs -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.3s;">
                     
-                    <!-- Live View -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- Browser Mockup -->
-                        <div class="glass-panel rounded-2xl overflow-hidden flex flex-col h-[600px] border border-white/10 shadow-2xl">
-                            <!-- Browser Header -->
-                            <div class="bg-[#050910]/90 border-b border-white/10 p-4 flex items-center gap-6">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
-                                    <div class="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
-                                    <div class="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+                    <!-- Enhanced Timer -->
+                    <div class="bg-[#050910]/50 px-6 py-4 rounded-xl border border-white/5 backdrop-blur-md shadow-xl group-hover:shadow-brand/5 transition-all">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1 text-center">Elapsed Time</span>
+                        <div class="flex items-center gap-2 justify-center">
+                            <i class="fa-regular fa-clock text-brand text-sm animate-pulse"></i>
+                            <p class="text-3xl font-mono text-white tracking-widest tabular-nums drop-shadow-glow" id="timer">00:00:00</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Progress Bar -->
+                <div class="relative z-10 pt-2">
+                    <div class="flex justify-between mb-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                        <span class="group-hover:text-brand transition-colors">Initialization</span>
+                        <span class="group-hover:text-brand transition-colors delay-100">Data Extraction</span>
+                        <span class="group-hover:text-brand transition-colors delay-200">Processing</span>
+                    </div>
+                    <div class="w-full h-3 bg-[#050910] rounded-full overflow-hidden border border-white/5 shadow-inner">
+                        <div class="h-full bg-gradient-to-r from-brand via-cyan-400 to-blue-500 rounded-full relative transition-all duration-500 ease-out shadow-[0_0_15px_rgba(0,212,197,0.4)]" style="width: 0%" id="progress-bar">
+                            <div class="absolute inset-0 bg-white/30 w-full h-full animate-[shimmer_1.5s_infinite] transform -skew-x-12"></div>
+                            <div class="absolute right-0 top-0 bottom-0 w-1 bg-white/50 shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estimated Remaining -->
+            <div class="glass-panel rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden group animate-slide-up border border-white/10 hover:border-blue-500/30 transition-all duration-500" style="animation-delay: 0.2s;">
+                <div class="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div>
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-hourglass-half text-blue-500"></i>
+                        Estimated Remaining
+                    </h3>
+                    <div class="flex items-center gap-5 relative z-10">
+                        <div class="relative">
+                            <!-- Animated Ring -->
+                            <svg class="w-16 h-16 transform -rotate-90">
+                                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="transparent" class="text-[#050910]" />
+                                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="175.9" stroke-dashoffset="40" class="text-blue-500 animate-[spin_3s_linear_infinite] opacity-80" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center text-white">
+                                <i class="fa-solid fa-infinity text-sm opacity-50"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-4xl font-display font-bold text-white tracking-tight" id="estimated-time">--:--</p>
+                            <p class="text-xs text-blue-400 font-medium mt-1">Calculating...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative z-10 mt-6">
+                    <div class="flex items-center gap-3 text-gray-400 text-xs bg-[#050910]/50 p-3 rounded-xl border border-white/5 shadow-inner">
+                        <div class="w-5 h-5 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 animate-pulse">
+                            <i class="fa-solid fa-gauge-high text-[10px]"></i>
+                        </div>
+                        <span class="font-mono opacity-80">Optimizing request rate...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Row: Live View & Logs -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.3s;">
+            
+            <!-- Live View -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Browser Mockup -->
+                <div class="glass-panel rounded-2xl overflow-hidden flex flex-col h-[600px] border border-white/10 shadow-2xl hover:border-brand/30 transition-all duration-500 group relative">
+                    <!-- Glow Effect -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-brand/20 to-blue-600/20 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                    
+                    <!-- Browser Header -->
+                    <div class="bg-[#050910] border-b border-white/10 p-4 flex items-center gap-6 relative z-10 backdrop-blur-md">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50 hover:bg-red-500 transition-colors shadow-[0_0_10px_rgba(239,68,68,0.4)]"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50 hover:bg-yellow-500 transition-colors shadow-[0_0_10px_rgba(234,179,8,0.4)]"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50 hover:bg-green-500 transition-colors shadow-[0_0_10px_rgba(34,197,94,0.4)]"></div>
+                        </div>
+                        <div class="flex-1 bg-[#0a0f1c] rounded-lg border border-white/5 text-xs text-gray-400 px-4 py-2.5 flex items-center gap-3 shadow-inner group-hover:border-white/10 transition-colors relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                            <i class="fa-solid fa-lock text-[10px] text-green-500"></i>
+                            <span class="truncate font-mono opacity-70 text-brand/80">{{ target_url }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/5 border border-green-500/10 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                            <span class="text-[10px] font-bold text-green-500 uppercase tracking-wider">Live View</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Browser Body (Visualization - Replaces Grid) -->
+                    <div class="flex-1 bg-[#030508] relative p-4 flex flex-col overflow-hidden z-10" id="live-grid">
+                        <!-- Browser Window Frame -->
+                        <div class="w-full h-full bg-[#0a0f1c] rounded-lg border border-white/10 flex flex-col overflow-hidden shadow-2xl relative group">
+                            <!-- Fake Browser Header -->
+                            <div class="bg-[#1a202c] px-3 py-2 flex items-center gap-3 border-b border-white/5 shrink-0">
+                                 <div class="flex gap-1.5">
+                                     <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                                     <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                                     <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                                 </div>
+                                 <div class="flex-1 bg-[#030508] rounded px-3 py-1 text-[10px] text-gray-500 font-mono flex items-center justify-between border border-white/5">
+                                     <span class="truncate" id="browser-url">{{ target_url }}/product/latest</span>
+                                     <i class="fa-solid fa-rotate-right text-[10px] hover:animate-spin cursor-pointer"></i>
+                                 </div>
+                            </div>
+
+                            <!-- Viewport (Video Simulation) -->
+                            <div class="flex-1 relative bg-white overflow-hidden group/viewport" id="browser-viewport">
+                                <!-- Simulated Webpage Content -->
+                                <div class="absolute inset-0 bg-gray-100 flex flex-col transition-transform duration-700" id="page-content">
+                                     <!-- Mock Navbar -->
+                                     <div class="h-10 bg-gray-800 w-full shrink-0 flex items-center px-4 gap-4">
+                                         <div class="w-20 h-4 bg-gray-600 rounded"></div>
+                                         <div class="flex-1"></div>
+                                         <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
+                                     </div>
+                                     <!-- Mock Hero -->
+                                     <div class="h-32 bg-blue-100 w-full shrink-0 border-b border-gray-200 p-6 flex gap-4">
+                                         <div class="w-24 h-24 bg-blue-200 rounded shadow-sm"></div>
+                                         <div class="flex-1 space-y-2">
+                                             <div class="w-3/4 h-4 bg-blue-200 rounded"></div>
+                                             <div class="w-1/2 h-3 bg-blue-200/50 rounded"></div>
+                                         </div>
+                                     </div>
+                                     <!-- Mock Grid -->
+                                     <div class="grid grid-cols-3 gap-3 p-4">
+                                          <div class="aspect-square bg-white rounded shadow-sm p-2 space-y-2 transform hover:scale-105 transition-transform duration-300">
+                                              <div class="w-full h-2/3 bg-gray-200 rounded-sm"></div>
+                                              <div class="w-full h-2 bg-gray-200 rounded-sm"></div>
+                                          </div>
+                                          <div class="aspect-square bg-white rounded shadow-sm p-2 space-y-2 transform hover:scale-105 transition-transform duration-300">
+                                              <div class="w-full h-2/3 bg-gray-200 rounded-sm"></div>
+                                              <div class="w-full h-2 bg-gray-200 rounded-sm"></div>
+                                          </div>
+                                          <div class="aspect-square bg-white rounded shadow-sm p-2 space-y-2 transform hover:scale-105 transition-transform duration-300">
+                                              <div class="w-full h-2/3 bg-gray-200 rounded-sm"></div>
+                                              <div class="w-full h-2 bg-gray-200 rounded-sm"></div>
+                                          </div>
+                                          <div class="aspect-square bg-white rounded shadow-sm p-2 space-y-2 transform hover:scale-105 transition-transform duration-300">
+                                              <div class="w-full h-2/3 bg-gray-200 rounded-sm"></div>
+                                              <div class="w-full h-2 bg-gray-200 rounded-sm"></div>
+                                          </div>
+                                          <div class="aspect-square bg-white rounded shadow-sm p-2 space-y-2 transform hover:scale-105 transition-transform duration-300">
+                                              <div class="w-full h-2/3 bg-gray-200 rounded-sm"></div>
+                                              <div class="w-full h-2 bg-gray-200 rounded-sm"></div>
+                                          </div>
+                                          <div class="aspect-square bg-white rounded shadow-sm p-2 space-y-2 transform hover:scale-105 transition-transform duration-300">
+                                              <div class="w-full h-2/3 bg-gray-200 rounded-sm"></div>
+                                              <div class="w-full h-2 bg-gray-200 rounded-sm"></div>
+                                          </div>
+                                     </div>
                                 </div>
-                                <div class="flex-1 bg-[#0a0f1c] rounded-lg border border-white/5 text-xs text-gray-400 px-4 py-2 flex items-center gap-3 shadow-inner">
-                                    <i class="fa-solid fa-lock text-[10px] text-green-500"></i>
-                                    <span class="truncate font-mono opacity-70">{{ target_url }}</span>
-                                </div>
-                                <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 live-dot"></span>
-                                    <span class="text-[10px] font-bold text-green-500 uppercase tracking-wider">Live View</span>
+                                
+                                <!-- Scanning Laser Effect -->
+                                <div class="absolute top-0 left-0 right-0 h-1 bg-brand/50 shadow-[0_0_15px_#00d4c5] z-10 animate-[scan_3s_ease-in-out_infinite]" id="scan-laser"></div>
+                                
+                                <!-- Interaction Cursors -->
+                                <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-black/50 rounded-full blur-sm animate-[ping_2s_infinite] pointer-events-none"></div>
+
+                                <!-- "Live" Badge -->
+                                <div class="absolute bottom-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded animate-pulse z-20 shadow-lg flex items-center gap-1">
+                                    <div class="w-1.5 h-1.5 bg-white rounded-full"></div> REC
                                 </div>
                             </div>
                             
-                            <!-- Browser Body (Visualization) -->
-                            <div class="flex-1 bg-[#050910] relative p-8 grid grid-cols-3 gap-6 overflow-hidden">
-                                <!-- Scan Line Animation -->
-                                <div class="absolute inset-0 pointer-events-none z-10 scan-line bg-gradient-to-b from-transparent via-brand/10 to-transparent h-[20%]"></div>
-                                
-                                <!-- Background Grid Items (Simulated) -->
-                                <div class="h-full bg-white/5 rounded-xl border border-white/5 animate-pulse"></div>
-                                <div class="h-full bg-white/5 rounded-xl border border-white/5 animate-pulse delay-75"></div>
-                                <div class="h-full bg-white/5 rounded-xl border border-white/5 animate-pulse delay-150"></div>
-                                <div class="h-full bg-white/5 rounded-xl border border-white/5 animate-pulse delay-100"></div>
-                                <div class="h-full bg-white/5 rounded-xl border border-white/5 animate-pulse delay-200"></div>
-                                <div class="h-full bg-white/5 rounded-xl border border-white/5 animate-pulse delay-300"></div>
-
-                                <!-- Intercepting Overlay -->
-                                <div class="absolute inset-0 bg-[#050910]/60 backdrop-blur-[4px] flex items-center justify-center z-20">
-                                    <div class="bg-[#0a0f1c]/90 border border-brand/30 rounded-2xl p-8 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(0,212,197,0.15)] relative overflow-hidden group">
-                                        <div class="absolute inset-0 bg-brand/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                        
-                                        <div class="w-16 h-16 rounded-full bg-brand/10 flex items-center justify-center text-brand text-2xl mb-4 relative">
-                                            <i class="fa-solid fa-bolt"></i>
-                                            <div class="absolute inset-0 rounded-full border border-brand animate-ping opacity-20"></div>
-                                            <div class="absolute inset-[-4px] rounded-full border border-brand/20 animate-spin duration-[3s]"></div>
-                                        </div>
-                                        <span class="text-sm font-bold text-white tracking-[0.2em] uppercase mb-1" id="action-status">Connecting...</span>
-                                        <div class="h-0.5 w-12 bg-brand/30 rounded-full overflow-hidden mt-2">
-                                            <div class="h-full bg-brand animate-[shimmer_1s_infinite]"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <!-- Overlay for "Connecting" state -->
+                            <div class="absolute inset-0 bg-[#0a0f1c] z-30 flex items-center justify-center transition-opacity duration-500" id="video-overlay">
+                                 <div class="text-center">
+                                      <div class="w-12 h-12 border-2 border-brand/30 border-t-brand rounded-full animate-spin mx-auto mb-3"></div>
+                                      <p class="text-xs text-brand font-mono animate-pulse">ESTABLISHING_FEED...</p>
+                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Stats & Logs -->
-                    <div class="flex flex-col gap-6">
-                        
-                        <!-- Small Stats -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors cursor-default">
-                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Status</p>
-                                <div class="flex items-end justify-between">
-                                    <span class="text-2xl font-bold text-white" id="stat-status">Active</span>
-                                    <div class="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
-                                        <i class="fa-solid fa-check text-sm"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors cursor-default">
-                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Mode</p>
-                                <div class="flex items-end justify-between">
-                                    <span class="text-2xl font-bold text-white">Fast</span>
-                                    <div class="w-8 h-8 rounded-full bg-brand/10 flex items-center justify-center text-brand">
-                                        <i class="fa-solid fa-bolt text-sm"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Real-time Log -->
-                        <div class="flex-1 glass-panel rounded-2xl overflow-hidden flex flex-col border border-white/10 shadow-xl">
-                            <div class="bg-white/5 p-4 border-b border-white/5 flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-terminal text-xs text-gray-500"></i>
-                                    <h3 class="text-xs font-bold text-gray-300 uppercase tracking-widest">System Log</h3>
-                                </div>
-                                <div class="flex gap-1.5">
-                                    <div class="w-1.5 h-1.5 rounded-full bg-white/20"></div>
-                                    <div class="w-1.5 h-1.5 rounded-full bg-white/20"></div>
-                                    <div class="w-1.5 h-1.5 rounded-full bg-white/20"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 p-5 font-mono text-[11px] leading-relaxed space-y-3 overflow-y-auto log-scroll h-[400px] bg-[#030508]/50" id="log-container">
-                                <div class="text-gray-500 border-l-2 border-transparent hover:border-white/10 pl-2 transition-colors">
-                                    <span class="opacity-30 mr-2" id="log-time-0"></span> <span class="text-blue-400 font-bold">[SYSTEM]</span> Initializing scrape job...
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
 
-    <script>
-        // Scrape Configuration
-        const targetUrl = "{{ target_url|escapejs }}";
-        const csrfToken = "{{ csrf_token }}";
+            <!-- Stats & Logs -->
+            <div class="flex flex-col gap-6">
+                
+                <!-- Small Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Status Card -->
+                    <div class="glass-panel rounded-2xl p-5 hover:bg-white/5 transition-all cursor-default border border-white/10 hover:border-green-500/30 group relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="absolute -right-6 -top-6 w-20 h-20 bg-green-500/10 rounded-full blur-xl group-hover:bg-green-500/20 transition-all"></div>
+                        
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                            Status
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        </p>
+                        <div class="flex items-end justify-between relative z-10">
+                            <span class="text-2xl font-bold text-white group-hover:text-green-400 transition-colors drop-shadow-sm" id="stat-status">Active</span>
+                            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 border border-green-500/20 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.2)] transition-all animate-pulse-slow">
+                                <i class="fa-solid fa-signal text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Speed Card -->
+                    <div class="glass-panel rounded-2xl p-5 hover:bg-white/5 transition-all cursor-default border border-white/10 hover:border-brand/30 group relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="absolute -right-6 -top-6 w-20 h-20 bg-brand/10 rounded-full blur-xl group-hover:bg-brand/20 transition-all"></div>
+                        
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Live Speed</p>
+                        <div class="flex items-end justify-between relative z-10">
+                            <div class="flex flex-col">
+                                <span class="text-2xl font-bold text-white group-hover:text-brand transition-colors drop-shadow-sm font-mono" id="live-speed">0.0</span>
+                                <span class="text-[10px] text-gray-500">req/sec</span>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center text-brand border border-brand/20 group-hover:shadow-[0_0_15px_rgba(0,212,197,0.2)] transition-all">
+                                <i class="fa-solid fa-bolt text-lg group-hover:animate-bounce"></i>
+                            </div>
+                        </div>
+                        <!-- Mini Graph Line -->
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-brand/20">
+                            <div class="h-full bg-brand w-1/3 animate-[shimmer_2s_infinite]"></div>
+                        </div>
+                    </div>
+
+                    <!-- Extra Stat: Pages / Data Points -->
+                    <div class="col-span-2 glass-panel rounded-2xl p-5 hover:bg-white/5 transition-all cursor-default border border-white/10 hover:border-blue-500/30 group relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4">
+                            <i class="fa-solid fa-database text-8xl text-blue-500"></i>
+                        </div>
+                        
+                        <div class="flex items-center justify-between relative z-10">
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Data Points Collected</p>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-3xl font-bold text-white group-hover:text-blue-400 transition-colors font-display tracking-tight" id="data-points-count">0</span>
+                                    <span class="text-xs text-green-500 font-mono"><i class="fa-solid fa-arrow-up"></i> +<span id="items-per-min">0</span>/m</span>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.2)] transition-all group-hover:scale-110">
+                                <i class="fa-solid fa-layer-group text-xl"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Progress bar for quota or similar -->
+                        <div class="mt-4 w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-blue-500/50 w-[45%] rounded-full animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-time Log -->
+                <div class="flex-1 glass-panel rounded-2xl overflow-hidden flex flex-col border border-white/10 shadow-xl hover:border-gray-500/30 transition-all group h-[200px]">
+                    <!-- Terminal Header -->
+                    <div class="bg-[#0a0f1c] p-3 border-b border-white/5 flex items-center justify-between relative shrink-0">
+                        <div class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex items-center gap-3 relative z-10">
+                            <div class="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 border border-white/5 shadow-inner">
+                                <i class="fa-solid fa-terminal text-[10px] text-brand animate-pulse"></i>
+                                <span class="text-[10px] font-mono text-gray-400">root@scraper:~</span>
+                            </div>
+                            <h3 class="text-xs font-bold text-gray-300 uppercase tracking-widest">System Log</h3>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="text-[10px] text-gray-500 hover:text-white transition-colors" title="Download Log">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                            <button class="text-[10px] text-gray-500 hover:text-white transition-colors" title="Clear">
+                                <i class="fa-solid fa-eraser"></i>
+                            </button>
+                            <div class="w-px h-3 bg-white/10 mx-1"></div>
+                            <div class="flex gap-1.5 opacity-50">
+                                <div class="w-2 h-2 rounded-full bg-red-500/50"></div>
+                                <div class="w-2 h-2 rounded-full bg-yellow-500/50"></div>
+                                <div class="w-2 h-2 rounded-full bg-green-500/50"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Terminal Content -->
+                    <div class="flex-1 p-4 font-mono text-[11px] leading-relaxed space-y-1.5 overflow-y-auto log-scroll bg-[#030508] relative shadow-inner" id="log-container">
+                        <!-- CRT Scanline Effect -->
+                        <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-0 pointer-events-none bg-[size:100%_2px,3px_100%] opacity-50"></div>
+                        
+                        <div class="relative z-10 text-gray-500 border-l-2 border-brand/20 pl-3 py-0.5 hover:bg-white/5 hover:border-brand transition-colors group/log">
+                            <span class="opacity-40 mr-2 text-[10px] group-hover/log:opacity-100 transition-opacity" id="log-time-0"></span> 
+                            <span class="text-blue-400 font-bold tracking-wider">[SYSTEM]</span> 
+                            <span class="text-gray-300">Initializing scrape job...</span>
+                        </div>
+                        
+                        <!-- Typing Cursor -->
+                        <div class="relative z-10 pl-3 mt-2 text-brand font-bold flex items-center gap-2">
+                            <span class="text-gray-600">$</span>
+                            <span class="animate-pulse">_</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Cancel Confirmation Modal -->
+<div id="cancel-modal" class="fixed inset-0 z-50 hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0" id="cancel-modal-backdrop"></div>
+    
+    <!-- Modal Content -->
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="glass-panel border-red-500/30 rounded-2xl p-6 max-w-sm w-full shadow-[0_0_50px_rgba(239,68,68,0.25)] transform scale-95 opacity-0 transition-all duration-300 relative overflow-hidden" id="cancel-modal-content">
+            <div class="absolute inset-0 bg-red-500/5 z-0"></div>
+            <div class="text-center relative z-10">
+                <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 mx-auto mb-4 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                    <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2 tracking-tight">Abort Mission?</h3>
+                <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                    Are you sure you want to stop the scraping process? <span class="text-red-400">Any data collected so far will be lost.</span>
+                </p>
+                <div class="flex gap-3">
+                    <button onclick="closeCancelModal()" class="flex-1 py-2.5 rounded-xl border border-white/10 text-gray-300 hover:bg-white/5 hover:text-white transition-all font-medium text-sm">
+                        No, Keep Going
+                    </button>
+                    <a href="{% url 'new_scrape' %}" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all font-medium text-sm flex items-center justify-center gap-2 group">
+                        <i class="fa-solid fa-ban group-hover:rotate-12 transition-transform"></i> Yes, Stop
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function togglePause() {
+        isPaused = !isPaused;
+        const pauseBtn = document.getElementById('pause-btn');
+        const resumeBtn = document.getElementById('resume-btn');
+        const statStatus = document.getElementById('stat-status');
         
-        // UI Elements
-        const progressBar = document.getElementById('progress-bar');
-        const progressPercent = document.getElementById('progress-percent');
-        const progressStage = document.getElementById('progress-stage');
-        const progressDetails = document.getElementById('progress-details');
-        const timerElement = document.getElementById('timer');
-        const logContainer = document.getElementById('log-container');
-        const actionStatus = document.getElementById('action-status');
-        const statusText = document.getElementById('status-text');
+        if (isPaused) {
+            pauseBtn.classList.add('hidden');
+            resumeBtn.classList.remove('hidden');
+            statStatus.innerText = "Paused";
+            statStatus.classList.remove('text-white');
+            statStatus.classList.add('text-yellow-500');
+            addLog('SYSTEM', 'Scrape process paused', 'text-yellow-500');
+        } else {
+            pauseBtn.classList.remove('hidden');
+            resumeBtn.classList.add('hidden');
+            statStatus.innerText = "Active";
+            statStatus.classList.remove('text-yellow-500');
+            statStatus.classList.add('text-white');
+            addLog('SYSTEM', 'Scrape process resumed', 'text-green-500');
+        }
+    }
+
+    // Modal Logic
+    function showCancelModal() {
+        const modal = document.getElementById('cancel-modal');
+        const backdrop = document.getElementById('cancel-modal-backdrop');
+        const content = document.getElementById('cancel-modal-content');
         
-        // Timer Logic
-        let seconds = 0;
-        const timerInterval = setInterval(() => {
+        modal.classList.remove('hidden');
+        // Trigger animations
+        setTimeout(() => {
+            backdrop.classList.remove('opacity-0');
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeCancelModal() {
+        const modal = document.getElementById('cancel-modal');
+        const backdrop = document.getElementById('cancel-modal-backdrop');
+        const content = document.getElementById('cancel-modal-content');
+        
+        backdrop.classList.add('opacity-0');
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // Scrape Configuration
+    const targetUrl = "{{ target_url|escapejs }}";
+    const csrfToken = "{{ csrf_token }}";
+    
+    // UI Elements
+    const progressBar = document.getElementById('progress-bar');
+    const progressPercent = document.getElementById('progress-percent');
+    const progressStage = document.getElementById('progress-stage');
+    const progressDetails = document.getElementById('progress-details');
+    const timerElement = document.getElementById('timer');
+    const logContainer = document.getElementById('log-container');
+    // const actionStatus = document.getElementById('action-status'); // Removed as it was missing in HTML
+    const statusText = document.getElementById('status-text');
+    const dataPointsCount = document.getElementById('data-points-count');
+    const itemsPerMin = document.getElementById('items-per-min');
+    const liveSpeed = document.getElementById('live-speed');
+    const liveGrid = document.getElementById('live-grid');
+    
+    // Pause State
+    let isPaused = false;
+    let lastItemTime = Date.now();
+    let itemsCount = 0;
+
+    // Timer Logic
+    let seconds = 0;
+    const timerInterval = setInterval(() => {
+        if (!isPaused) {
             seconds++;
             const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
             const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
             const s = (seconds % 60).toString().padStart(2, '0');
             timerElement.innerText = `${h}:${m}:${s}`;
-        }, 1000);
-
-        // Helper: Add Log
-        function addLog(type, message, colorClass) {
-            const now = new Date();
-            const timeStr = now.toTimeString().split(' ')[0];
-            const div = document.createElement('div');
-            div.className = 'text-gray-500 border-l-2 border-transparent hover:border-white/10 pl-2 transition-colors animate-slide-up';
-            div.style.animationDuration = '0.3s';
-            div.innerHTML = `<span class="opacity-30 mr-2 font-mono text-[10px]">${timeStr}</span> <span class="${colorClass} font-bold tracking-wide">[${type}]</span> <span class="text-gray-400">${message}</span>`;
-            logContainer.appendChild(div);
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
-
-        // Start Scrape via API
-        async function startScrape() {
-            addLog('SYSTEM', `Target: ${targetUrl}`, 'text-blue-400');
             
-            // Simulation of progress while waiting for server response
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                if (progress < 90) {
-                    progress += Math.random() * 5;
-                    if (progress > 90) progress = 90;
-                    
-                    progressBar.style.width = `${progress}%`;
-                    progressPercent.innerText = `${Math.floor(progress)}%`;
-                    
-                    if (progress > 10 && progress < 30) {
-                        progressStage.innerText = "Connecting...";
-                        progressDetails.innerText = "Handshaking with target server";
-                        actionStatus.innerText = "Connecting...";
-                    } else if (progress > 30 && progress < 60) {
-                        progressStage.innerText = "Scraping...";
-                        progressDetails.innerText = "Extracting DOM elements";
-                        actionStatus.innerText = "Scraping Data";
-                        if (Math.random() > 0.8) addLog('ENGINE', 'Found potential product container', 'text-brand');
-                    } else if (progress > 60) {
-                        progressStage.innerText = "Processing...";
-                        progressDetails.innerText = "Parsing and structuring data";
-                        actionStatus.innerText = "Parsing Data";
-                    }
+            // Calculate rate
+            if (seconds > 0) {
+                const rate = Math.round((itemsCount / seconds) * 60);
+                if (itemsPerMin) itemsPerMin.innerText = rate;
+                
+                // Simulate speed fluctuation
+                if (liveSpeed && !isPaused) {
+                    const baseSpeed = 12.5;
+                    const fluctuation = (Math.random() * 4) - 2; // +/- 2
+                    liveSpeed.innerText = (baseSpeed + fluctuation).toFixed(1);
                 }
-            }, 500);
-
-            try {
-                addLog('NETWORK', 'Sending scrape request...', 'text-yellow-500');
-                
-                const response = await fetch('/api/run-scrape/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}' // Django CSRF
-                    },
-                    body: JSON.stringify({ url: targetUrl })
-                });
-
-                const text = await response.text();
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (e) {
-                    console.error('Failed to parse JSON:', text);
-                    throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
-                }
-
-                clearInterval(progressInterval);
-                
-                if (data.status === 'success') {
-                    // Complete progress
-                    progressBar.style.width = '100%';
-                    progressPercent.innerText = '100%';
-                    progressStage.innerText = "Completed";
-                    progressDetails.innerText = "Redirecting to results...";
-                    actionStatus.innerText = "Success";
-                    statusText.innerText = "Scrape Completed!";
-                    
-                    addLog('SUCCESS', `Scrape finished. Found ${data.result.count} items.`, 'text-green-500');
-                    addLog('SYSTEM', 'Redirecting to results page...', 'text-blue-400');
-                    
-                    // Redirect after short delay
-                    setTimeout(() => {
-                        window.location.href = `{% url 'scraped_results' %}?job_id=${data.job_id}`;
-                    }, 1000);
-                } else {
-                    throw new Error(data.message || 'Unknown error occurred');
-                }
-
-            } catch (error) {
-                clearInterval(progressInterval);
-                progressBar.classList.remove('bg-brand');
-                progressBar.classList.add('bg-red-500');
-                progressBar.parentElement.classList.add('shadow-[0_0_20px_rgba(239,68,68,0.3)]');
-                
-                progressStage.innerText = "Scrape Failed";
-                progressDetails.innerText = "Process terminated";
-                actionStatus.innerText = "Error";
-                actionStatus.classList.add('text-red-500');
-                statusText.innerText = "Scrape Failed";
-                statusText.classList.remove('bg-gradient-to-r', 'from-white', 'to-gray-400');
-                statusText.classList.add('text-red-500');
-                
-                addLog('ERROR', error.message, 'text-red-500');
             }
         }
+    }, 1000);
 
-        // Initialize
-        document.getElementById('log-time-0').innerText = new Date().toTimeString().split(' ')[0];
+    // Helper: Add Log
+    function addLog(type, message, colorClass) {
+        const now = new Date();
+        const timeStr = now.toTimeString().split(' ')[0];
+        const div = document.createElement('div');
+        div.className = 'relative z-10 text-gray-500 border-l-2 border-brand/20 pl-3 py-0.5 hover:bg-white/5 hover:border-brand transition-colors animate-slide-up group/log';
+        div.style.animationDuration = '0.3s';
+        div.innerHTML = `<span class="opacity-40 mr-2 text-[10px] group-hover/log:opacity-100 transition-opacity">${timeStr}</span> <span class="${colorClass} font-bold tracking-wider">[${type}]</span> <span class="text-gray-300">${message}</span>`;
+        logContainer.appendChild(div);
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    function simulateLiveItem() {
+        if (Math.random() > 0.6) return; // Only trigger sometimes
         
-        // Start after a brief delay to allow UI to render
-        setTimeout(startScrape, 1000);
+        const items = document.querySelectorAll('.live-item');
+        if (items.length === 0) return;
+        
+        const randomItem = items[Math.floor(Math.random() * items.length)];
+        const overlay = randomItem.querySelector('.status-overlay');
+        const icon = randomItem.querySelector('.status-icon');
+        
+        // Visual feedback
+        randomItem.classList.remove('border-white/5');
+        randomItem.classList.add('border-brand/50', 'shadow-[0_0_20px_rgba(0,212,197,0.2)]');
+        
+        if (overlay) overlay.classList.remove('opacity-0');
+        if (icon) icon.classList.remove('scale-0');
+        
+        // Revert
+        setTimeout(() => {
+            randomItem.classList.add('border-white/5');
+            randomItem.classList.remove('border-brand/50', 'shadow-[0_0_20px_rgba(0,212,197,0.2)]');
+            
+            if (overlay) overlay.classList.add('opacity-0');
+            if (icon) icon.classList.add('scale-0');
+        }, 600);
 
-    </script>
-</body>
-</html>
+        // Update Counter
+        let current = parseInt(dataPointsCount.innerText.replace(/,/g, '')) || 0;
+        itemsCount = current + 1;
+        dataPointsCount.innerText = itemsCount.toLocaleString();
+    }
+
+    // Start Scrape via API
+    async function startScrape() {
+        addLog('SYSTEM', `Target: ${targetUrl}`, 'text-blue-400');
+        
+        // Simulation of progress while waiting for server response
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            if (!isPaused && progress < 90) {
+                progress += Math.random() * 5;
+                if (progress > 90) progress = 90;
+                
+                progressBar.style.width = `${progress}%`;
+                progressPercent.innerText = `${Math.floor(progress)}%`;
+                
+                if (progress > 10 && progress < 30) {
+                    progressStage.innerText = "Connecting...";
+                    progressDetails.innerText = "Handshaking with target server";
+                    // actionStatus.innerText = "Connecting..."; // Removed
+                } else if (progress > 30 && progress < 60) {
+                    progressStage.innerText = "Scraping...";
+                    progressDetails.innerText = "Extracting DOM elements";
+                    // actionStatus.innerText = "Scraping Data"; // Removed
+                    
+                    simulateLiveItem();
+                    if (Math.random() > 0.7) {
+                         const logs = [
+                             'Found product container',
+                             'Extracting image attributes',
+                             'Parsing price metadata',
+                             'Traversing DOM tree',
+                             'Validating schema markup'
+                         ];
+                         addLog('ENGINE', logs[Math.floor(Math.random() * logs.length)], 'text-brand');
+                    }
+                } else if (progress > 60) {
+                    progressStage.innerText = "Processing...";
+                    progressDetails.innerText = "Parsing and structuring data";
+                    // actionStatus.innerText = "Parsing Data"; // Removed
+                    
+                    simulateLiveItem();
+                    if (Math.random() > 0.7) {
+                         const logs = [
+                             'Normalizing JSON output',
+                             'Cleaning data fields',
+                             'Formatting timestamps',
+                             'Deduplicating records'
+                         ];
+                         addLog('DATA', logs[Math.floor(Math.random() * logs.length)], 'text-purple-400');
+                    }
+                }
+            }
+        }, 500);
+
+        try {
+            addLog('NETWORK', 'Sending scrape request...', 'text-yellow-500');
+            
+            const response = await fetch('/api/run-scrape/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}' // Django CSRF
+                },
+                body: JSON.stringify({ url: targetUrl })
+            });
+
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.error('Failed to parse JSON:', text);
+                throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+            }
+
+            // Wait if paused
+            while (isPaused) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            clearInterval(progressInterval);
+            
+            if (data.status === 'success') {
+                // Complete progress
+                progressBar.style.width = '100%';
+                progressPercent.innerText = '100%';
+                progressStage.innerText = "Completed";
+                progressDetails.innerText = "Redirecting to results...";
+                // actionStatus.innerText = "Success"; // Removed
+                statusText.innerText = "Scrape Completed!";
+                
+                addLog('SUCCESS', `Scrape finished. Found ${data.result.count} items.`, 'text-green-500');
+                addLog('SYSTEM', 'Redirecting to results page...', 'text-blue-400');
+                
+                // Redirect after short delay
+                setTimeout(() => {
+                    window.location.href = `{% url 'scraped_results' %}?job_id=${data.job_id}`;
+                }, 1000);
+            } else {
+                throw new Error(data.message || 'Unknown error occurred');
+            }
+
+        } catch (error) {
+            clearInterval(progressInterval);
+            progressBar.classList.remove('bg-brand');
+            progressBar.classList.add('bg-red-500');
+            progressBar.parentElement.classList.add('shadow-[0_0_20px_rgba(239,68,68,0.3)]');
+            
+            progressStage.innerText = "Scrape Failed";
+            progressDetails.innerText = "Process terminated";
+            // actionStatus.innerText = "Error"; // Removed
+            // actionStatus.classList.add('text-red-500'); // Removed
+            statusText.innerText = "Scrape Failed";
+            statusText.classList.remove('bg-gradient-to-r', 'from-white', 'to-gray-400');
+            statusText.classList.add('text-red-500');
+            
+            addLog('ERROR', error.message, 'text-red-500');
+        }
+    }
+
+    // Initialize
+    document.getElementById('log-time-0').innerText = new Date().toTimeString().split(' ')[0];
+    
+    // Start after a brief delay to allow UI to render
+    setTimeout(startScrape, 1000);
+
+</script>
+{% endblock %}

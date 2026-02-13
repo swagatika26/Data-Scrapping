@@ -1,377 +1,430 @@
+{% extends 'dashboard/base_dashboard.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>History - OneClick DataScrape</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+{% block title %}History - ScrapyX{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom Checkbox */
+    .custom-checkbox {
+        appearance: none;
+        background-color: rgba(255, 255, 255, 0.05);
+        margin: 0;
+        font: inherit;
+        color: currentColor;
+        width: 1.15em;
+        height: 1.15em;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.35em;
+        display: grid;
+        place-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .custom-checkbox:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .custom-checkbox::before {
+        content: "";
+        width: 0.65em;
+        height: 0.65em;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em #00d4c5;
+        transform-origin: center;
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+    .custom-checkbox:checked::before {
+        transform: scale(1);
+    }
+    .custom-checkbox:checked {
+        border-color: #00d4c5;
+        background-color: rgba(0, 212, 197, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-[1600px] mx-auto space-y-8 p-6">
     
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            DEFAULT: '#00d4c5',
-                            hover: '#00b8aa',
-                            glow: '#00d4c580',
-                        },
-                        dark: {
-                            bg: '#030712',       /* Deep almost black */
-                            sidebar: '#0B1121',  /* Slightly lighter */
-                            card: '#0f172a',     /* Card bg */
-                            border: 'rgba(255, 255, 255, 0.08)',
-                            surface: '#1e293b',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Space Grotesk', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    animation: {
-                        'blob': 'blob 7s infinite',
-                        'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'slide-up': 'slideUp 0.5s ease-out forwards',
-                        'shimmer': 'shimmer 2s infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        shimmer: {
-                            '0%': { transform: 'translateX(-100%)' },
-                            '100%': { transform: 'translateX(100%)' },
-                        },
-                        float: {
-                            '0%': { transform: 'translateY(0px) rotate(0deg)' },
-                            '50%': { transform: 'translateY(-20px) rotate(2deg)' },
-                            '100%': { transform: 'translateY(0px) rotate(0deg)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .font-display { font-family: 'Space Grotesk', sans-serif; }
-        
-        /* Glassmorphism Utilities */
-        .glass {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .glass-panel {
-            background: rgba(10, 15, 28, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #374151; }
-        
-        /* Background Blobs */
-        .bg-blob-1 {
-            position: fixed; top: -10%; left: -10%; width: 50%; height: 50%;
-            background: radial-gradient(circle, rgba(0, 212, 197, 0.15) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px); z-index: -1; animation: blob 15s infinite alternate;
-        }
-        .bg-blob-2 {
-            position: fixed; bottom: -10%; right: -10%; width: 50%; height: 50%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px); z-index: -1; animation: blob 20s infinite alternate-reverse;
-        }
-
-        /* Custom Checkbox */
-        .custom-checkbox {
-            appearance: none;
-            background-color: rgba(255, 255, 255, 0.05);
-            margin: 0;
-            font: inherit;
-            color: currentColor;
-            width: 1.15em;
-            height: 1.15em;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.35em;
-            display: grid;
-            place-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .custom-checkbox:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        .custom-checkbox::before {
-            content: "";
-            width: 0.65em;
-            height: 0.65em;
-            transform: scale(0);
-            transition: 120ms transform ease-in-out;
-            box-shadow: inset 1em 1em #00d4c5;
-            transform-origin: center;
-            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-        }
-        .custom-checkbox:checked::before {
-            transform: scale(1);
-        }
-        .custom-checkbox:checked {
-            border-color: #00d4c5;
-            background-color: rgba(0, 212, 197, 0.1);
-        }
-    </style>
-</head>
-<body class="bg-dark-bg text-gray-300 font-sans antialiased overflow-hidden selection:bg-brand selection:text-white">
-
-    <!-- Background Effects -->
-    <div class="bg-blob-1"></div>
-    <div class="bg-blob-2"></div>
-
-    <div class="flex h-screen">
-        
-        <!-- Sidebar -->
-        <aside class="w-64 glass border-r-0 border-r border-dark-border flex flex-col justify-between shrink-0 transition-all duration-300 z-30 relative">
-            <!-- Logo & Menu -->
-            <div>
-                <!-- Logo -->
-                <div class="p-6 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white font-bold shadow-[0_0_15px_rgba(0,212,197,0.4)] relative group overflow-hidden">
-                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                        <i class="fa-solid fa-bolt text-lg relative z-10"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-display font-bold text-white leading-none tracking-tight">OneClick</h1>
-                        <p class="text-[10px] text-brand font-medium tracking-[0.2em] mt-1 uppercase">DataScrape AI</p>
-                    </div>
-                </div>
-
-                <!-- Navigation -->
-                <nav class="px-4 space-y-2 mt-4">
-                    <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-grid-2 text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="{% url 'new_scrape' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-globe text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>Scraper</span>
-                    </a>
-                    <a href="{% url 'history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)] relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <i class="fa-solid fa-clock-rotate-left text-lg w-6 text-center relative z-10"></i>
-                        <span class="relative z-10">History</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-code text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>API Reference</span>
-                    </a>
-                    <a href="{% url 'settings' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-gear text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>Settings</span>
-                    </a>
-                </nav>
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 animate-slide-up">
+        <div>
+             <!-- Breadcrumbs -->
+            <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Dashboard</span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                <span class="text-brand">History</span>
             </div>
-
-            <!-- Bottom Section (Usage & User) -->
-            <div class="p-4 space-y-4">
-                <!-- User Profile -->
-                <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center text-brand font-bold shadow-lg group-hover:shadow-brand/20 transition-all">
-                        {{ user.username|make_list|first|upper }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-white truncate group-hover:text-brand transition-colors">{{ user.username|default:"Alex Rivera" }}</p>
-                        <p class="text-xs text-gray-500 truncate font-mono">Pro Plan</p>
-                    </div>
-                    <i class="fa-solid fa-arrow-right-from-bracket text-gray-600 group-hover:text-red-400 transition-colors"></i>
-                </div>
+             <!-- Title -->
+            <div class="flex items-center gap-3 mb-2">
+                 <div class="w-2 h-8 bg-brand rounded-full shadow-[0_0_15px_#00d4c5]"></div>
+                 <h1 class="text-4xl font-display font-bold text-white drop-shadow-md tracking-tight">Scraping History</h1>
             </div>
-        </aside>
+            <p class="text-gray-400 text-sm max-w-xl pl-5">
+                Monitor your data extraction tasks, view status, and download results.
+            </p>
+        </div>
 
-        <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto relative z-10 scroll-smooth p-6">
-            <div class="max-w-[1600px] mx-auto space-y-8">
-                
-                <!-- Header Section -->
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 animate-slide-up">
-                    <div>
-                         <!-- Breadcrumbs -->
-                        <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                            <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Dashboard</span>
-                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            <span class="text-brand">History</span>
-                        </div>
-                         <!-- Title -->
-                        <div class="flex items-center gap-3 mb-2">
-                             <div class="w-2 h-8 bg-brand rounded-full shadow-[0_0_15px_#00d4c5]"></div>
-                             <h1 class="text-4xl font-display font-bold text-white drop-shadow-md tracking-tight">Scraping History</h1>
-                        </div>
-                        <p class="text-gray-400 text-sm max-w-xl pl-5">
-                            Monitor your data extraction tasks, view status, and download results.
-                        </p>
-                    </div>
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+            <!-- Bulk Delete Button (Hidden by default) -->
+            <button id="bulkDeleteBtn" onclick="openBulkDeleteModal()" class="hidden items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_20px_rgba(239,68,68,0.15)] animate-fade-in">
+                <i class="fa-solid fa-trash-can"></i> Delete (<span id="selectedCount">0</span>)
+            </button>
 
-                    <!-- Actions -->
-                    <div class="flex items-center gap-3">
-                        <div class="relative w-64 group">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-brand transition-colors">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </div>
-                            <input type="text" placeholder="Search by URL or Job ID..." class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/50 transition-all hover:bg-white/10">
-                        </div>
-                        <a href="{% url 'new_scrape' %}" class="flex items-center gap-2 bg-brand hover:bg-brand-hover text-dark-bg px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)]">
-                            <i class="fa-solid fa-plus"></i> New Scrape
-                        </a>
-                    </div>
+            <div class="relative w-64 group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-brand transition-colors">
+                    <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
-
-                <!-- History Table -->
-                <div class="glass-panel rounded-2xl overflow-hidden flex flex-col mb-8 animate-slide-up" style="animation-delay: 0.1s;">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-white/5 bg-white/5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                                    <th class="p-5 w-10"><input type="checkbox" class="custom-checkbox"></th>
-                                    <th class="p-5">Job ID</th>
-                                    <th class="p-5">Source URL</th>
-                                    <th class="p-5">Status</th>
-                                    <th class="p-5">Date</th>
-                                    <th class="p-5 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm divide-y divide-white/5 text-gray-300">
-                                {% for job in jobs %}
-                                <tr class="hover:bg-white/5 transition-colors group">
-                                    <td class="p-5"><input type="checkbox" class="custom-checkbox"></td>
-                                    <td class="p-5 font-mono text-brand font-bold">#{{ job.id }}</td>
-                                    <td class="p-5">
-                                        <div class="font-bold text-white truncate max-w-xs group-hover:text-brand transition-colors">{{ job.url }}</div>
-                                        <div class="text-xs text-gray-500 mt-0.5 font-mono opacity-70">Web Scraper</div>
-                                    </td>
-                                    <td class="p-5">
-                                        {% if job.status == 'COMPLETED' %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-500/10 text-green-500 border border-green-500/20 uppercase tracking-wide">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span> Success
-                                        </span>
-                                        {% elif job.status == 'PROCESSING' or job.status == 'PENDING' %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-500 border border-blue-500/20 uppercase tracking-wide">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Running
-                                        </span>
-                                        {% elif job.status == 'FAILED' %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-500/10 text-red-500 border border-red-500/20 uppercase tracking-wide">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span> Failed
-                                        </span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="p-5 text-gray-400 font-medium">{{ job.created_at|date:"M d, H:i" }}</td>
-                                    <td class="p-5 text-right">
-                                        <div class="flex items-center justify-end gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
-                                            <a href="{% url 'scraped_results' %}?job_id={{ job.id }}" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 hover:text-white transition-all text-gray-400" title="View"><i class="fa-regular fa-eye"></i></a>
-                                            <a href="{% url 'export_results' %}?job_id={{ job.id }}&format=csv" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-brand/10 hover:text-brand transition-all text-gray-400" title="Download"><i class="fa-solid fa-download"></i></a>
-                                            <button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-500/10 hover:text-red-500 transition-all text-gray-400" title="Delete" onclick="alert('Delete functionality coming soon!')"><i class="fa-regular fa-trash-can"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="6" class="p-10 text-center text-gray-500">
-                                        <div class="flex flex-col items-center gap-3">
-                                            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl text-gray-600">
-                                                <i class="fa-solid fa-box-open"></i>
-                                            </div>
-                                            <p>No scraping history found.</p>
-                                            <a href="{% url 'new_scrape' %}" class="text-brand text-xs font-bold hover:underline">Start a new scrape</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination (Simplified for now) -->
-                    <div class="p-5 border-t border-white/5 flex items-center justify-between text-xs text-gray-500 bg-white/5 backdrop-blur-md">
-                        <div class="flex items-center gap-2">
-                            Showing <span class="text-white font-bold">{{ jobs|length }}</span> results
-                        </div>
-                        <div class="flex items-center gap-2 opacity-50 cursor-not-allowed">
-                            <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors" disabled><i class="fa-solid fa-chevron-left"></i></button>
-                            <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-brand text-dark-bg font-bold shadow-[0_0_10px_rgba(0,212,197,0.3)]">1</button>
-                            <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors" disabled><i class="fa-solid fa-chevron-right"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bottom Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.2s;">
-                    <!-- Stat 1 -->
-                    <div class="glass-panel rounded-2xl p-6 flex items-center gap-5 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-20 h-20 bg-green-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-green-500/20 transition-colors"></div>
-                        <div class="w-14 h-14 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center text-2xl border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.15)]">
-                            <i class="fa-solid fa-code"></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Total Rows</p>
-                            <p class="text-3xl font-bold text-white tracking-tight">{{ total_rows }}</p>
-                        </div>
-                    </div>
-                    <!-- Stat 2 -->
-                    <div class="glass-panel rounded-2xl p-6 flex items-center gap-5 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-500/20 transition-colors"></div>
-                        <div class="w-14 h-14 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-2xl border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-                            <i class="fa-solid fa-database"></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Storage Used</p>
-                            <p class="text-3xl font-bold text-white tracking-tight">{{ storage_used }} <span class="text-sm text-gray-500 font-medium opacity-60">/ 10 GB</span></p>
-                        </div>
-                    </div>
-                    <!-- Stat 3 -->
-                    <div class="glass-panel rounded-2xl p-6 flex items-center gap-5 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-20 h-20 bg-brand/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-brand/20 transition-colors"></div>
-                        <div class="w-14 h-14 rounded-xl bg-brand/10 text-brand flex items-center justify-center text-2xl border border-brand/20 shadow-[0_0_15px_rgba(0,212,197,0.15)]">
-                            <i class="fa-solid fa-bolt"></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Efficiency</p>
-                            <p class="text-3xl font-bold text-white tracking-tight">{{ efficiency }}</p>
-                        </div>
-                    </div>
-                </div>
-
+                <input type="text" placeholder="Search by URL or Job ID..." class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/50 transition-all hover:bg-white/10">
             </div>
-        </main>
+            <a href="{% url 'new_scrape' %}" class="flex items-center gap-2 bg-brand hover:bg-brand-hover text-dark-bg px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)]">
+                <i class="fa-solid fa-plus"></i> New Scrape
+            </a>
+        </div>
     </div>
 
-</body>
-</html>
+    <!-- History Table -->
+    <div class="glass-panel rounded-2xl overflow-hidden flex flex-col mb-8 animate-slide-up" style="animation-delay: 0.1s;">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-white/5 bg-white/5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                        <th class="p-5 w-10"><input type="checkbox" id="selectAll" class="custom-checkbox" onchange="toggleSelectAll()"></th>
+                        <th class="p-5">Job ID</th>
+                        <th class="p-5">Source URL</th>
+                        <th class="p-5">Status</th>
+                        <th class="p-5">Date</th>
+                        <th class="p-5 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-white/5 text-gray-300">
+                    {% for job in jobs %}
+                    <tr class="hover:bg-white/5 transition-colors group">
+                        <td class="p-5"><input type="checkbox" class="custom-checkbox job-checkbox" value="{{ job.id }}" onchange="updateSelectionState()"></td>
+                        <td class="p-5 font-mono text-brand font-bold">#{{ job.id }}</td>
+                        <td class="p-5">
+                            <div class="font-bold text-white truncate max-w-xs group-hover:text-brand transition-colors">{{ job.url }}</div>
+                            <div class="text-xs text-gray-500 mt-0.5 font-mono opacity-70">Web Scraper</div>
+                        </td>
+                        <td class="p-5">
+                            {% if job.status == 'COMPLETED' %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-500/10 text-green-500 border border-green-500/20 uppercase tracking-wide">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span> Success
+                            </span>
+                            {% elif job.status == 'PROCESSING' or job.status == 'PENDING' %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-500 border border-blue-500/20 uppercase tracking-wide">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Running
+                            </span>
+                            {% elif job.status == 'FAILED' %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-500/10 text-red-500 border border-red-500/20 uppercase tracking-wide">
+                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span> Failed
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="p-5 text-gray-400 font-medium">{{ job.created_at|date:"M d, H:i" }}</td>
+                        <td class="p-5 text-right">
+                            <div class="flex items-center justify-end gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
+                                <a href="{% url 'scraped_results' %}?job_id={{ job.id }}" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 hover:text-white transition-all text-gray-400" title="View"><i class="fa-regular fa-eye"></i></a>
+                                <button type="button" onclick="openDownloadModal('{{ job.id }}')" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-brand/10 hover:text-brand transition-all text-gray-400" title="Download"><i class="fa-solid fa-download"></i></button>
+                                <button type="button" data-delete-url="{% url 'delete_scrape' job.id %}" onclick="openDeleteModal(this.getAttribute('data-delete-url'))" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-500/10 hover:text-red-500 transition-all text-gray-400" title="Delete"><i class="fa-regular fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="p-10 text-center text-gray-500">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-2">
+                                    <i class="fa-solid fa-clock-rotate-left text-2xl opacity-30"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-white">No history found</h3>
+                                <p class="text-sm">Start your first scraping job to see results here.</p>
+                                <a href="{% url 'new_scrape' %}" class="mt-4 text-brand hover:text-brand-hover font-bold text-sm">Start Scraping &rarr;</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="p-5 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <p class="text-xs text-gray-500">Showing <span class="text-white font-bold">{{ jobs.start_index }}-{{ jobs.end_index }}</span> of <span class="text-white font-bold">{{ jobs.paginator.count }}</span> results</p>
+                
+                <!-- Rows Per Page Selector -->
+                <div class="relative group">
+                    <button class="flex items-center gap-2 bg-white/5 border border-white/10 hover:border-brand/50 text-xs text-white px-3 py-1.5 rounded-lg transition-all">
+                        <span>{% if per_page == 'all' %}All{% else %}{{ per_page }}{% endif %} rows</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-gray-500"></i>
+                    </button>
+                    <!-- Dropdown -->
+                    <div class="absolute bottom-full left-0 pb-2 w-24 hidden group-hover:block z-50">
+                        <div class="bg-dark-bg border border-white/10 rounded-lg shadow-xl overflow-hidden">
+                            <a href="?per_page=10{% if status_filter %}&status={{ status_filter }}{% endif %}" class="block px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors {% if per_page == '10' %}text-brand font-bold bg-brand/5{% endif %}">10 rows</a>
+                            <a href="?per_page=25{% if status_filter %}&status={{ status_filter }}{% endif %}" class="block px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors {% if per_page == '25' %}text-brand font-bold bg-brand/5{% endif %}">25 rows</a>
+                            <a href="?per_page=50{% if status_filter %}&status={{ status_filter }}{% endif %}" class="block px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors {% if per_page == '50' %}text-brand font-bold bg-brand/5{% endif %}">50 rows</a>
+                            <div class="h-px bg-white/5 my-0.5"></div>
+                            <a href="?per_page=all{% if status_filter %}&status={{ status_filter }}{% endif %}" class="block px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors {% if per_page == 'all' %}text-brand font-bold bg-brand/5{% endif %}">All rows</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if jobs.paginator.num_pages > 1 %}
+            <div class="flex items-center gap-2">
+                <!-- Previous Button -->
+                {% if jobs.has_previous %}
+                <a href="?page={{ jobs.previous_page_number }}&per_page={{ per_page }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </a>
+                {% else %}
+                <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-600 cursor-not-allowed opacity-50" disabled>
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                {% endif %}
+
+                <!-- Page Numbers -->
+                {% for i in jobs.paginator.page_range %}
+                    {% if jobs.number == i %}
+                        <button class="w-8 h-8 rounded-lg bg-brand text-dark-bg font-bold flex items-center justify-center text-xs shadow-[0_0_10px_rgba(0,212,197,0.3)]">{{ i }}</button>
+                    {% elif i > jobs.number|add:'-3' and i < jobs.number|add:'3' %}
+                        <a href="?page={{ i }}&per_page={{ per_page }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all text-xs">{{ i }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Next Button -->
+                {% if jobs.has_next %}
+                <a href="?page={{ jobs.next_page_number }}&per_page={{ per_page }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </a>
+                {% else %}
+                <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-600 cursor-not-allowed opacity-50" disabled>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Download Modal -->
+<div id="downloadModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeDownloadModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
+        <div class="glass-card rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-up relative overflow-hidden">
+            <!-- Glow Effect -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-brand/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center mx-auto mb-4 text-brand shadow-[0_0_20px_rgba(0,212,197,0.15)]">
+                    <i class="fa-solid fa-cloud-arrow-down text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-display font-bold text-white mb-2">Download Data</h3>
+                <p class="text-gray-400 text-sm">Choose your preferred format to export the scraped data.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <a href="#" id="downloadJsonBtn" class="flex flex-col items-center justify-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-brand/50 hover:bg-brand/5 transition-all group cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-file-code"></i>
+                    </div>
+                    <span class="font-bold text-white text-sm">JSON</span>
+                </a>
+                <a href="#" id="downloadCsvBtn" class="flex flex-col items-center justify-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-brand/50 hover:bg-brand/5 transition-all group cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-file-csv"></i>
+                    </div>
+                    <span class="font-bold text-white text-sm">CSV</span>
+                </a>
+            </div>
+
+            <button onclick="closeDownloadModal()" class="w-full py-3 rounded-xl border border-white/10 text-gray-400 font-bold hover:text-white hover:bg-white/5 transition-all">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm">
+        <div class="glass-card rounded-2xl p-8 border border-red-500/20 shadow-2xl animate-slide-up relative overflow-hidden">
+             <!-- Glow Effect -->
+             <div class="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+             
+             <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+                    <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-display font-bold text-white mb-2">Delete History?</h3>
+                <p class="text-gray-400 text-sm">This action cannot be undone. The scraped data will be permanently removed.</p>
+            </div>
+
+            <form id="deleteForm" method="POST">
+                {% csrf_token %}
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeDeleteModal()" class="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 font-bold hover:text-white hover:bg-white/5 transition-all">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold transition-all shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+                        Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Delete Confirmation Modal -->
+<div id="bulkDeleteModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeBulkDeleteModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm">
+        <div class="glass-card rounded-2xl p-8 border border-red-500/20 shadow-2xl animate-slide-up relative overflow-hidden">
+             <!-- Glow Effect -->
+             <div class="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+             
+             <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+                    <i class="fa-solid fa-dumpster-fire text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-display font-bold text-white mb-2">Delete Selected?</h3>
+                <p class="text-gray-400 text-sm">Are you sure you want to delete <span id="modalSelectedCount" class="text-white font-bold">0</span> items? This cannot be undone.</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button type="button" onclick="closeBulkDeleteModal()" class="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 font-bold hover:text-white hover:bg-white/5 transition-all">
+                    Cancel
+                </button>
+                <button type="button" onclick="confirmBulkDelete()" class="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold transition-all shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+                    Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Modal Functions
+    function openDownloadModal(jobId) {
+        document.getElementById('downloadModal').classList.remove('hidden');
+        document.getElementById('downloadJsonBtn').href = `/download_json/${jobId}/`;
+        document.getElementById('downloadCsvBtn').href = `/download_csv/${jobId}/`;
+    }
+    
+    function closeDownloadModal() {
+        document.getElementById('downloadModal').classList.add('hidden');
+    }
+
+    function openDeleteModal(deleteUrl) {
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteForm').action = deleteUrl;
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+
+    // Close modals on Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeDownloadModal();
+            closeDeleteModal();
+            closeBulkDeleteModal();
+        }
+    });
+
+    // Bulk Delete Logic
+    function toggleSelectAll() {
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.job-checkbox');
+        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        updateSelectionState();
+    }
+
+    function updateSelectionState() {
+        const checkboxes = document.querySelectorAll('.job-checkbox');
+        const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+        const bulkBtn = document.getElementById('bulkDeleteBtn');
+        const selectAll = document.getElementById('selectAll');
+        
+        // Update count text
+        document.getElementById('selectedCount').textContent = selectedCount;
+        
+        // Toggle button visibility
+        if (selectedCount > 0) {
+            bulkBtn.classList.remove('hidden');
+            bulkBtn.classList.add('flex');
+        } else {
+            bulkBtn.classList.add('hidden');
+            bulkBtn.classList.remove('flex');
+        }
+
+        // Update select all state
+        if (selectedCount === 0) {
+            selectAll.checked = false;
+            selectAll.indeterminate = false;
+        } else if (selectedCount === checkboxes.length) {
+            selectAll.checked = true;
+            selectAll.indeterminate = false;
+        } else {
+            selectAll.checked = false;
+            selectAll.indeterminate = true;
+        }
+    }
+
+    function openBulkDeleteModal() {
+        const selectedCount = document.querySelectorAll('.job-checkbox:checked').length;
+        if (selectedCount === 0) return;
+        
+        document.getElementById('modalSelectedCount').textContent = selectedCount;
+        document.getElementById('bulkDeleteModal').classList.remove('hidden');
+    }
+
+    function closeBulkDeleteModal() {
+        document.getElementById('bulkDeleteModal').classList.add('hidden');
+    }
+
+    function confirmBulkDelete() {
+        const selectedCheckboxes = document.querySelectorAll('.job-checkbox:checked');
+        const jobIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+        
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.cookie.match(/csrftoken=([^;]+)/)?.[1];
+
+        fetch("{% url 'delete_bulk_scrapes' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ job_ids: jobIds })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Show success toast (reusing the toast system if possible, or reload)
+                // Since we want to update the table, reloading is easiest for now
+                window.location.reload();
+            } else {
+                alert('Error deleting jobs: ' + data.message);
+                closeBulkDeleteModal();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting jobs.');
+            closeBulkDeleteModal();
+        });
+    }
+</script>
+{% endblock %}

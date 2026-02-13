@@ -1,407 +1,1450 @@
+{% extends 'dashboard/base_dashboard.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - OneClick DataScrape</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% load humanize %}
+
+{% block title %}Settings - ScrapyX{% endblock %}
+
+{% block extra_css %}
+<!-- No specific extra CSS needed as base handles common styles -->
+{% endblock %}
+
+{% block content %}
+<!-- Top Header -->
+<header class="h-16 glass border-b-0 border-b border-white/5 flex items-center justify-between px-8 sticky top-0 z-20">
+    <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
+        <span class="hover:text-gray-300 transition-colors cursor-pointer">Account</span>
+        <i class="fa-solid fa-chevron-right text-[10px] opacity-50"></i>
+        <span class="text-white bg-white/5 px-2 py-0.5 rounded text-xs border border-white/5">Settings</span>
+    </div>
     
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            DEFAULT: '#00d4c5',
-                            hover: '#00b8aa',
-                            glow: '#00d4c580',
-                        },
-                        dark: {
-                            bg: '#030712',       /* Deep almost black */
-                            sidebar: '#0B1121',  /* Slightly lighter */
-                            card: '#0f172a',     /* Card bg */
-                            border: 'rgba(255, 255, 255, 0.08)',
-                            surface: '#1e293b',
-                            input: '#1e293b',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Space Grotesk', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    animation: {
-                        'blob': 'blob 7s infinite',
-                        'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'slide-up': 'slideUp 0.5s ease-out forwards',
-                        'shimmer': 'shimmer 2s infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        shimmer: {
-                            '0%': { transform: 'translateX(-100%)' },
-                            '100%': { transform: 'translateX(100%)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .font-display { font-family: 'Space Grotesk', sans-serif; }
-        
-        /* Glassmorphism Utilities */
-        .glass {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .glass-panel {
-            background: rgba(10, 15, 28, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #374151; }
-        
-        /* Background Blobs */
-        .bg-blob-1 {
-            position: fixed; top: -10%; left: -10%; width: 50%; height: 50%;
-            background: radial-gradient(circle, rgba(0, 212, 197, 0.15) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px); z-index: -1; animation: blob 15s infinite alternate;
-        }
-        .bg-blob-2 {
-            position: fixed; bottom: -10%; right: -10%; width: 50%; height: 50%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px); z-index: -1; animation: blob 20s infinite alternate-reverse;
-        }
-    </style>
-</head>
-<body class="bg-dark-bg text-gray-300 font-sans antialiased overflow-hidden selection:bg-brand selection:text-white">
+    <div class="flex items-center gap-4">
+        <button class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-all relative">
+            <i class="fa-regular fa-bell"></i>
+            <span class="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full bg-red-500 border border-dark-bg"></span>
+        </button>
+    </div>
+</header>
 
-    <!-- Background Effects -->
-    <div class="bg-blob-1"></div>
-    <div class="bg-blob-2"></div>
-
-    <div class="flex h-screen">
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-8 scroll-smooth h-[calc(100vh-4rem)]">
+    <div class="max-w-6xl mx-auto flex gap-10">
         
-        <!-- Sidebar -->
-        <aside class="w-64 glass border-r-0 border-r border-dark-border flex flex-col justify-between shrink-0 transition-all duration-300 z-30 relative">
-            <!-- Logo & Menu -->
-            <div>
-                <!-- Logo -->
-                <div class="p-6 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white font-bold shadow-[0_0_15px_rgba(0,212,197,0.4)] relative group overflow-hidden">
-                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                        <i class="fa-solid fa-bolt text-lg relative z-10"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-display font-bold text-white leading-none tracking-tight">OneClick</h1>
-                        <p class="text-[10px] text-brand font-medium tracking-[0.2em] mt-1 uppercase">DataScrape AI</p>
-                    </div>
-                </div>
+        <!-- Inner Sidebar (Account Control) -->
+        <div class="w-64 shrink-0 hidden lg:block sticky top-0 animate-slide-up">
+            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 px-4">Account Control</h3>
+            <nav class="space-y-1">
+                <a href="{% url 'settings_section' 'profile' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all {% if active_section == 'profile' or not active_section %}text-white bg-white/5 font-medium border-l-2 border-brand shadow-inner{% else %}text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent{% endif %}">
+                    <i class="fa-regular fa-user w-5 {% if active_section == 'profile' or not active_section %}text-brand{% endif %}"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="{% url 'settings_section' 'plan' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all {% if active_section == 'plan' %}text-white bg-white/5 font-medium border-l-2 border-brand shadow-inner{% else %}text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent{% endif %}">
+                    <i class="fa-regular fa-credit-card w-5 {% if active_section == 'plan' %}text-brand{% endif %}"></i>
+                    <span>Plan & Billing</span>
+                </a>
+                <a href="{% url 'settings_section' 'api' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all {% if active_section == 'api' %}text-white bg-white/5 font-medium border-l-2 border-brand shadow-inner{% else %}text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent{% endif %}">
+                    <i class="fa-solid fa-code w-5 {% if active_section == 'api' %}text-brand{% endif %}"></i>
+                    <span>API Access</span>
+                </a>
+                <a href="{% url 'settings_section' 'privacy' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all {% if active_section == 'privacy' %}text-white bg-white/5 font-medium border-l-2 border-brand shadow-inner{% else %}text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent{% endif %}">
+                    <i class="fa-solid fa-user-shield w-5 {% if active_section == 'privacy' %}text-brand{% endif %}"></i>
+                    <span>Privacy</span>
+                </a>
+                <a href="{% url 'settings_section' 'security' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all {% if active_section == 'security' %}text-white bg-white/5 font-medium border-l-2 border-brand shadow-inner{% else %}text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent{% endif %}">
+                    <i class="fa-solid fa-shield-halved w-5 {% if active_section == 'security' %}text-brand{% endif %}"></i>
+                    <span>Security</span>
+                </a>
+            </nav>
 
-                <!-- Navigation -->
-                <nav class="px-4 space-y-2 mt-4">
-                    <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-grid-2 text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="{% url 'new_scrape' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-globe text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>Scraper</span>
-                    </a>
-                    <a href="{% url 'history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-clock-rotate-left text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>History</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-code text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>API Reference</span>
-                    </a>
-                    <a href="{% url 'settings' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)] relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <i class="fa-solid fa-gear text-lg w-6 text-center relative z-10"></i>
-                        <span class="relative z-10">Settings</span>
-                    </a>
-                </nav>
+            <div class="mt-8 pt-8 border-t border-white/5">
+                 <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-5"></i>
+                    <span>Sign Out</span>
+                </a>
             </div>
+        </div>
 
-            <!-- Bottom Section (Usage & User) -->
-            <div class="p-4 space-y-4">
-                <!-- User Profile -->
-                <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center text-brand font-bold shadow-lg group-hover:shadow-brand/20 transition-all">
-                        {{ user.username|make_list|first|upper }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-white truncate group-hover:text-brand transition-colors">{{ user.username|default:"Alex Rivera" }}</p>
-                        <p class="text-xs text-gray-500 truncate font-mono">Pro Plan</p>
-                    </div>
-                    <i class="fa-solid fa-arrow-right-from-bracket text-gray-600 group-hover:text-red-400 transition-colors"></i>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
+        <!-- Right Settings Content -->
+        <div class="flex-1 space-y-10 pb-20 animate-slide-up" style="animation-delay: 0.1s;">
             
-            <!-- Top Header -->
-            <header class="h-16 glass border-b-0 border-b border-white/5 flex items-center justify-between px-8 sticky top-0 z-20">
-                <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
-                    <span class="hover:text-gray-300 transition-colors cursor-pointer">Account</span>
-                    <i class="fa-solid fa-chevron-right text-[10px] opacity-50"></i>
-                    <span class="text-white bg-white/5 px-2 py-0.5 rounded text-xs border border-white/5">Settings</span>
+            <!-- Profile -->
+            {% if active_section == 'profile' or not active_section %}
+            <section id="profile">
+                <!-- Header -->
+                <div class="mb-8">
+                    <h2 class="text-3xl font-display font-bold text-white mb-2 tracking-tight">Profile Settings</h2>
+                    <p class="text-gray-400">Manage your personal information and public presence.</p>
                 </div>
-                
-                <div class="flex items-center gap-4">
-                    <button class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-all relative">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full bg-red-500 border border-dark-bg"></span>
-                    </button>
-                </div>
-            </header>
 
-            <!-- Scrollable Content -->
-            <div class="flex-1 overflow-y-auto p-8 scroll-smooth">
-                <div class="max-w-6xl mx-auto flex gap-10">
+                <form method="POST" action="{% url 'update_profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
                     
-                    <!-- Inner Sidebar (Account Control) -->
-                    <div class="w-64 shrink-0 hidden lg:block sticky top-0 animate-slide-up">
-                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 px-4">Account Control</h3>
-                        <nav class="space-y-1">
-                            <a href="#profile" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                                <i class="fa-regular fa-user w-5"></i>
-                                <span>Profile</span>
-                            </a>
-                            <a href="#plan" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white bg-white/5 font-medium border-l-2 border-brand transition-all shadow-inner">
-                                <i class="fa-regular fa-credit-card w-5 text-brand"></i>
-                                <span>Plan & Billing</span>
-                            </a>
-                            <a href="#api" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                                <i class="fa-solid fa-code w-5"></i>
-                                <span>API Access</span>
-                            </a>
-                            <a href="#security" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                                <i class="fa-solid fa-shield-halved w-5"></i>
-                                <span>Security</span>
-                            </a>
-                        </nav>
-
-                        <div class="mt-8 pt-8 border-t border-white/5">
-                             <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all">
-                                <i class="fa-solid fa-arrow-right-from-bracket w-5"></i>
-                                <span>Sign Out</span>
-                            </a>
+                    <!-- Avatar Card -->
+                    <div class="glass-card rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center gap-6">
+                        <div class="relative group cursor-pointer" onclick="document.getElementById('avatar-input').click()">
+                            <div class="w-24 h-24 rounded-full bg-dark-bg border-2 border-brand/20 flex items-center justify-center text-brand text-4xl font-bold overflow-hidden">
+                                {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" alt="Profile" class="w-full h-full object-cover">
+                                {% else %}
+                                <span>{{ user.username|make_list|first|upper }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="absolute bottom-0 right-0 w-8 h-8 bg-brand rounded-full flex items-center justify-center text-dark-bg border-2 border-dark-bg shadow-lg transition-transform group-hover:scale-110">
+                                <i class="fa-solid fa-pencil text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 text-center md:text-left">
+                            <h3 class="text-2xl font-bold text-white font-display">{{ user.first_name }} {{ user.last_name|default:user.username }}</h3>
+                            <p class="text-sm text-gray-400 mt-1 flex items-center justify-center md:justify-start gap-2">
+                                <span>{{ user.job_title|default:"Senior Data Architect" }}</span>
+                                <span class="w-1 h-1 rounded-full bg-gray-500"></span>
+                                <span>Member since {{ user.date_joined|date:"F Y" }}</span>
+                            </p>
+                            <button type="button" onclick="document.getElementById('avatar-input').click()" class="mt-4 px-4 py-1.5 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg border border-white/10 transition-all">
+                                Edit Photo
+                            </button>
+                            <input type="file" name="avatar" id="avatar-input" class="hidden" accept="image/*" onchange="previewAvatar(this)">
                         </div>
                     </div>
 
-                    <!-- Right Settings Content -->
-                    <div class="flex-1 space-y-10 pb-20 animate-slide-up" style="animation-delay: 0.1s;">
+                    <!-- Personal Information -->
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-4 text-brand">
+                            <i class="fa-solid fa-user-tag"></i>
+                            <h3 class="font-bold text-white text-lg">Personal Information</h3>
+                        </div>
                         
-                        <!-- Plan & Billing -->
-                        <section id="plan" class="scroll-mt-6">
-                            <div class="mb-6">
-                                <h2 class="text-3xl font-display font-bold text-white mb-2 tracking-tight">Plan & Billing</h2>
-                                <p class="text-gray-400">Scale your data operations with professional-grade credits.</p>
+                        <div class="glass-card rounded-2xl p-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Username</label>
+                                    <input type="text" name="username" value="{{ user.username }}" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner placeholder-gray-600">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Full Name</label>
+                                    <input type="text" name="full_name" value="{{ user.first_name }} {{ user.last_name }}" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner placeholder-gray-600" placeholder="e.g. Alex Sterling">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Email Address</label>
+                                    <input type="email" name="email" value="{{ user.email }}" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner placeholder-gray-600">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Job Title</label>
+                                    <input type="text" name="job_title" value="{{ user.job_title|default:'' }}" placeholder="e.g. Senior Data Architect" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner placeholder-gray-600">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Location</label>
+                                    <input type="text" name="location" value="{{ user.location|default:'' }}" placeholder="e.g. San Francisco, CA" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner placeholder-gray-600">
+                                </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="glass-card rounded-2xl p-8 relative overflow-hidden group transition-all duration-300">
-                                <!-- Background decoration -->
-                                <div class="absolute top-0 right-0 w-64 h-64 bg-brand/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-brand/10 transition-all"></div>
+                    <!-- Account Preferences -->
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-4 text-brand">
+                            <i class="fa-solid fa-sliders"></i>
+                            <h3 class="font-bold text-white text-lg">Account Preferences</h3>
+                        </div>
 
-                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 relative z-10">
-                                    <div class="flex items-start gap-4">
-                                        <div class="w-14 h-14 rounded-xl bg-brand/10 flex items-center justify-center text-brand text-2xl border border-brand/20 shadow-[0_0_15px_rgba(0,212,197,0.15)]">
-                                            <i class="fa-solid fa-medal"></i>
+                        <div class="glass-card rounded-2xl p-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Language</label>
+                                    <div class="relative">
+                                        <select class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner appearance-none cursor-pointer">
+                                            <option>English (US)</option>
+                                            <option>Spanish</option>
+                                            <option>French</option>
+                                        </select>
+                                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                                            <i class="fa-solid fa-chevron-down text-xs"></i>
                                         </div>
-                                        <div>
-                                            <div class="flex items-center gap-3 mb-1">
-                                                <h3 class="text-xl font-bold text-white font-display">PROFESSIONAL MONTHLY</h3>
-                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand/10 text-brand border border-brand/20 tracking-wider">ACTIVE</span>
-                                            </div>
-                                            <p class="text-sm text-gray-400">Next renewal on Oct 24, 2026 for <span class="text-white font-bold">$49.00/mo</span></p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-3 w-full md:w-auto">
-                                        <button class="flex-1 md:flex-none px-6 py-2.5 bg-brand hover:bg-brand-hover text-dark-bg font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)]">
-                                            Upgrade Plan
-                                        </button>
-                                        <button class="flex-1 md:flex-none px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl transition-all">
-                                            Manage Billing
-                                        </button>
                                     </div>
                                 </div>
-
-                                <div class="bg-black/20 rounded-xl p-6 border border-white/5 relative z-10">
-                                    <div class="flex justify-between items-end mb-3">
-                                        <div>
-                                            <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">USAGE METER</p>
-                                            <div class="flex items-baseline gap-2">
-                                                <span class="text-3xl font-bold text-white font-display">8,450</span>
-                                                <span class="text-gray-500 font-mono text-sm">/ 10,000</span>
-                                            </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Timezone</label>
+                                    <div class="relative">
+                                        <select class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner appearance-none cursor-pointer">
+                                            <option>(GMT-08:00) Pacific Time</option>
+                                            <option>(GMT+00:00) UTC</option>
+                                            <option>(GMT+05:30) IST</option>
+                                        </select>
+                                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                                            <i class="fa-solid fa-chevron-down text-xs"></i>
                                         </div>
-                                        <div class="text-right">
-                                            <p class="text-brand font-bold">84.5% Consumed</p>
-                                            <p class="text-xs text-gray-500">1,550 credits remaining</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-xl">
+                                <div>
+                                    <h3 class="font-bold text-white text-sm mb-1">Public Profile</h3>
+                                    <p class="text-xs text-gray-400 leading-relaxed">Allow others to see your scraping portfolio and stats.</p>
+                                </div>
+                                <div class="relative inline-block w-12 align-middle select-none">
+                                    <input type="checkbox" id="public-profile" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:border-brand transition-all duration-300" checked/>
+                                    <label for="public-profile" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300 checked:bg-brand/50"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex justify-end gap-4">
+                        <button type="button" onclick="window.location.reload()" class="px-6 py-2.5 bg-transparent hover:bg-white/5 text-gray-400 hover:text-white border border-transparent hover:border-white/20 rounded-xl transition-all font-medium">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-8 py-2.5 bg-brand hover:bg-brand-hover text-dark-bg font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)]">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </section>
+            {% endif %}
+
+            <!-- Plan & Billing -->
+            {% if active_section == 'plan' %}
+            <section id="plan">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-display font-bold text-white mb-2 tracking-tight">Plan & Billing</h2>
+                    <p class="text-gray-400">Manage your subscription, usage, and billing preferences.</p>
+                </div>
+
+                <!-- Subscription Card -->
+                <div class="glass-card rounded-2xl p-8 mb-8 relative overflow-hidden group transition-all duration-300">
+                    <!-- Background decoration -->
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-brand/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-brand/10 transition-all"></div>
+
+                    <div class="flex flex-col xl:flex-row justify-between items-center mb-8 gap-6 relative z-10">
+                        <div class="flex items-center gap-4 shrink-0 w-full xl:w-auto">
+                            <div class="w-14 h-14 rounded-xl bg-brand/10 flex items-center justify-center text-brand text-2xl border border-brand/20">
+                                <i class="fa-solid fa-rocket"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-3 mb-1">
+                                    <h3 class="text-2xl font-bold text-white font-display">{{ plan_name }}</h3>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand text-dark-bg uppercase tracking-wider">ACTIVE</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Renewal on <span class="text-white font-bold">{{ renewal_date }}</span> for ${{ plan_price }}/mo</p>
+                            </div>
+                        </div>
+
+                        <!-- Compact Credit Usage (Moved) -->
+                        <div class="flex-1 w-full xl:max-w-xl mx-4 bg-black/40 rounded-xl p-4 border border-white/5 relative overflow-hidden group">
+                             <div class="flex justify-between items-end mb-2 relative z-10">
+                                <div>
+                                    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">MONTHLY CREDIT USAGE</p>
+                                    <div class="flex items-baseline gap-2">
+                                        <span class="text-2xl font-bold text-white font-display">{{ credits_used|intcomma }}</span>
+                                        <span class="text-gray-500 font-mono text-sm">/ {{ credits_limit|intcomma }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-brand font-bold text-sm"><i class="fa-solid fa-chart-line mr-1"></i> {{ credits_percent|default:0 }}% Consumed</p>
+                                    <p class="text-xs text-gray-500">Resetting in 12 days</p>
+                                </div>
+                            </div>
+                            <div class="h-2 w-full bg-dark-bg rounded-full overflow-hidden border border-white/5">
+                                <div class="h-full bg-brand rounded-full relative overflow-hidden shadow-[0_0_10px_rgba(0,212,197,0.3)]" style="width: {{ credits_percent|default:0 }}%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col items-end shrink-0 w-full xl:w-auto">
+                            <button class="w-full xl:w-auto px-6 py-2 bg-brand hover:bg-brand-hover text-dark-bg font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(0,212,197,0.3)] hover:shadow-[0_0_25px_rgba(0,212,197,0.5)]" onclick="togglePlanModal()">
+                                Manage Subscription
+                            </button>
+                            <p class="text-[10px] text-gray-500 mt-1.5 text-center xl:text-right"><i class="fa-solid fa-clock mr-1"></i>Changes apply on {{ renewal_date }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="mb-10">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-white font-display">Payment Methods</h3>
+                        <button class="text-brand text-sm font-bold hover:text-white transition-colors flex items-center gap-2" onclick="alert('Add Card feature coming soon!')">
+                            <i class="fa-solid fa-plus-circle"></i> Add New Card
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% for method in payment_methods %}
+                        <div class="glass-card rounded-xl p-6 flex items-center justify-between group hover:border-brand/30 transition-all cursor-pointer relative overflow-hidden">
+                            <!-- Gradient Background for differentiation -->
+                            {% if method.type == 'Visa' %}
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            {% elif method.type == 'Mastercard' %}
+                            <div class="absolute inset-0 bg-gradient-to-br from-orange-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            {% elif method.type == 'PayPal' %}
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            {% endif %}
+
+                            <div class="flex items-center gap-4 relative z-10">
+                                <div class="w-14 h-10 bg-white/5 rounded-lg flex items-center justify-center text-white text-2xl border border-white/10 shadow-inner">
+                                    <i class="{{ method.icon }}"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-white font-bold text-sm">{{ method.type }}</p>
+                                        {% if method.default %}
+                                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-brand/20 text-brand border border-brand/20">Default</span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-0.5">
+                                        {% if method.email %}
+                                            {{ method.email }}
+                                        {% else %}
+                                            ending in {{ method.last4 }} • Expires {{ method.expiry }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity relative z-10">
+                                <button class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all" title="Edit">
+                                    <i class="fa-solid fa-pencil text-xs"></i>
+                                </button>
+                                <button class="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-500 transition-all" title="Remove">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <!-- Add New Method Card Placeholder -->
+                        <div class="rounded-xl p-6 flex items-center justify-center border-2 border-dashed border-white/10 hover:border-brand/30 hover:bg-white/5 transition-all cursor-pointer group" onclick="togglePaymentModal()">
+                            <div class="text-center">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-500 group-hover:text-brand group-hover:scale-110 transition-all mx-auto mb-2">
+                                    <i class="fa-solid fa-plus"></i>
+                                </div>
+                                <span class="text-sm font-bold text-gray-500 group-hover:text-white transition-colors">Add Payment Method</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing History -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold text-white font-display mb-4">Billing History</h3>
+                    <div class="glass-card rounded-xl overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-black/20 text-gray-500 font-bold uppercase text-xs tracking-wider border-b border-white/5">
+                                <tr>
+                                    <th class="p-5 font-bold">Invoice ID</th>
+                                    <th class="p-5 font-bold">Date</th>
+                                    <th class="p-5 font-bold">Amount</th>
+                                    <th class="p-5 font-bold text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                {% for invoice in invoices %}
+                                <tr class="hover:bg-white/5 transition-colors group">
+                                    <td class="p-5 text-white font-mono text-xs">{{ invoice.id }}</td>
+                                    <td class="p-5 text-gray-400">{{ invoice.date }}</td>
+                                    <td class="p-5 text-white font-bold">${{ invoice.amount }}</td>
+                                    <td class="p-5 text-right">
+                                        <button class="text-brand/80 hover:text-brand font-bold text-xs flex items-center gap-2 justify-end ml-auto px-3 py-1.5 rounded-lg hover:bg-brand/10 transition-all" onclick="downloadInvoice(this, '{{ invoice.id|escapejs }}')">
+                                            <i class="fa-solid fa-download"></i> Download
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="p-4 text-center border-t border-white/5 bg-black/20 hover:bg-black/30 transition-colors cursor-pointer">
+                            <button class="text-gray-400 hover:text-white text-sm font-bold transition-colors">View All Invoices</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="border border-red-500/20 bg-red-500/5 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
+                            <h3 class="text-red-500 font-bold">Danger Zone</h3>
+                        </div>
+                        <p class="text-sm text-gray-400">Permanently delete your account and all associated scraping data.</p>
+                    </div>
+                    <button class="px-6 py-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-lg transition-all font-bold text-sm shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.4)]" onclick="if(confirm('Are you sure you want to delete your account? This action cannot be undone.')) alert('Account deletion request submitted.')">
+                        Delete Account
+                    </button>
+                </div>
+
+                <!-- Plan Selection Modal (Hidden by default) -->
+                <div id="plan-modal" class="fixed inset-0 z-50 hidden">
+                    <!-- Backdrop -->
+                    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="togglePlanModal()"></div>
+                    
+                    <!-- Modal Content -->
+                    <div class="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto">
+                        <div class="bg-dark-bg border border-white/10 rounded-3xl w-full max-w-5xl shadow-2xl transform transition-all scale-100 p-8 relative">
+                            <button onclick="togglePlanModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors">
+                                <i class="fa-solid fa-xmark text-2xl"></i>
+                            </button>
+                            
+                            <div class="text-center mb-10">
+                                <h2 class="text-3xl font-display font-bold text-white mb-3">Upgrade Your Plan</h2>
+                                <p class="text-gray-400">Select a plan to schedule for your next billing cycle starting <span class="text-brand font-bold">{{ renewal_date }}</span>.</p>
+                                
+                            <!-- Billing Toggle -->
+                                <div class="flex items-center justify-center gap-4 mt-6">
+                                    <span class="text-sm font-bold text-white transition-colors" id="label-monthly">Monthly</span>
+                                    <div class="relative inline-block w-12 align-middle select-none">
+                                        <input type="checkbox" id="billing-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:border-brand transition-all duration-300" onchange="toggleBillingCycle()"/>
+                                        <label for="billing-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300 checked:bg-brand/50"></label>
+                                    </div>
+                                    <span class="text-sm font-bold text-gray-400 transition-colors" id="label-yearly">Yearly <span class="text-brand text-xs ml-1">-20%</span></span>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <!-- Starter Plan -->
+                                <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-brand/30 transition-all flex flex-col relative group">
+                                    <div class="mb-6">
+                                        <h3 class="text-xl font-bold text-white mb-2">Starter</h3>
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-3xl font-bold text-white price-display" data-monthly="0" data-yearly="0">$0</span>
+                                            <span class="text-gray-500 duration-text">/mo</span>
+                                        </div>
+                                        <p class="text-sm text-gray-400 mt-2">Perfect for hobbyists and testing.</p>
+                                    </div>
+                                    <ul class="space-y-3 mb-8 flex-1">
+                                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                                            <i class="fa-solid fa-check text-brand"></i> 500 Credits
+                                        </li>
+                                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                                            <i class="fa-solid fa-check text-brand"></i> 1 Concurrent Scrape
+                                        </li>
+                                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                                            <i class="fa-solid fa-check text-brand"></i> Basic Support
+                                        </li>
+                                        <li class="flex items-center gap-3 text-sm text-gray-500">
+                                            <i class="fa-solid fa-xmark"></i> API Access
+                                        </li>
+                                    </ul>
+                                    <button class="w-full py-2.5 rounded-lg border border-white/10 hover:bg-white/5 text-white font-bold transition-all" onclick="schedulePlanChange('Starter', '{{ renewal_date }}')">Schedule Starter</button>
+                                </div>
+                                
+                                <!-- Professional Plan (Active) -->
+                                <div class="glass-card rounded-2xl p-6 border-2 border-brand bg-brand/5 flex flex-col relative transform md:-translate-y-6 shadow-[0_0_30px_rgba(0,212,197,0.1)]">
+                                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-brand text-dark-bg text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+                                    <div class="mb-6">
+                                        <h3 class="text-xl font-bold text-white mb-2">Professional</h3>
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-3xl font-bold text-white price-display" data-monthly="49" data-yearly="39">$49</span>
+                                            <span class="text-gray-500 duration-text">/mo</span>
+                                        </div>
+                                        <p class="text-sm text-gray-400 mt-2">For power users and small teams.</p>
+                                    </div>
+                                    <ul class="space-y-3 mb-8 flex-1">
+                                        <li class="flex items-center gap-3 text-sm text-white">
+                                            <div class="w-5 h-5 rounded-full bg-brand/20 flex items-center justify-center text-brand text-xs"><i class="fa-solid fa-check"></i></div> 10,000 Credits
+                                        </li>
+                                        <li class="flex items-center gap-3 text-sm text-white">
+                                            <div class="w-5 h-5 rounded-full bg-brand/20 flex items-center justify-center text-brand text-xs"><i class="fa-solid fa-check"></i></div> 5 Concurrent Scrapes
+                                        </li>
+                                        <li class="flex items-center gap-3 text-sm text-white">
+                                            <div class="w-5 h-5 rounded-full bg-brand/20 flex items-center justify-center text-brand text-xs"><i class="fa-solid fa-check"></i></div> Priority Support
+                                        </li>
+                                        <li class="flex items-center gap-3 text-sm text-white">
+                                            <div class="w-5 h-5 rounded-full bg-brand/20 flex items-center justify-center text-brand text-xs"><i class="fa-solid fa-check"></i></div> API Access
+                                        </li>
+                                    </ul>
+                                    <button class="w-full py-2.5 rounded-lg bg-brand text-dark-bg font-bold cursor-default opacity-90">Current Plan</button>
+                                </div>
+                                
+                                <!-- Business Plan -->
+                                <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-brand/30 transition-all flex flex-col relative group">
+                                    <div class="mb-6">
+                                        <h3 class="text-xl font-bold text-white mb-2">Business</h3>
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-3xl font-bold text-white price-display" data-monthly="199" data-yearly="159">$199</span>
+                                            <span class="text-gray-500 duration-text">/mo</span>
+                                        </div>
+                                        <p class="text-sm text-gray-400 mt-2">Scale your data operations.</p>
+                                    </div>
+                                    <ul class="space-y-3 mb-8 flex-1">
+                                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                                            <i class="fa-solid fa-check text-brand"></i> 100,000 Credits
+                                        </li>
+                                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                                            <i class="fa-solid fa-check text-brand"></i> 20 Concurrent Scrapes
+                                        </li>
+                                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                                            <i class="fa-solid fa-check text-brand"></i> Dedicated Manager
+                                        </li>
+                                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                                            <i class="fa-solid fa-check text-brand"></i> Custom Integrations
+                                        </li>
+                                    </ul>
+                                    <button class="w-full py-2.5 rounded-lg bg-white text-dark-bg font-bold hover:bg-gray-200 transition-all" onclick="schedulePlanChange('Business', '{{ renewal_date }}')">Schedule Upgrade</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Payment Method Modal (Hidden by default) -->
+            <div id="payment-modal" class="fixed inset-0 z-50 hidden">
+                <!-- Backdrop -->
+                <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="togglePaymentModal()"></div>
+                
+                <!-- Modal Content -->
+                <div class="absolute inset-0 flex items-center justify-center p-4">
+                    <div class="bg-dark-bg border border-white/10 rounded-3xl w-full max-w-lg shadow-2xl transform transition-all scale-100 p-8 relative">
+                        <button onclick="togglePaymentModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors">
+                            <i class="fa-solid fa-xmark text-2xl"></i>
+                        </button>
+                        
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-display font-bold text-white mb-2">Add Payment Method</h2>
+                            <p class="text-gray-400 text-sm">Choose your preferred payment method.</p>
+                        </div>
+
+                        <!-- Payment Type Tabs -->
+                        <div class="flex p-1 bg-white/5 rounded-xl mb-6 overflow-x-auto no-scrollbar gap-1">
+                            <button onclick="switchPaymentTab('upi')" id="tab-upi" class="flex-1 py-2 px-3 rounded-lg bg-brand text-dark-bg font-bold text-xs whitespace-nowrap shadow-lg transition-all">UPI</button>
+                            <button onclick="switchPaymentTab('card')" id="tab-card" class="flex-1 py-2 px-3 rounded-lg text-gray-400 hover:text-white font-bold text-xs whitespace-nowrap transition-colors">Card</button>
+                            <button onclick="switchPaymentTab('netbanking')" id="tab-netbanking" class="flex-1 py-2 px-3 rounded-lg text-gray-400 hover:text-white font-bold text-xs whitespace-nowrap transition-colors">Net Banking</button>
+                            <button onclick="switchPaymentTab('emi')" id="tab-emi" class="flex-1 py-2 px-3 rounded-lg text-gray-400 hover:text-white font-bold text-xs whitespace-nowrap transition-colors">EMI</button>
+                        </div>
+
+                        <!-- UPI Content -->
+                        <div id="payment-upi" class="payment-content">
+                            <form onsubmit="event.preventDefault(); togglePaymentModal(); alert('UPI ID verified and added!');">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">UPI ID / VPA</label>
+                                        <div class="relative">
+                                            <input type="text" placeholder="username@upi" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 pl-12 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner font-mono">
+                                            <i class="fa-solid fa-mobile-screen-button absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                                        </div>
+                                        <p class="text-[10px] text-gray-500 mt-2">Google Pay, PhonePe, Paytm, BHIM, etc.</p>
+                                    </div>
+                                    
+                                    <div class="p-4 bg-brand/5 border border-brand/10 rounded-xl flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-brand/20 flex items-center justify-center text-brand text-xs">
+                                            <i class="fa-solid fa-bolt"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold text-white">Instant Verification</p>
+                                            <p class="text-[10px] text-gray-400">We will send a ₹1 test request to verify.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3 mt-8">
+                                    <button type="button" onclick="togglePaymentModal()" class="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 font-bold transition-all">Cancel</button>
+                                    <button type="submit" class="flex-1 py-3 rounded-xl bg-brand hover:bg-brand-hover text-dark-bg font-bold transition-all shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)]">Verify & Add</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div id="payment-card" class="payment-content hidden">
+                            <form onsubmit="event.preventDefault(); togglePaymentModal(); alert('Card added successfully!');">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Card Number</label>
+                                        <div class="relative">
+                                            <input type="text" placeholder="0000 0000 0000 0000" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 pl-12 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner font-mono">
+                                            <i class="fa-regular fa-credit-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
                                         </div>
                                     </div>
                                     
-                                    <!-- Progress Bar -->
-                                    <div class="h-3 w-full bg-dark-bg rounded-full overflow-hidden border border-white/5">
-                                        <div class="h-full bg-gradient-to-r from-brand to-emerald-400 rounded-full w-[84.5%] shadow-[0_0_10px_rgba(0,212,197,0.3)] relative overflow-hidden">
-                                            <div class="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite] transform -skew-x-12"></div>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-4 flex items-center gap-2">
-                                        <i class="fa-regular fa-clock"></i>
-                                        Credits reset in 12 days. Unused credits do not roll over.
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- API Access -->
-                        <section id="api" class="pt-10 border-t border-white/5 scroll-mt-6">
-                            <div class="flex justify-between items-center mb-8">
-                                <h2 class="text-2xl font-bold text-white font-display">API Access</h2>
-                                <a href="#" class="text-sm text-brand hover:text-white transition-colors flex items-center gap-2 font-medium">
-                                    Read API Docs <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-                                </a>
-                            </div>
-
-                            <div class="space-y-6">
-                                <!-- API Key -->
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Your Secret API Key</label>
-                                    <div class="flex gap-3">
-                                        <div class="flex-1 relative group">
-                                            <input type="password" value="sk_live_51M3Q2...X8z9jL" readonly class="w-full bg-dark-input border border-white/10 rounded-xl px-5 py-3.5 text-gray-300 font-mono focus:outline-none focus:border-brand/50 transition-all shadow-inner group-hover:bg-dark-input/80">
-                                            <i class="fa-regular fa-eye absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer hover:text-white transition-colors"></i>
-                                        </div>
-                                        <button onclick="copyApiKey()" class="px-5 py-2 bg-white text-dark-bg font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                                            <i class="fa-regular fa-copy"></i> Copy
-                                        </button>
-                                        <button class="px-5 py-2 bg-white/5 text-gray-400 border border-white/10 rounded-xl hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
-                                            <i class="fa-solid fa-arrows-rotate"></i> Rotate
-                                        </button>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-2 flex items-center gap-2">
-                                        <i class="fa-solid fa-shield-halved text-brand"></i>
-                                        Do not share your API key in public places or on client-side code.
-                                    </p>
-                                </div>
-
-                                <!-- Webhook -->
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Webhook Endpoints</label>
-                                    <div class="flex gap-3">
-                                        <input type="text" placeholder="https://your-server.com/webhooks" class="flex-1 bg-dark-input border border-white/10 rounded-xl px-5 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand/50 transition-all shadow-inner">
-                                        <button class="px-6 py-2 bg-brand/10 text-brand border border-brand/20 hover:bg-brand/20 hover:border-brand/40 font-bold rounded-xl transition-all shadow-[0_0_10px_rgba(0,212,197,0.1)]">
-                                            Save Endpoint
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- Security -->
-                        <section id="security" class="pt-10 border-t border-white/5 scroll-mt-6">
-                            <h2 class="text-2xl font-bold text-white font-display mb-8">Security</h2>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <!-- 2FA -->
-                                <div class="glass-card rounded-xl p-6 flex items-center justify-between hover:border-brand/30 transition-all group cursor-pointer">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-brand group-hover:scale-110 transition-all">
-                                            <i class="fa-solid fa-shield-halved text-xl"></i>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Expiry Date</label>
+                                            <input type="text" placeholder="MM / YY" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner font-mono text-center">
                                         </div>
                                         <div>
-                                            <h4 class="font-bold text-white text-sm">Two-Factor Auth</h4>
-                                            <p class="text-xs text-gray-500 mt-0.5">Enhanced protection</p>
+                                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">CVC</label>
+                                            <div class="relative">
+                                                <input type="text" placeholder="123" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner font-mono text-center">
+                                                <i class="fa-solid fa-circle-question absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs" title="3 digits on back of card"></i>
+                                            </div>
                                         </div>
                                     </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" value="" class="sr-only peer" checked>
-                                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand shadow-inner"></div>
-                                    </label>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Cardholder Name</label>
+                                        <input type="text" placeholder="John Doe" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner">
+                                    </div>
                                 </div>
 
-                                <!-- Password -->
-                                <div class="glass-card rounded-xl p-6 flex items-center justify-between hover:border-brand/30 transition-all group cursor-pointer">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-brand group-hover:scale-110 transition-all">
-                                            <i class="fa-solid fa-key text-xl"></i>
+                                <div class="flex gap-3 mt-8">
+                                    <button type="button" onclick="togglePaymentModal()" class="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 font-bold transition-all">Cancel</button>
+                                    <button type="submit" class="flex-1 py-3 rounded-xl bg-brand hover:bg-brand-hover text-dark-bg font-bold transition-all shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)]">Add Card</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Net Banking Content -->
+                        <div id="payment-netbanking" class="payment-content hidden">
+                            <form onsubmit="event.preventDefault(); togglePaymentModal(); alert('Redirecting to bank login...');">
+                                <div class="space-y-4">
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Popular Banks</label>
+                                    <div class="grid grid-cols-3 gap-3 mb-4">
+                                        <div class="p-3 bg-white/5 border border-white/10 rounded-xl hover:border-brand/50 hover:bg-brand/5 cursor-pointer transition-all flex flex-col items-center gap-2 group">
+                                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-blue-800 font-bold text-xs">H</div>
+                                            <span class="text-[10px] text-gray-400 group-hover:text-white">HDFC</span>
                                         </div>
-                                        <div>
-                                            <h4 class="font-bold text-white text-sm">Password</h4>
-                                            <p class="text-xs text-gray-500 mt-0.5">Last changed 3mo ago</p>
+                                        <div class="p-3 bg-white/5 border border-white/10 rounded-xl hover:border-brand/50 hover:bg-brand/5 cursor-pointer transition-all flex flex-col items-center gap-2 group">
+                                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-blue-600 font-bold text-xs">S</div>
+                                            <span class="text-[10px] text-gray-400 group-hover:text-white">SBI</span>
+                                        </div>
+                                        <div class="p-3 bg-white/5 border border-white/10 rounded-xl hover:border-brand/50 hover:bg-brand/5 cursor-pointer transition-all flex flex-col items-center gap-2 group">
+                                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-red-600 font-bold text-xs">I</div>
+                                            <span class="text-[10px] text-gray-400 group-hover:text-white">ICICI</span>
                                         </div>
                                     </div>
-                                    <button class="text-brand text-xs font-bold uppercase tracking-wider hover:text-white transition-colors border border-brand/20 px-3 py-1.5 rounded-lg hover:bg-brand/10">Update</button>
-                                </div>
-                            </div>
-                        </section>
 
-                        <!-- Danger Zone -->
-                        <section class="pt-10 border-t border-white/5 mt-10">
-                            <h2 class="text-xl font-bold text-red-500 font-display mb-4">Danger Zone</h2>
-                            <div class="border border-red-500/20 rounded-xl p-6 bg-red-500/5 flex items-center justify-between">
-                                <div>
-                                    <h4 class="font-bold text-white text-sm">Delete Account</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Once you delete your account, there is no going back. Please be certain.</p>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Other Banks</label>
+                                        <select class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner text-sm">
+                                            <option>Select your bank</option>
+                                            <option>Axis Bank</option>
+                                            <option>Kotak Mahindra Bank</option>
+                                            <option>Punjab National Bank</option>
+                                            <option>Bank of Baroda</option>
+                                            <option>Canara Bank</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <button class="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(239,68,68,0.3)]">
-                                    Delete Account
-                                </button>
-                            </div>
-                        </section>
+                                <div class="flex gap-3 mt-8">
+                                    <button type="button" onclick="togglePaymentModal()" class="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 font-bold transition-all">Cancel</button>
+                                    <button type="submit" class="flex-1 py-3 rounded-xl bg-brand hover:bg-brand-hover text-dark-bg font-bold transition-all shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)]">Proceed</button>
+                                </div>
+                            </form>
+                        </div>
 
+                        <!-- EMI Content -->
+                        <div id="payment-emi" class="payment-content hidden">
+                            <form onsubmit="event.preventDefault(); togglePaymentModal(); alert('EMI Setup Initiated!');">
+                                <div class="space-y-4">
+                                    <div class="p-4 bg-white/5 border border-white/10 rounded-xl mb-4">
+                                        <h4 class="text-sm font-bold text-white mb-2">No Cost EMI available</h4>
+                                        <p class="text-xs text-gray-400">On credit cards from HDFC, SBI, ICICI, Axis and more for plans above ₹2000.</p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Select Card for EMI</label>
+                                        <select class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner text-sm">
+                                            <option>Select Bank Credit Card</option>
+                                            <option>HDFC Bank Credit Card</option>
+                                            <option>SBI Credit Card</option>
+                                            <option>ICICI Bank Credit Card</option>
+                                            <option>Axis Bank Credit Card</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tenure</label>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div class="p-3 bg-brand/10 border border-brand/50 rounded-xl cursor-pointer">
+                                                <p class="text-xs font-bold text-white">3 Months</p>
+                                                <p class="text-[10px] text-brand">@ 14% p.a.</p>
+                                            </div>
+                                            <div class="p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:border-white/30">
+                                                <p class="text-xs font-bold text-gray-400">6 Months</p>
+                                                <p class="text-[10px] text-gray-500">@ 15% p.a.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3 mt-8">
+                                    <button type="button" onclick="togglePaymentModal()" class="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 font-bold transition-all">Cancel</button>
+                                    <button type="submit" class="flex-1 py-3 rounded-xl bg-brand hover:bg-brand-hover text-dark-bg font-bold transition-all shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)]">Setup EMI</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+                            <i class="fa-solid fa-lock text-brand"></i>
+                            <span>Payments are securely processed by Stripe</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+            {% endif %}
 
-    <script>
-        function copyApiKey() {
-            // In a real app, this would copy to clipboard
-            alert('API Key copied to clipboard!');
+            <!-- API Access -->
+            {% if active_section == 'api' %}
+            <section id="api">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-white mb-2 tracking-tight">API Access</h2>
+                        <p class="text-gray-400">Manage your keys and integrate ScrapyX into your workflow.</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4 flex items-center gap-4 hover:bg-white/5 transition-all cursor-pointer group border border-white/10 w-full md:w-auto">
+                        <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand text-xl">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-white font-bold text-sm group-hover:text-brand transition-colors">API Documentation</h4>
+                            <p class="text-xs text-gray-500">v2.4 endpoints & examples</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-500 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <!-- API Usage -->
+                <div class="glass-card rounded-2xl p-6 mb-8 border border-white/5 bg-black/40">
+                    <div class="flex justify-between items-end mb-3">
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">API CALL USAGE</p>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-3xl font-bold text-white font-display">{{ api_usage|intcomma }}</span>
+                                <span class="text-gray-500 font-mono text-sm">/ {{ api_limit|intcomma }}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-brand font-bold">{{ api_percent|default:0 }}% Consumed</p>
+                            <p class="text-xs text-gray-500">Resetting in 14 days</p>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="h-3 w-full bg-dark-bg rounded-full overflow-hidden border border-white/5">
+                        <div class="h-full bg-brand rounded-full relative overflow-hidden shadow-[0_0_10px_rgba(0,212,197,0.3)]" style="width: {{ api_percent|default:0 }}%;"></div>
+                    </div>
+                </div>
+
+                <!-- Secret API Key -->
+                <div class="glass-card rounded-2xl p-8 mb-8">
+                    <div class="flex items-center gap-2 mb-4 text-brand">
+                        <i class="fa-solid fa-key"></i>
+                        <h3 class="font-bold text-white text-lg">Secret API Key</h3>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                        <div class="flex-1 relative">
+                            <input type="password" value="{{ api_key }}" id="api-key-input" class="w-full bg-dark-bg border border-white/10 rounded-xl px-4 py-3 text-gray-400 font-mono text-sm focus:outline-none focus:border-brand/50 transition-all shadow-inner" readonly>
+                            <button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors" onclick="toggleApiKeyVisibility()">
+                                <i class="fa-regular fa-eye" id="api-key-eye"></i>
+                            </button>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="px-4 py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl border border-white/10 transition-all flex items-center gap-2" onclick="copyApiKey()">
+                                <i class="fa-regular fa-copy"></i> Copy
+                            </button>
+                            <button class="px-4 py-2.5 bg-transparent hover:bg-white/5 text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-xl transition-all flex items-center gap-2" onclick="regenerateApiKey()">
+                                <i class="fa-solid fa-rotate"></i> Regenerate
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 text-yellow-500/80 text-xs bg-yellow-500/5 p-3 rounded-lg border border-yellow-500/10">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <p>Keys provide full access to your account data. Keep them secret and secure.</p>
+                    </div>
+                </div>
+
+                <!-- Webhook Endpoints -->
+                <div class="mb-10">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-white font-display">Webhook Endpoints</h3>
+                        <button class="px-4 py-2 bg-brand/10 hover:bg-brand/20 text-brand font-bold rounded-lg border border-brand/20 hover:border-brand/40 transition-all text-sm flex items-center gap-2" onclick="addWebhookEndpoint()">
+                            <i class="fa-solid fa-plus"></i> Add Endpoint
+                        </button>
+                    </div>
+
+                    <div class="glass-card rounded-xl overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-black/20 text-gray-500 font-bold uppercase text-xs tracking-wider border-b border-white/5">
+                                <tr>
+                                    <th class="p-5 font-bold">URL Endpoint</th>
+                                    <th class="p-5 font-bold">Events</th>
+                                    <th class="p-5 font-bold">Status</th>
+                                    <th class="p-5 font-bold text-right"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                {% for webhook in webhooks %}
+                                <tr class="hover:bg-white/5 transition-colors group">
+                                    <td class="p-5 text-gray-300 font-mono text-xs">{{ webhook.url }}</td>
+                                    <td class="p-5 text-gray-500 text-xs">{{ webhook.events }}</td>
+                                    <td class="p-5">
+                                        {% if webhook.status == 'ACTIVE' %}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand/10 text-brand text-[10px] font-bold border border-brand/10">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-brand"></span> ACTIVE
+                                        </span>
+                                        {% else %}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-700/50 text-gray-400 text-[10px] font-bold border border-gray-600/30">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span> DISABLED
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-5 text-right">
+                                        <button class="text-gray-500 hover:text-white transition-colors">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- IP Whitelisting -->
+                <div class="glass-card rounded-2xl p-8 mb-10 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-2 text-brand">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <h3 class="font-bold text-white text-lg">IP Whitelisting</h3>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand/20 text-brand border border-brand/20 uppercase tracking-wider">Security Pro</span>
+                    </div>
+                    
+                    <p class="text-gray-400 text-sm mb-6">Restrict API requests to specific IP addresses. If no IPs are listed, the API is accessible from any address.</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 mb-6">
+                        <input type="text" placeholder="e.g. 192.168.1.1" class="flex-1 bg-dark-bg border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner placeholder-gray-600">
+                        <button class="px-6 py-3 bg-transparent hover:bg-brand/10 text-brand font-bold rounded-xl border border-brand/20 hover:border-brand/50 transition-all text-sm" onclick="addIpAddress()">
+                            Add IP Address
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        {% for ip in whitelisted_ips %}
+                        <div class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg flex items-center gap-2 text-gray-300 text-xs font-mono group hover:border-white/20 transition-all">
+                            <span>{{ ip }}</span>
+                            <button class="text-gray-500 hover:text-red-400 transition-colors" onclick="this.parentElement.remove()">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="border border-red-500/20 bg-red-500/5 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-red-500 font-bold">Danger Zone</h3>
+                        </div>
+                        <p class="text-sm text-gray-400">Revoke all active sessions and rotate all API keys immediately.</p>
+                    </div>
+                    <button class="px-6 py-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-lg transition-all font-bold text-sm shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.4)]" onclick="if(confirm('Are you sure you want to revoke all access? This will break existing integrations.')) alert('All access revoked.')">
+                        Revoke All Access
+                    </button>
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Privacy -->
+            {% if active_section == 'privacy' %}
+            <section id="privacy">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-display font-bold text-white mb-2 tracking-tight">Privacy Settings</h2>
+                    <p class="text-gray-400">Manage how your data is handled and your visibility on the platform.</p>
+                </div>
+
+                <!-- Data Privacy -->
+                <div class="glass-card rounded-2xl p-8 mb-8 border border-white/5 bg-black/40">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center text-brand text-xl">
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white font-display">Data Privacy</h3>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-white font-bold text-sm mb-1">Anonymize Scraping Requests</h4>
+                                <p class="text-xs text-gray-400">Mask your origin IP and headers for all scraping tasks.</p>
+                            </div>
+                            <div class="relative inline-block w-12 align-middle select-none">
+                                <input type="checkbox" id="anonymize-requests" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:border-brand transition-all duration-300" {% if anonymize_requests %}checked{% endif %}/>
+                                <label for="anonymize-requests" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300 checked:bg-brand/50"></label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-white font-bold text-sm mb-1">Store Scraping History</h4>
+                                <p class="text-xs text-gray-400">Keep a log of your successful and failed scraping jobs for 30 days.</p>
+                            </div>
+                            <div class="relative inline-block w-12 align-middle select-none">
+                                <input type="checkbox" id="store-history" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:border-brand transition-all duration-300" {% if store_history %}checked{% endif %}/>
+                                <label for="store-history" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300 checked:bg-brand/50"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <!-- Cookies -->
+                    <div class="glass-card rounded-2xl p-8 border border-white/5 bg-black/40">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center text-brand text-xl">
+                                <i class="fa-solid fa-cookie-bite"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white font-display">Cookies</h3>
+                        </div>
+                        
+                        <p class="text-xs text-gray-400 mb-6">Control how we use cookies to track your activity and improve your experience.</p>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
+                                <div class="relative flex items-center justify-center w-5 h-5">
+                                    <input type="checkbox" checked disabled class="appearance-none w-5 h-5 rounded bg-brand/20 border border-brand/50 checked:bg-brand checked:border-brand cursor-not-allowed relative z-10">
+                                    <i class="fa-solid fa-check text-dark-bg text-xs absolute z-20 pointer-events-none"></i>
+                                </div>
+                                <span class="text-sm font-bold text-white">Essential Cookies</span>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-transparent border border-white/10 hover:border-white/20 transition-all cursor-pointer" onclick="document.getElementById('analytics-tracking').click()">
+                                <div class="relative flex items-center justify-center w-5 h-5">
+                                    <input type="checkbox" id="analytics-tracking" class="appearance-none w-5 h-5 rounded bg-dark-bg border border-white/20 checked:bg-brand checked:border-brand cursor-pointer relative z-10 transition-all" {% if analytics_tracking %}checked{% endif %}>
+                                    <i class="fa-solid fa-check text-dark-bg text-xs absolute z-20 pointer-events-none opacity-0 check-icon"></i>
+                                </div>
+                                <span class="text-sm font-bold text-gray-300">Analytics & Tracking</span>
+                            </div>
+                            <style>
+                                #analytics-tracking:checked + .check-icon { opacity: 1; }
+                            </style>
+                        </div>
+                    </div>
+
+                    <!-- Your Data -->
+                    <div class="glass-card rounded-2xl p-8 border border-white/5 bg-black/40">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center text-brand text-xl">
+                                <i class="fa-solid fa-download"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white font-display">Your Data</h3>
+                        </div>
+
+                        <p class="text-xs text-gray-400 mb-6">Manage your data portability and account termination options.</p>
+
+                        <div class="space-y-4">
+                            <button class="w-full py-3 bg-white text-dark-bg font-bold rounded-xl hover:bg-gray-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)]" onclick="downloadMyData()">
+                                Download My Data
+                            </button>
+                            <button class="w-full py-3 bg-transparent text-red-500 font-bold rounded-xl border border-red-500/30 hover:bg-red-500/10 transition-all shadow-[0_0_15px_rgba(239,68,68,0.05)] hover:shadow-[0_0_20px_rgba(239,68,68,0.2)]" onclick="requestAccountDeletion()">
+                                Request Account Deletion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Third-Party Integrations -->
+                <div class="mb-10">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-white font-display">Third-Party Integrations</h3>
+                        <button class="text-brand text-sm font-bold hover:text-white transition-colors flex items-center gap-2" onclick="addNewIntegration()">
+                            <span class="text-xs">Add New Integration</span>
+                        </button>
+                    </div>
+
+                    <div class="glass-card rounded-xl overflow-hidden border border-white/5 bg-black/40">
+                        <div class="divide-y divide-white/5">
+                            {% for integration in integrations %}
+                            <div class="p-6 flex flex-col md:flex-row items-center justify-between gap-4 hover:bg-white/5 transition-colors group">
+                                <div class="flex items-center gap-4 w-full md:w-auto">
+                                    <div class="w-12 h-12 rounded-xl {{ integration.icon_bg }} flex items-center justify-center text-2xl shadow-inner border border-white/10">
+                                        <i class="{{ integration.icon }}"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-3 mb-1">
+                                            <h4 class="text-white font-bold text-sm">{{ integration.name }}</h4>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border {{ integration.status_class }}">
+                                                {{ integration.status }}
+                                            </span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 flex items-center gap-2">
+                                            <span>Last accessed: {{ integration.last_accessed }}</span>
+                                            <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                                            <span>{{ integration.permission }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <button class="text-red-400 hover:text-red-300 text-xs font-bold px-4 py-2 rounded-lg hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20" onclick="revokeAccess('{{ integration.name }}')">
+                                    Revoke Access
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Security -->
+            {% if active_section == 'security' %}
+            <section id="security">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-display font-bold text-white mb-2 tracking-tight">Security Settings</h2>
+                    <p class="text-gray-400">Manage your account protection and active login sessions. 
+                        <a href="{% url 'settings_section' 'profile' %}" class="text-brand hover:underline ml-1">Need to update your Username or Name?</a>
+                    </p>
+                </div>
+
+                <!-- Change Password -->
+                <div class="glass-card rounded-2xl p-8 mb-8 border border-white/5 bg-black/40">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center text-brand text-xl">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white font-display">Change Password</h3>
+                    </div>
+
+                    <form method="POST" action="{% url 'update_password' %}">
+                        {% csrf_token %}
+                        <div class="space-y-4 mb-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Current Password</label>
+                                <input type="password" name="current_password" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner placeholder-gray-600" required>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">New Password</label>
+                                    <input type="password" name="new_password" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner placeholder-gray-600" required>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Confirm New Password</label>
+                                    <input type="password" name="confirm_password" class="w-full bg-dark-input border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand/50 transition-all shadow-inner placeholder-gray-600" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 bg-brand hover:bg-brand-hover text-dark-bg font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(0,212,197,0.3)] hover:shadow-[0_0_20px_rgba(0,212,197,0.5)]">
+                            Update Password
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Active Sessions -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-white font-display">Active Sessions</h3>
+                        <button onclick="logoutAllDevices()" class="text-xs font-bold text-red-500 hover:text-red-400 transition-colors">Log out of all devices</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        {% for session in active_sessions %}
+                        <div id="{{ session.id }}" class="glass-card rounded-xl p-6 border border-white/5 bg-black/40 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-gray-400 text-xl">
+                                    <i class="{{ session.icon }}"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h4 class="text-white font-bold text-sm">{{ session.device }}</h4>
+                                        {% if session.is_current %}
+                                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-brand/20 text-brand border border-brand/20">CURRENT SESSION</span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="text-xs text-gray-400">{{ session.location }} • {{ session.ip }}</p>
+                                </div>
+                            </div>
+                            <button onclick="revokeSession('{{ session.id }}')" class="text-xs font-bold text-gray-500 hover:text-white transition-colors">Revoke</button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Security Logs -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-white font-display mb-4">Security Logs</h3>
+                    
+                    <div class="glass-card rounded-2xl border border-white/5 bg-black/40 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-white/5 bg-white/5">
+                                        <th class="p-4 text-[10px] font-bold text-gray-500 uppercase tracking-wider">Event</th>
+                                        <th class="p-4 text-[10px] font-bold text-gray-500 uppercase tracking-wider">Location</th>
+                                        <th class="p-4 text-[10px] font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="p-4 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-right">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-white/5">
+                                    {% for log in security_logs %}
+                                    <tr class="hover:bg-white/5 transition-colors">
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-3">
+                                                <i class="{{ log.icon }} {{ log.icon_class }} text-xs"></i>
+                                                <span class="text-sm font-medium text-gray-300">{{ log.event }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="p-4 text-xs text-gray-400">{{ log.location }}</td>
+                                        <td class="p-4 text-xs text-gray-400">{{ log.date }}</td>
+                                        <td class="p-4 text-right">
+                                            <span class="px-2 py-1 rounded text-[10px] font-bold {{ log.status_class }}">{{ log.status }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-t border-white/5 text-center">
+                            <button onclick="viewAllLogs()" class="text-xs font-bold text-brand hover:text-brand-light transition-colors">View All Security Logs</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="rounded-2xl p-6 border border-red-500/20 bg-red-500/5 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-red-500 mb-1">Danger Zone</h3>
+                        <p class="text-xs text-red-400/70">Permanently delete your account and all associated scraping data.</p>
+                    </div>
+                    <button onclick="deleteAccount()" class="px-6 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-red-500/20 whitespace-nowrap">
+                        Delete Account
+                    </button>
+                </div>
+            </section>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if active_section == 'profile' or not active_section %}
+<script>
+    function previewAvatar(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const avatarContainer = input.parentElement.parentElement.querySelector('.w-24');
+                // Check if img exists, if not create it
+                let img = avatarContainer.querySelector('img');
+                if (!img) {
+                    avatarContainer.innerHTML = ''; // Clear initials
+                    img = document.createElement('img');
+                    img.className = 'w-full h-full object-cover';
+                    avatarContainer.appendChild(img);
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
         }
-    </script>
-</body>
-</html>
+    }
+
+</script>
+{% endif %}
+{% if active_section == 'plan' %}
+<script>
+    function togglePaymentModal() {
+        const modal = document.getElementById('payment-modal');
+        if (modal.classList.contains('hidden')) {
+            modal.classList.remove('hidden');
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        } else {
+            modal.classList.add('hidden');
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
+    }
+
+    function switchPaymentTab(tabName) {
+        // Hide all contents
+        document.querySelectorAll('.payment-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+        
+        // Show selected content
+        document.getElementById('payment-' + tabName).classList.remove('hidden');
+        
+        // Reset all tabs
+        const tabs = ['upi', 'card', 'netbanking', 'emi'];
+        tabs.forEach(t => {
+            const btn = document.getElementById('tab-' + t);
+            if(t === tabName) {
+                btn.className = 'flex-1 py-2 px-3 rounded-lg bg-brand text-dark-bg font-bold text-xs whitespace-nowrap shadow-lg transition-all';
+            } else {
+                btn.className = 'flex-1 py-2 px-3 rounded-lg text-gray-400 hover:text-white font-bold text-xs whitespace-nowrap transition-colors';
+            }
+        });
+    }
+
+    function togglePlanModal() {
+        const modal = document.getElementById('plan-modal');
+        if (modal.classList.contains('hidden')) {
+            modal.classList.remove('hidden');
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        } else {
+            modal.classList.add('hidden');
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Toggle Billing Cycle
+    function toggleBillingCycle() {
+        const isYearly = document.getElementById('billing-toggle').checked;
+        const prices = document.querySelectorAll('.price-display');
+        const durations = document.querySelectorAll('.duration-text');
+        const labelMonthly = document.getElementById('label-monthly');
+        const labelYearly = document.getElementById('label-yearly');
+        
+        if(isYearly) {
+            labelMonthly.classList.replace('text-white', 'text-gray-400');
+            labelYearly.classList.replace('text-gray-400', 'text-white');
+        } else {
+            labelYearly.classList.replace('text-white', 'text-gray-400');
+            labelMonthly.classList.replace('text-gray-400', 'text-white');
+        }
+
+        prices.forEach(price => {
+            const amount = isYearly ? price.dataset.yearly : price.dataset.monthly;
+            price.textContent = `$${amount}`;
+        });
+
+        durations.forEach(duration => {
+            duration.textContent = isYearly ? '/mo (billed yearly)' : '/mo';
+        });
+    }
+
+    function schedulePlanChange(planName, renewalDate) {
+        if (!confirm(`Are you sure you want to schedule the ${planName} plan? This change will take effect on ${renewalDate}.`)) {
+            return;
+        }
+
+        // Find the button that triggered this (simulated) or just simulate loading state
+        // In a real app, this would be an AJAX call
+        
+        // Show simulated loading/processing
+        const buttons = document.querySelectorAll('#plan-modal button');
+        buttons.forEach(btn => btn.disabled = true);
+        
+        // Create and show a toast notification
+        showToast('Plan Change Scheduled!', 'success');
+        
+        setTimeout(() => {
+            // Update UI to reflect scheduled state
+            togglePlanModal();
+            buttons.forEach(btn => btn.disabled = false);
+            
+            // Update the main "Manage Subscription" section to show pending change
+            const renewalText = document.querySelector('#plan p.text-sm.text-gray-400');
+            if(renewalText) {
+                renewalText.innerHTML = `Renewal on <span class="text-white font-bold">${renewalDate}</span> <span class="text-brand ml-2 text-xs border border-brand/30 px-2 py-0.5 rounded bg-brand/10">Switches to ${planName}</span>`;
+            }
+            
+        }, 1500);
+    }
+
+    function downloadInvoice(btn, invoiceId) {
+        // Store original content
+        const originalContent = btn.innerHTML;
+        const originalClasses = btn.className;
+        
+        // Loading State
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Downloading...`;
+        btn.className = "text-brand font-bold text-xs flex items-center gap-2 justify-end ml-auto px-3 py-1.5 rounded-lg bg-brand/10 cursor-wait transition-all";
+        
+        // Show "Started" Toast
+        showToast(`Downloading invoice ${invoiceId}...`, 'info');
+
+        // Fetch the file
+        fetch(`/dashboard/settings/download-invoice/${encodeURIComponent(invoiceId)}/`)
+            .then(response => {
+                if (!response.ok) throw new Error('Download failed');
+                return response.blob();
+            })
+            .then(blob => {
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `invoice_${invoiceId.replace('#', '')}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                
+                // Success State
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> Saved`;
+                btn.className = "text-green-400 font-bold text-xs flex items-center gap-2 justify-end ml-auto px-3 py-1.5 rounded-lg bg-green-400/10 transition-all";
+                
+                showToast(`Invoice ${invoiceId} saved successfully!`, 'success');
+                
+                // Revert
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.className = originalClasses;
+                    btn.disabled = false;
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Error State
+                btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error`;
+                btn.className = "text-red-500 font-bold text-xs flex items-center gap-2 justify-end ml-auto px-3 py-1.5 rounded-lg bg-red-500/10 transition-all";
+                showToast('Failed to download invoice', 'error'); // Assuming you update showToast to handle 'error' or just use default style
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.className = originalClasses;
+                    btn.disabled = false;
+                }, 3000);
+            });
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        let icon = 'fa-circle-info';
+        let bgClass = 'bg-brand';
+        let textClass = 'text-dark-bg';
+
+        if (type === 'success') {
+            icon = 'fa-circle-check';
+        } else if (type === 'error') {
+            icon = 'fa-triangle-exclamation';
+            bgClass = 'bg-red-500';
+            textClass = 'text-white';
+        }
+
+        toast.className = `fixed bottom-8 right-8 ${bgClass} ${textClass} px-6 py-4 rounded-xl shadow-2xl z-[100] font-bold transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3`;
+        toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+             toast.classList.remove('translate-y-20', 'opacity-0');
+        });
+        
+        // Remove after delay
+        setTimeout(() => {
+            toast.classList.add('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+</script>
+{% endif %}
+{% if active_section == 'privacy' %}
+<script>
+    function downloadMyData() {
+        alert('Preparing your data archive. You will receive an email shortly.');
+    }
+
+    function requestAccountDeletion() {
+        if(confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+            alert('Account deletion request submitted. Our team will process this within 48 hours.');
+        }
+    }
+
+    function addNewIntegration() {
+        alert('Integration marketplace coming soon!');
+    }
+
+    function revokeAccess(integrationName) {
+        if(confirm(`Are you sure you want to revoke access for ${integrationName}?`)) {
+            alert(`Access revoked for ${integrationName}.`);
+        }
+    }
+    
+    // Toggle handlers (visual only for now)
+    document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const label = this.parentElement.previousElementSibling.querySelector('h4').textContent;
+            console.log(`${label} is now ${this.checked ? 'enabled' : 'disabled'}`);
+        });
+    });
+</script>
+{% endif %}
+{% if active_section == 'api' %}
+<script>
+    function toggleApiKeyVisibility() {
+        const input = document.getElementById('api-key-input');
+        const icon = document.getElementById('api-key-eye');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    function copyApiKey() {
+        const input = document.getElementById('api-key-input');
+        if (input) {
+            navigator.clipboard.writeText(input.value).then(() => {
+                alert('API Key copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy API Key. Please copy manually.');
+            });
+        }
+    }
+
+    function regenerateApiKey() {
+        if(confirm('Regenerating your API key will invalidate the current one immediately. Continue?')) {
+            // Mock regeneration
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let newKey = 'sk_live_';
+            for(let i=0; i<30; i++) {
+                newKey += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            const input = document.getElementById('api-key-input');
+            if (input) {
+                input.value = newKey;
+                alert('New API Key generated.');
+            }
+        }
+    }
+    
+    function addWebhookEndpoint() {
+        alert('Add Webhook Endpoint modal would open here.');
+    }
+    
+    function addIpAddress() {
+        alert('IP Address added successfully.');
+    }
+</script>
+{% endif %}
+{% if active_section == 'security' %}
+<script>
+    function logoutAllDevices() {
+        if(confirm('Are you sure you want to log out of all other devices?')) {
+            alert('Logged out of all other devices.');
+        }
+    }
+
+    function revokeSession(sessionId) {
+        if(confirm('Are you sure you want to revoke this session?')) {
+            const element = document.getElementById(sessionId);
+            if(element) {
+                element.style.opacity = '0.5';
+                setTimeout(() => {
+                    element.remove();
+                    alert('Session revoked successfully.');
+                }, 500);
+            }
+        }
+    }
+
+    function viewAllLogs() {
+        alert('Redirecting to full security logs...');
+    }
+    
+    // deleteAccount is likely already defined in plan section or globally, 
+    // but if we are in security section exclusively, we should define it or ensure it's available.
+    // Since we reuse the function name, let's define it here if it's not global.
+    // However, to avoid conflict if we merge scripts later, we can keep it simple.
+    function deleteAccount() {
+         if(confirm('DANGER: Are you sure you want to permanently delete your account? This action CANNOT be undone.')) {
+            const confirmation = prompt('Type "DELETE" to confirm account deletion:');
+            if(confirmation === 'DELETE') {
+                alert('Account deletion scheduled. You will be logged out immediately.');
+                window.location.href = "/"; // Redirect to home/login
+            }
+        }
+    }
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+
+{% block title %}ScrapyX - Web Scraping Made Easy{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pt-32 pb-40 overflow-hidden">
+    <!-- Background Effects -->
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-brand/20 rounded-full blur-[100px] -z-10 animate-pulse-slow"></div>
+    <div class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] -z-10"></div>
+    
+    <!-- Floating Elements (Decorative) -->
+    <div class="absolute top-40 left-10 lg:left-20 animate-float-slow hidden md:block">
+        <div class="bg-dark-card/80 backdrop-blur-md border border-dark-border p-4 rounded-xl shadow-2xl transform -rotate-6">
+            <div class="flex gap-2 mb-2">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <code class="text-xs text-brand font-mono">
+                > extracting_data...<br>
+                > found_tables: 4<br>
+                > saving_to_csv...
+            </code>
+        </div>
+    </div>
+
+    <div class="absolute bottom-40 right-10 lg:right-20 animate-float-delayed hidden md:block">
+        <div class="bg-dark-card/80 backdrop-blur-md border border-dark-border p-4 rounded-xl shadow-2xl transform rotate-3">
+             <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-gray-400">AI Agent Status</div>
+                    <div class="text-sm font-bold text-white">Active & Learning</div>
+                </div>
+             </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 text-center relative z-10">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-dark-card/50 backdrop-blur-sm border border-brand/30 mb-8 animate-fade-in-up hover:border-brand/60 transition-colors cursor-default">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
+            </span>
+            <span class="text-xs font-bold text-brand uppercase tracking-wider">v2.0: AI Agents Now Live</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 leading-tight tracking-tight animate-fade-in-up animation-delay-100">
+            Scrape The Web <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-blue-400 to-purple-500 animate-gradient-x">With ScrapyX</span>
+        </h1>
+        
+        <!-- Subheadline -->
+        <p class="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in-up animation-delay-200">
+            Turn any website into a structured API or spreadsheet instantly. 
+            <span class="text-gray-300 font-semibold">No code required.</span> 
+            Powered by next-gen LLMs that understand context like a human.
+        </p>
+        
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-5 mb-24 animate-fade-in-up animation-delay-300">
+            <a href="{% url 'signup' %}" class="group relative w-full sm:w-auto bg-brand text-dark-bg font-bold py-4 px-10 rounded-xl transition-all hover:shadow-[0_0_40px_rgba(0,212,197,0.5)] overflow-hidden">
+                <div class="absolute inset-0 w-full h-full bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full"></div>
+                <span class="relative flex items-center justify-center gap-2">
+                    Start Scraping Free <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </span>
+            </a>
+            <a href="#" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-4 px-10 rounded-xl border border-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2 backdrop-blur-sm">
+                <i class="fa-solid fa-play text-brand"></i> See It In Action
+            </a>
+        </div>
+
+        <!-- Dashboard Preview 3D Effect -->
+        <div class="relative mx-auto max-w-2xl perspective-1000 animate-fade-in-up animation-delay-400 group">
+            <!-- Glow behind -->
+            <div class="absolute -inset-4 bg-gradient-to-t from-brand/20 to-purple-600/20 rounded-[2rem] blur-2xl opacity-50 group-hover:opacity-70 transition-opacity duration-700"></div>
+            
+            <!-- Card Container -->
+            <div class="relative bg-dark-card border border-dark-border rounded-2xl overflow-hidden shadow-2xl transform transition-transform duration-700 group-hover:rotate-x-2 group-hover:scale-[1.02] preserve-3d">
+                
+                <!-- Browser Bar -->
+                <div class="h-14 w-full bg-dark-bg/90 backdrop-blur-md border-b border-dark-border flex items-center justify-between px-6">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                    </div>
+                    <div class="flex-1 mx-8">
+                        <div class="bg-dark-card border border-dark-border rounded-lg h-8 w-full max-w-lg mx-auto flex items-center px-4 text-xs text-gray-500 font-mono">
+                            <i class="fa-solid fa-lock mr-2 text-brand"></i> https://app.oneclick-datascrape.com/dashboard
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                         <div class="w-8 h-8 rounded-full bg-gradient-to-r from-brand to-blue-500"></div>
+                    </div>
+                </div>
+
+                <!-- App Content Mockup -->
+                <div class="p-1">
+                     <div class="bg-dark-bg aspect-[16/9] w-full relative overflow-hidden">
+                        <!-- Sidebar Mock -->
+                        <div class="absolute left-0 top-0 bottom-0 w-64 bg-dark-card border-r border-dark-border p-6 hidden md:block">
+                            <div class="space-y-6">
+                                <div class="h-2 w-20 bg-dark-border rounded"></div>
+                                <div class="space-y-3">
+                                    <div class="h-10 w-full bg-brand/10 rounded-lg border border-brand/20"></div>
+                                    <div class="h-10 w-full bg-dark-border/30 rounded-lg"></div>
+                                    <div class="h-10 w-full bg-dark-border/30 rounded-lg"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Main Area -->
+                        <div class="absolute left-0 md:left-64 right-0 top-0 bottom-0 p-8">
+                            <div class="flex justify-between items-center mb-8">
+                                <div class="h-8 w-48 bg-dark-border/50 rounded-lg"></div>
+                                <div class="h-10 w-32 bg-brand rounded-lg shadow-lg shadow-brand/20"></div>
+                            </div>
+                            
+                            <!-- Data Grid -->
+                            <div class="grid grid-cols-4 gap-4 mb-6">
+                                <div class="h-24 bg-dark-card border border-dark-border rounded-xl p-4"></div>
+                                <div class="h-24 bg-dark-card border border-dark-border rounded-xl p-4"></div>
+                                <div class="h-24 bg-dark-card border border-dark-border rounded-xl p-4"></div>
+                                <div class="h-24 bg-dark-card border border-dark-border rounded-xl p-4"></div>
+                            </div>
+                            
+                            <!-- Table -->
+                            <div class="w-full h-full bg-dark-card border border-dark-border rounded-xl overflow-hidden">
+                                <div class="h-10 border-b border-dark-border bg-dark-bg/50"></div>
+                                <div class="p-4 space-y-3">
+                                    <div class="h-12 w-full bg-dark-bg/30 rounded-lg flex items-center px-4 gap-4">
+                                        <div class="w-8 h-8 rounded bg-gray-700"></div>
+                                        <div class="h-2 w-32 bg-gray-700 rounded"></div>
+                                    </div>
+                                    <div class="h-12 w-full bg-dark-bg/30 rounded-lg flex items-center px-4 gap-4">
+                                        <div class="w-8 h-8 rounded bg-gray-700"></div>
+                                        <div class="h-2 w-24 bg-gray-700 rounded"></div>
+                                    </div>
+                                    <div class="h-12 w-full bg-dark-bg/30 rounded-lg flex items-center px-4 gap-4">
+                                        <div class="w-8 h-8 rounded bg-gray-700"></div>
+                                        <div class="h-2 w-40 bg-gray-700 rounded"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    @keyframes float-slow {
+        0%, 100% { transform: translateY(0) rotate(-6deg); }
+        50% { transform: translateY(-20px) rotate(-3deg); }
+    }
+    @keyframes float-delayed {
+        0%, 100% { transform: translateY(0) rotate(3deg); }
+        50% { transform: translateY(-15px) rotate(6deg); }
+    }
+    .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
+    .animate-float-delayed { animation: float-delayed 7s ease-in-out infinite 1s; }
+    
+    .perspective-1000 { perspective: 1000px; }
+    .preserve-3d { transform-style: preserve-3d; }
+    .rotate-x-2 { transform: rotateX(2deg); }
+    
+    .animate-gradient-x {
+        background-size: 200% 200%;
+        animation: gradient-move 3s ease infinite;
+    }
+    @keyframes gradient-move {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    @keyframes fadeInUp {
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animation-delay-100 { animation-delay: 0.1s; }
+    .animation-delay-200 { animation-delay: 0.2s; }
+    .animation-delay-300 { animation-delay: 0.3s; }
+    .animation-delay-400 { animation-delay: 0.4s; }
+</style>
+
+<!-- Trusted By Section -->
+<section class="py-10 border-y border-dark-border bg-dark-bg/50">
+    <div class="container mx-auto px-6">
+        <p class="text-center text-xs font-semibold text-gray-500 uppercase tracking-widest mb-8">Trusted by data teams at industry leaders</p>
+        <div class="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+            <!-- Placeholders for Logos -->
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-aws"></i> AMAZON</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-google"></i> Google</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-microsoft"></i> Microsoft</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-spotify"></i> Spotify</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-brands fa-airbnb"></i> Airbnb</div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-24 relative">
+    <div class="container mx-auto px-6">
+        <div class="mb-16 md:max-w-2xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Powerful Features, <span class="text-brand">Zero Complexity</span></h2>
+            <p class="text-gray-400">Everything you need to turn the entire web into your personal, structured database.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-brand/50 transition-colors group">
+                <div class="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-brain text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">AI Detection</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Automatically identifies lists, tables, and pagination with human-like precision. No selector configuration needed.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-brand/50 transition-colors group">
+                <div class="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-cloud text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Cloud Processing</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Run heavy scraping tasks in the background across 1,000s of concurrent sessions without slowing down your computer.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-brand/50 transition-colors group">
+                <div class="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-file-export text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Universal Export</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    One-click export to Google Sheets, Excel, JSON, or via Webhooks to your own custom API or CRM.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="py-24 bg-dark-bg">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Transparent Pricing</h2>
+            <p class="text-gray-400">Scale from hobby projects to enterprise-grade data operations.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+            <!-- Starter -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border">
+                <h3 class="text-lg font-medium text-white mb-2">Starter</h3>
+                <div class="text-4xl font-bold text-white mb-6">$0 <span class="text-base font-normal text-gray-500">/mo</span></div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-400">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 500 Credits / month</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Standard AI Detection</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gray-600"></i> No API Access</li>
+                </ul>
+                <a href="#" class="block w-full py-3 border border-dark-border rounded-lg text-center text-white hover:bg-dark-border transition-colors">Get Started</a>
+            </div>
+
+            <!-- Pro (Highlighted) -->
+            <div class="relative bg-dark-card p-8 rounded-2xl border border-brand shadow-[0_0_40px_rgba(0,212,197,0.1)] transform md:-translate-y-4">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand text-dark-bg text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Most Popular</div>
+                <h3 class="text-lg font-medium text-white mb-2">Pro</h3>
+                <div class="text-4xl font-bold text-white mb-6">$49 <span class="text-base font-normal text-gray-500">/mo</span></div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-300">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 10,000 Credits / month</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Advanced AI (LLM Powered)</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Custom Webhooks</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 10 Concurrent Sessions</li>
+                </ul>
+                <a href="#" class="block w-full py-3 bg-brand text-dark-bg font-bold rounded-lg text-center hover:bg-brand-hover transition-colors shadow-lg shadow-brand/20">Go Pro Now</a>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border">
+                <h3 class="text-lg font-medium text-white mb-2">Enterprise</h3>
+                <div class="text-4xl font-bold text-white mb-6">Custom</div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-400">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Unlimited Credits</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Dedicated AI Models</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> SLA Guarantee</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> API Access</li>
+                </ul>
+                <a href="#" class="block w-full py-3 border border-dark-border rounded-lg text-center text-white hover:bg-dark-border transition-colors">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-24">
+    <div class="container mx-auto px-6">
+        <div class="bg-gradient-to-br from-brand to-teal-600 rounded-3xl p-12 md:p-20 text-center relative overflow-hidden">
+            <!-- Decorative circles -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full -ml-16 -mb-16 blur-2xl"></div>
+
+            <div class="relative z-10 max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Ready to automate your data workflow?</h2>
+                <p class="text-white/90 text-lg mb-10">Join 10,000+ data engineers and analysts who have replaced manual scraping with ScrapyX.</p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#" class="w-full sm:w-auto bg-white text-teal-700 font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-colors shadow-lg">
+                        Create Free Account
+                    </a>
+                    <a href="#" class="w-full sm:w-auto bg-teal-800/50 text-white font-semibold py-4 px-8 rounded-xl hover:bg-teal-800/70 transition-colors backdrop-blur-sm">
+                        Schedule Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Landing Page Verified -->
+{% endblock %}

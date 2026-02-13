@@ -1,390 +1,251 @@
+{% extends 'dashboard/base_dashboard.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Start New Scrape - OneClick DataScrape</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+{% block title %}Start New Scrape - ScrapyX{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Form Specifics */
+    .toggle-checkbox:checked {
+        right: 0;
+        border-color: #00d4c5;
+    }
+    .toggle-checkbox:checked + .toggle-label {
+        background-color: #00d4c5;
+    }
+    select { background-image: none; }
     
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            DEFAULT: '#00d4c5',
-                            hover: '#00b8aa',
-                            glow: '#00d4c580',
-                        },
-                        dark: {
-                            bg: '#030712',       /* Deep almost black */
-                            sidebar: '#0B1121',  /* Slightly lighter */
-                            card: '#0f172a',     /* Card bg */
-                            border: 'rgba(255, 255, 255, 0.08)',
-                            surface: '#1e293b',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Space Grotesk', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    animation: {
-                        'blob': 'blob 7s infinite',
-                        'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'slide-up': 'slideUp 0.5s ease-out forwards',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .font-display { font-family: 'Space Grotesk', sans-serif; }
-        
-        /* Glassmorphism Utilities */
-        .glass {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .glass-card:hover {
-            border-color: rgba(0, 212, 197, 0.3);
-            box-shadow: 0 0 15px rgba(0, 212, 197, 0.15);
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #374151; }
-        
-        /* Background Blobs */
-        .bg-blob-1 {
-            position: fixed; top: -10%; left: -10%; width: 50%; height: 50%;
-            background: radial-gradient(circle, rgba(0, 212, 197, 0.15) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px); z-index: -1; animation: blob 15s infinite alternate;
-        }
-        .bg-blob-2 {
-            position: fixed; bottom: -10%; right: -10%; width: 50%; height: 50%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px); z-index: -1; animation: blob 20s infinite alternate-reverse;
-        }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #030712; }
+    ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #374151; }
+</style>
+{% endblock %}
 
-        /* Form Specifics */
-        .toggle-checkbox:checked {
-            right: 0;
-            border-color: #00d4c5;
-        }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #00d4c5;
-        }
-        select { background-image: none; }
-    </style>
-</head>
-<body class="bg-dark-bg text-gray-300 font-sans antialiased overflow-hidden selection:bg-brand selection:text-white">
+{% block content %}
+<!-- Top Header -->
+<header class="sticky top-0 z-20 glass border-b-0 border-b border-white/5 px-8 py-4 flex items-center justify-between">
+    <!-- Breadcrumbs -->
+    <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
+        <span class="hover:text-gray-300 transition-colors cursor-pointer">Pages</span>
+        <i class="fa-solid fa-chevron-right text-[10px] opacity-50"></i>
+        <span class="text-white bg-white/5 px-2 py-0.5 rounded text-xs border border-white/5">New Scrape</span>
+    </div>
 
-    <!-- Background Effects -->
-    <div class="bg-blob-1"></div>
-    <div class="bg-blob-2"></div>
+    <!-- Right Actions -->
+    <div class="flex items-center gap-6">
+        <!-- Notifications -->
+        <button class="relative text-gray-400 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+            <i class="fa-solid fa-bell text-lg"></i>
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-dark-bg animate-pulse"></span>
+        </button>
+    </div>
+</header>
 
-    <div class="flex h-screen">
+<div class="p-8 max-w-5xl mx-auto space-y-8 pb-20">
+    
+    <!-- Heading Section -->
+    <div class="text-center mb-10 animate-slide-up">
+        <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4 tracking-tight">
+            Start New <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-blue-400">Extraction</span>
+        </h1>
+        <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+            Enter a URL below to launch our AI-powered scraper. We'll handle the proxy rotation, CAPTCHA solving, and data structuring.
+        </p>
+    </div>
+
+    <!-- Main Form -->
+    <form id="scrape-form" action="{% url 'scrape_progress' %}" method="GET" class="animate-slide-up delay-100">
         
-        <!-- Sidebar -->
-        <aside class="w-64 glass border-r-0 border-r border-dark-border flex flex-col justify-between shrink-0 transition-all duration-300 z-30 relative">
-            <!-- Logo & Menu -->
-            <div>
-                <!-- Logo -->
-                <div class="p-6 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white font-bold shadow-[0_0_15px_rgba(0,212,197,0.4)] relative group overflow-hidden">
-                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                        <i class="fa-solid fa-bolt text-lg relative z-10"></i>
+        <!-- URL Input -->
+        <div class="group relative glass-card p-2 flex items-center gap-3 rounded-2xl mb-8 transition-all hover:border-brand/50 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/10">
+            <div class="pl-5 text-gray-400 group-focus-within:text-brand transition-colors">
+                <i class="fa-solid fa-link text-lg" id="input-icon"></i>
+            </div>
+            <input type="text" name="url" id="url-input" required placeholder="Paste target URL or enter search query..." 
+                class="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:ring-0 text-lg h-14 font-medium w-full font-sans">
+            <button type="submit" id="submit-btn" class="bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3.5 px-8 rounded-xl transition-all flex items-center gap-2.5 shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)] hover:-translate-y-0.5 active:translate-y-0">
+                <span id="btn-text">Analyze</span>
+                <i class="fa-solid fa-wand-magic-sparkles" id="btn-icon"></i>
+            </button>
+        </div>
+
+        <!-- Search Results (Hidden by default) -->
+        <div id="search-results" class="hidden mb-8 animate-fade-in">
+            <div class="glass-card rounded-2xl p-6 border border-white/5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-white font-bold flex items-center gap-2">
+                        <i class="fa-brands fa-google text-brand"></i>
+                        Search Results
+                    </h3>
+                    <span class="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">Powered by Search Engine</span>
+                </div>
+                <div id="results-list" class="space-y-3">
+                    <!-- Results injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Panel -->
+        <div class="glass-card rounded-3xl p-8 border border-white/5 relative overflow-hidden">
+            
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-brand shadow-inner">
+                        <i class="fa-solid fa-sliders text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-display font-bold text-white leading-none tracking-tight">OneClick</h1>
-                        <p class="text-[10px] text-brand font-medium tracking-[0.2em] mt-1 uppercase">DataScrape AI</p>
+                        <h2 class="text-xl font-bold text-white font-display">Configuration</h2>
+                        <p class="text-xs text-gray-500">Customize extraction parameters</p>
                     </div>
                 </div>
-
-                <!-- Navigation -->
-                <nav class="px-4 space-y-2 mt-4">
-                    <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-grid-2 text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="{% url 'new_scrape' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)] relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <i class="fa-solid fa-globe text-lg w-6 text-center relative z-10"></i>
-                        <span class="relative z-10">Scraper</span>
-                    </a>
-                    <a href="{% url 'history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-clock-rotate-left text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>History</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-code text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>API Reference</span>
-                    </a>
-                    <a href="{% url 'settings' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-gear text-lg w-6 text-center group-hover:text-brand transition-colors"></i>
-                        <span>Settings</span>
-                    </a>
-                </nav>
-            </div>
-
-            <!-- Bottom Section (Usage & User) -->
-            <div class="p-4 space-y-4">
-                <!-- User Profile -->
-                <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center text-brand font-bold shadow-lg group-hover:shadow-brand/20 transition-all">
-                        {{ user.username|make_list|first|upper }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-white truncate group-hover:text-brand transition-colors">{{ user.username|default:"Alex Rivera" }}</p>
-                        <p class="text-xs text-gray-500 truncate font-mono">Pro Plan</p>
-                    </div>
-                    <i class="fa-solid fa-arrow-right-from-bracket text-gray-600 group-hover:text-red-400 transition-colors"></i>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto relative z-10 scroll-smooth">
-            <!-- Top Header -->
-            <header class="sticky top-0 z-20 glass border-b-0 border-b border-white/5 px-8 py-4 flex items-center justify-between">
-                <!-- Breadcrumbs -->
-                <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
-                    <span class="hover:text-gray-300 transition-colors cursor-pointer">Pages</span>
-                    <i class="fa-solid fa-chevron-right text-[10px] opacity-50"></i>
-                    <span class="text-white bg-white/5 px-2 py-0.5 rounded text-xs border border-white/5">New Scrape</span>
-                </div>
-
-                <!-- Right Actions -->
-                <div class="flex items-center gap-6">
-                    <!-- Notifications -->
-                    <button class="relative text-gray-400 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
-                        <i class="fa-solid fa-bell text-lg"></i>
-                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-dark-bg animate-pulse"></span>
-                    </button>
-                </div>
-            </header>
-
-            <div class="p-8 max-w-5xl mx-auto space-y-8 pb-20">
                 
-                <!-- Heading Section -->
-                <div class="text-center mb-10 animate-slide-up">
-                    <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4 tracking-tight">
-                        Start New <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-blue-400">Extraction</span>
-                    </h1>
-                    <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Enter a URL below to launch our AI-powered scraper. We'll handle the proxy rotation, CAPTCHA solving, and data structuring.
-                    </p>
-                </div>
-
-                <!-- Main Form -->
-                <form action="{% url 'scrape_progress' %}" method="GET" class="animate-slide-up delay-100">
-                    
-                    <!-- URL Input -->
-                    <div class="group relative glass-card p-2 flex items-center gap-3 rounded-2xl mb-8 transition-all hover:border-brand/50 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/10">
-                        <div class="pl-5 text-gray-400 group-focus-within:text-brand transition-colors">
-                            <i class="fa-solid fa-link text-lg"></i>
-                        </div>
-                        <input type="text" name="url" required placeholder="Paste target URL or enter search query..." 
-                            class="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:ring-0 text-lg h-14 font-medium w-full font-sans">
-                        <button type="submit" class="bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3.5 px-8 rounded-xl transition-all flex items-center gap-2.5 shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)] hover:-translate-y-0.5 active:translate-y-0">
-                            <span>Analyze</span>
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        </button>
+                <!-- Auto-Save Toggle -->
+                <div class="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
+                    <span id="auto-save-label" class="text-[10px] font-bold text-brand uppercase tracking-wider">Auto-Save On</span>
+                    <div class="relative inline-block w-8 align-middle select-none transition duration-200 ease-in">
+                        <input type="checkbox" name="auto_save" id="auto-save-toggle" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-2 appearance-none cursor-pointer checked:right-0 checked:border-brand transition-all duration-300 shadow-sm" checked/>
+                        <label for="auto-save-toggle" class="toggle-label block overflow-hidden h-4 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300 checked:bg-brand"></label>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Configuration Panel -->
-                    <div class="glass-card rounded-3xl p-8 border border-white/5 relative overflow-hidden">
-                        
-                        <!-- Header -->
-                        <div class="flex items-center justify-between mb-8">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-brand shadow-inner">
-                                    <i class="fa-solid fa-sliders text-xl"></i>
+            <div class="grid md:grid-cols-2 gap-12 relative">
+                <!-- Divider (Vertical) -->
+                <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
+
+                <!-- Left Column -->
+                <div class="space-y-8">
+                    <!-- AI Toggle -->
+                    <div class="bg-white/5 border border-white/5 rounded-2xl p-5 hover:bg-white/10 transition-colors group cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-start gap-4">
+                                <div class="mt-1 text-brand group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-robot text-xl"></i>
                                 </div>
                                 <div>
-                                    <h2 class="text-xl font-bold text-white font-display">Configuration</h2>
-                                    <p class="text-xs text-gray-500">Customize extraction parameters</p>
+                                    <h3 class="font-bold text-white text-sm mb-1">AI Auto-Detect</h3>
+                                    <p class="text-xs text-gray-400 leading-relaxed">Use LLMs to automatically identify products, tables, and lists without manual selectors.</p>
                                 </div>
                             </div>
                             
-                            <!-- Auto-Save Toggle -->
-                            <div class="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
-                                <span id="auto-save-label" class="text-[10px] font-bold text-brand uppercase tracking-wider">Auto-Save On</span>
-                                <div class="relative inline-block w-8 align-middle select-none transition duration-200 ease-in">
-                                    <input type="checkbox" name="auto_save" id="auto-save-toggle" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-2 appearance-none cursor-pointer checked:right-0 checked:border-brand transition-all duration-300 shadow-sm" checked/>
-                                    <label for="auto-save-toggle" class="toggle-label block overflow-hidden h-4 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300 checked:bg-brand"></label>
-                                </div>
+                            <!-- Toggle Switch -->
+                            <div class="relative inline-block w-10 align-middle select-none">
+                                <input type="checkbox" name="ai_toggle" id="ai-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 appearance-none cursor-pointer checked:right-0 checked:border-brand transition-all duration-300" checked/>
+                                <label for="ai-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300 checked:bg-brand/50"></label>
                             </div>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-12 relative">
-                            <!-- Divider (Vertical) -->
-                            <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
-
-                            <!-- Left Column -->
-                            <div class="space-y-8">
-                                <!-- AI Toggle -->
-                                <div class="bg-white/5 border border-white/5 rounded-2xl p-5 hover:bg-white/10 transition-colors group cursor-pointer">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-start gap-4">
-                                            <div class="mt-1 text-brand group-hover:scale-110 transition-transform">
-                                                <i class="fa-solid fa-robot text-xl"></i>
-                                            </div>
-                                            <div>
-                                                <h3 class="font-bold text-white text-sm mb-1">AI Auto-Detect</h3>
-                                                <p class="text-xs text-gray-400 leading-relaxed">Use LLMs to automatically identify products, tables, and lists without manual selectors.</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Toggle Switch -->
-                                        <div class="relative inline-block w-10 align-middle select-none">
-                                            <input type="checkbox" name="ai_toggle" id="ai-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 appearance-none cursor-pointer checked:right-0 checked:border-brand transition-all duration-300" checked/>
-                                            <label for="ai-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300 checked:bg-brand/50"></label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Content Type -->
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 ml-1">Content Type</label>
-                                    <div class="relative group/select">
-                                        <select name="content_type" class="w-full bg-dark-bg/50 border border-white/10 text-white text-sm rounded-xl px-4 py-4 pl-12 appearance-none focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand cursor-pointer transition-all hover:border-white/20 hover:bg-dark-bg/80 font-medium">
-                                            <option value="ecommerce">E-commerce Products</option>
-                                            <option value="real_estate">Real Estate Listings</option>
-                                            <option value="articles">Articles / Blogs</option>
-                                            <option value="table">Table Data</option>
-                                            <option value="contact">Contact Information</option>
-                                        </select>
-                                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none group-hover/select:text-white transition-colors">
-                                            <i class="fa-solid fa-chevron-down text-xs"></i>
-                                        </div>
-                                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-brand pointer-events-none text-lg">
-                                            <i class="fa-solid fa-bag-shopping"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Right Column -->
-                            <div class="space-y-8">
-                                <!-- Export Format -->
-                                <div>
-                                    <div class="flex items-center justify-between mb-3">
-                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Export Format</label>
-                                        <span class="text-xs text-brand cursor-pointer hover:text-white transition-colors">View Samples</span>
-                                    </div>
-                                    
-                                    <input type="hidden" name="export_format" id="export_format_input" value="CSV">
-                                    <div class="grid grid-cols-3 gap-3">
-                                        <button type="button" data-format="CSV" class="format-btn flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-white/10 bg-dark-bg/30 hover:bg-white/10 hover:border-white/30 transition-all group/btn active-format relative overflow-hidden">
-                                            <div class="absolute inset-0 bg-brand/5 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
-                                            <i class="fa-solid fa-file-csv text-2xl text-gray-500 group-hover/btn:text-white group-hover/btn:scale-110 transition-all"></i>
-                                            <span class="text-[10px] font-bold text-gray-500 group-hover/btn:text-white uppercase tracking-wider">CSV</span>
-                                        </button>
-                                        <button type="button" data-format="JSON" class="format-btn flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-white/10 bg-dark-bg/30 hover:bg-white/10 hover:border-white/30 transition-all group/btn relative overflow-hidden">
-                                            <div class="absolute inset-0 bg-brand/5 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
-                                            <i class="fa-solid fa-file-code text-2xl text-gray-500 group-hover/btn:text-white group-hover/btn:scale-110 transition-all"></i>
-                                            <span class="text-[10px] font-bold text-gray-500 group-hover/btn:text-white uppercase tracking-wider">JSON</span>
-                                        </button>
-                                        <button type="button" data-format="EXCEL" class="format-btn flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-white/10 bg-dark-bg/30 hover:bg-white/10 hover:border-white/30 transition-all group/btn relative overflow-hidden">
-                                            <div class="absolute inset-0 bg-brand/5 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
-                                            <i class="fa-solid fa-file-excel text-2xl text-gray-500 group-hover/btn:text-white group-hover/btn:scale-110 transition-all"></i>
-                                            <span class="text-[10px] font-bold text-gray-500 group-hover/btn:text-white uppercase tracking-wider">Excel</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Footer -->
-                        <div class="mt-10 pt-8 border-t border-white/10 flex items-center justify-between">
-                            <div class="flex items-center gap-2 text-xs text-gray-400">
-                                <i class="fa-solid fa-info-circle text-brand"></i>
-                                <span>Estimates are based on average page size.</span>
-                            </div>
-                            <button type="button" class="text-sm font-bold text-gray-500 hover:text-white transition-colors px-4 py-2" onclick="alert('Template saved successfully!')">
-                                <i class="fa-regular fa-bookmark mr-2"></i>Save Template
-                            </button>
                         </div>
                     </div>
 
-                </form>
+                    <!-- Content Type -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 ml-1">Content Type</label>
+                        <div class="relative group/select">
+                            <select name="content_type" class="w-full bg-dark-bg/50 border border-white/10 text-white text-sm rounded-xl px-4 py-4 pl-12 appearance-none focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand cursor-pointer transition-all hover:border-white/20 hover:bg-dark-bg/80 font-medium">
+                                <option value="ecommerce">E-commerce Products</option>
+                                <option value="real_estate">Real Estate Listings</option>
+                                <option value="articles">Articles / Blogs</option>
+                                <option value="table">Table Data</option>
+                                <option value="contact">Contact Information</option>
+                            </select>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none group-hover/select:text-white transition-colors">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-brand pointer-events-none text-lg">
+                                <i class="fa-solid fa-bag-shopping"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Right Column -->
+                <div class="space-y-8">
+                    <!-- Export Format -->
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Export Format</label>
+                            <span class="text-xs text-brand cursor-pointer hover:text-white transition-colors">View Samples</span>
+                        </div>
+                        
+                        <input type="hidden" name="export_format" id="export_format_input" value="CSV">
+                        <div class="grid grid-cols-3 gap-3">
+                            <button type="button" data-format="CSV" class="format-btn flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-white/10 bg-dark-bg/30 hover:bg-white/10 hover:border-white/30 transition-all group/btn active-format relative overflow-hidden">
+                                <div class="absolute inset-0 bg-brand/5 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
+                                <i class="fa-solid fa-file-csv text-2xl text-gray-500 group-hover/btn:text-white group-hover/btn:scale-110 transition-all"></i>
+                                <span class="text-[10px] font-bold text-gray-500 group-hover/btn:text-white uppercase tracking-wider">CSV</span>
+                            </button>
+                            <button type="button" data-format="JSON" class="format-btn flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-white/10 bg-dark-bg/30 hover:bg-white/10 hover:border-white/30 transition-all group/btn relative overflow-hidden">
+                                <div class="absolute inset-0 bg-brand/5 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
+                                <i class="fa-solid fa-file-code text-2xl text-gray-500 group-hover/btn:text-white group-hover/btn:scale-110 transition-all"></i>
+                                <span class="text-[10px] font-bold text-gray-500 group-hover/btn:text-white uppercase tracking-wider">JSON</span>
+                            </button>
+                            <button type="button" data-format="EXCEL" class="format-btn flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-white/10 bg-dark-bg/30 hover:bg-white/10 hover:border-white/30 transition-all group/btn relative overflow-hidden">
+                                <div class="absolute inset-0 bg-brand/5 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
+                                <i class="fa-solid fa-file-excel text-2xl text-gray-500 group-hover/btn:text-white group-hover/btn:scale-110 transition-all"></i>
+                                <span class="text-[10px] font-bold text-gray-500 group-hover/btn:text-white uppercase tracking-wider">Excel</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
-    </div>
 
-    <script>
-        // Format selection logic
-        const formatButtons = document.querySelectorAll('.format-btn');
-        const formatInput = document.getElementById('export_format_input');
+            <!-- Footer -->
+            <div class="mt-10 pt-8 border-t border-white/10 flex items-center justify-between">
+                <div class="flex items-center gap-2 text-xs text-gray-400">
+                    <i class="fa-solid fa-info-circle text-brand"></i>
+                    <span>Estimates are based on average page size.</span>
+                </div>
+                <button type="button" class="text-sm font-bold text-gray-500 hover:text-white transition-colors px-4 py-2" onclick="alert('Template saved successfully!')">
+                    <i class="fa-regular fa-bookmark mr-2"></i>Save Template
+                </button>
+            </div>
+        </div>
 
-        // Initial set (CSV)
-        const setFormat = (btn) => {
-            // Remove active state from all
-            formatButtons.forEach(b => {
-                b.classList.remove('bg-brand/10', 'border-brand', 'text-white', 'ring-1', 'ring-brand');
-                b.classList.add('border-white/10', 'text-gray-500');
-                b.querySelector('i').classList.remove('text-white', 'text-brand');
-                b.querySelector('span').classList.remove('text-white', 'text-brand');
-            });
-            
-            // Add active state to selected
-            btn.classList.remove('border-white/10', 'text-gray-500');
-            btn.classList.add('bg-brand/10', 'border-brand', 'text-white', 'ring-1', 'ring-brand');
-            btn.querySelector('i').classList.add('text-brand');
-            btn.querySelector('span').classList.add('text-white');
-            
-            formatInput.value = btn.getAttribute('data-format');
-        }
+    </form>
+</div>
+{% endblock %}
 
-        formatButtons.forEach(btn => {
-            btn.addEventListener('click', () => setFormat(btn));
+{% block scripts %}
+<script>
+    // Format selection logic
+    const formatButtons = document.querySelectorAll('.format-btn');
+    const formatInput = document.getElementById('export_format_input');
+
+    // Initial set (CSV)
+    const setFormat = (btn) => {
+        // Remove active state from all
+        formatButtons.forEach(b => {
+            b.classList.remove('bg-brand/10', 'border-brand', 'text-white', 'ring-1', 'ring-brand');
+            b.classList.add('border-white/10', 'text-gray-500');
+            b.querySelector('i').classList.remove('text-white', 'text-brand');
+            b.querySelector('span').classList.remove('text-white', 'text-brand');
         });
+        
+        // Add active state to selected
+        btn.classList.remove('border-white/10', 'text-gray-500');
+        btn.classList.add('bg-brand/10', 'border-brand', 'text-white', 'ring-1', 'ring-brand');
+        btn.querySelector('i').classList.add('text-brand');
+        btn.querySelector('span').classList.add('text-white');
+        
+        formatInput.value = btn.getAttribute('data-format');
+    }
 
-        // Initialize first button as active
-        if(formatButtons.length > 0) {
-            setFormat(formatButtons[0]);
-        }
+    formatButtons.forEach(btn => {
+        btn.addEventListener('click', () => setFormat(btn));
+    });
 
-        // Auto-Save Toggle Logic
-        const autoSaveToggle = document.getElementById('auto-save-toggle');
-        const autoSaveLabel = document.getElementById('auto-save-label');
+    // Initialize first button as active
+    if(formatButtons.length > 0) {
+        setFormat(formatButtons[0]);
+    }
 
+    // Auto-Save Toggle Logic
+    const autoSaveToggle = document.getElementById('auto-save-toggle');
+    const autoSaveLabel = document.getElementById('auto-save-label');
+
+    if(autoSaveToggle && autoSaveLabel) {
         autoSaveToggle.addEventListener('change', function() {
             if(this.checked) {
                 autoSaveLabel.textContent = 'Auto-Save On';
@@ -396,6 +257,152 @@
                 autoSaveLabel.classList.add('text-gray-500');
             }
         });
-    </script>
-</body>
-</html>
+    }
+
+    // Search Engine Logic
+    const scrapeForm = document.getElementById('scrape-form');
+    const urlInput = document.getElementById('url-input');
+    const inputIcon = document.getElementById('input-icon');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
+    const searchResults = document.getElementById('search-results');
+    const resultsList = document.getElementById('results-list');
+
+    // Toggle icon based on input type
+    urlInput.addEventListener('input', function() {
+        const val = this.value.trim();
+        if (val.startsWith('http')) {
+            inputIcon.className = 'fa-solid fa-link text-lg';
+            btnText.textContent = 'Analyze';
+            btnIcon.className = 'fa-solid fa-wand-magic-sparkles';
+        } else if (val.length > 0) {
+            inputIcon.className = 'fa-solid fa-magnifying-glass text-lg';
+            btnText.textContent = 'Search';
+            btnIcon.className = 'fa-solid fa-arrow-right';
+        }
+    });
+
+    scrapeForm.addEventListener('submit', function(e) {
+        const query = urlInput.value.trim();
+        const looksLikeDomain = query.length > 0 && !query.includes(' ') && query.includes('.');
+        
+        // If it looks like a URL, let standard submission happen
+        if (query.startsWith('http')) {
+            return;
+        }
+        if (looksLikeDomain) {
+            urlInput.value = `https://${query}`;
+            return;
+        }
+
+        // Otherwise, perform search
+        e.preventDefault();
+        
+        // Loading State
+        const originalBtnText = btnText.textContent;
+        const originalBtnIconClass = btnIcon.className;
+        
+        submitBtn.disabled = true;
+        btnText.textContent = 'Searching...';
+        btnIcon.className = 'fa-solid fa-circle-notch fa-spin';
+        
+        // Clear previous results
+        searchResults.classList.add('hidden');
+        resultsList.innerHTML = '';
+
+        // Fetch Results
+        fetch(`/api/search-proxy/?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    searchResults.classList.remove('hidden');
+                    resultsList.innerHTML = `<div class="text-sm text-gray-400">${data.error}</div>`;
+                    return;
+                }
+                if (data.results && data.results.length > 0) {
+                    // Populate results
+                    data.results.forEach(result => {
+                        // Handle both old (string) and new (object) formats
+                        const isObj = typeof result === 'object';
+                        const url = isObj ? result.link : result;
+                        const title = isObj ? (result.title || url) : url;
+                        const snippet = isObj ? (result.snippet || 'No description available.') : '';
+                        const displayLink = isObj ? (result.displayLink || new URL(url).hostname) : url;
+
+                        const div = document.createElement('div');
+                        div.className = 'mb-8 font-sans animate-fade-in border-b border-white/5 pb-6 last:border-0';
+                        
+                        // Click handler
+                        const selectResult = () => {
+                            urlInput.value = url;
+                            searchResults.classList.add('hidden');
+                            // Trigger standard submission
+                            scrapeForm.submit();
+                        };
+
+                        div.innerHTML = `
+                            <!-- Header: URL info -->
+                            <div class="flex items-center gap-3 mb-2 cursor-pointer group w-fit" onclick="window.open('${url}', '_blank')">
+                                <div class="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-xs text-gray-400 border border-white/5 overflow-hidden">
+                                     <img src="https://www.google.com/s2/favicons?domain=${url}&sz=32" class="w-4 h-4" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-globe\\'></i>'"/>
+                                </div>
+                                <div class="flex flex-col">
+                                     <span class="text-sm text-[#dadce0] font-medium group-hover:text-white transition-colors">${displayLink}</span>
+                                     <span class="text-xs text-gray-500 truncate max-w-[300px]">${url}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Title -->
+                            <h3 class="text-xl text-[#8ab4f8] font-normal hover:underline cursor-pointer mb-2 decoration-2 decoration-[#8ab4f8]/50">
+                                <span class="select-result-btn">${title}</span>
+                            </h3>
+                            
+                            <!-- Snippet -->
+                            <p class="text-sm text-[#bdc1c6] leading-relaxed max-w-3xl line-clamp-3">
+                                ${snippet}
+                            </p>
+                            
+                            <!-- Action -->
+                            <div class="mt-4 flex items-center gap-3">
+                                <button type="button" class="select-result-btn flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand/10 text-brand text-xs font-bold border border-brand/20 hover:bg-brand/20 transition-all">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Scrape This Site
+                                </button>
+                                <a href="${url}" target="_blank" class="text-xs text-gray-500 hover:text-white transition-colors flex items-center gap-1">
+                                    Visit <i class="fa-solid fa-external-link-alt text-[10px]"></i>
+                                </a>
+                            </div>
+                        `;
+                        
+                        // Add click listeners to specific elements
+                        div.querySelectorAll('.select-result-btn').forEach(el => {
+                            el.addEventListener('click', selectResult);
+                        });
+                        
+                        resultsList.appendChild(div);
+                    });
+                    
+                    // Show results container
+                    searchResults.classList.remove('hidden');
+                    
+                    // Smooth scroll to results
+                    searchResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                } else {
+                    searchResults.classList.remove('hidden');
+                    resultsList.innerHTML = '<div class="text-sm text-gray-400">No results found. Try a different query or paste a direct URL.</div>';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Search failed. Please check your connection.');
+            })
+            .finally(() => {
+                // Reset Button
+                submitBtn.disabled = false;
+                btnText.textContent = originalBtnText;
+                btnIcon.className = originalBtnIconClass;
+            });
+    });
+</script>
+{% endblock %}

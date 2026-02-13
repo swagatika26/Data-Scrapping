@@ -45,62 +45,97 @@
 
         <!-- Logo -->
         <div class="relative z-10">
-            <a href="/" class="flex items-center gap-2 group w-fit">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-blue-600 flex items-center justify-center text-white font-bold">
-                    <i class="fa-solid fa-bolt"></i>
+            <a href="/" class="flex items-center gap-3 group w-fit">
+                <!-- Icon -->
+                <div class="relative w-10 h-10 rounded-full bg-[#0B1120] border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-brand/50 transition-colors shadow-[0_0_15px_rgba(0,212,197,0.2)]">
+                    <!-- X Background -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                        <div class="w-[140%] h-[1px] bg-white rotate-45 absolute"></div>
+                        <div class="w-[140%] h-[1px] bg-white -rotate-45 absolute"></div>
+                    </div>
+                    <!-- Bars -->
+                    <div class="flex items-center gap-[4px] relative z-10">
+                        <div class="w-[4px] h-3 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_10px_rgba(0,212,197,0.4)]"></div>
+                        <div class="w-[4px] h-5 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_10px_rgba(0,212,197,0.4)]"></div>
+                        <div class="w-[4px] h-3 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_10px_rgba(0,212,197,0.4)]"></div>
+                    </div>
                 </div>
-                <span class="text-xl font-bold text-white tracking-tight">OneClick</span>
-                <span class="ml-2 text-[10px] bg-brand/20 text-brand px-2 py-0.5 rounded-full border border-brand/20 font-medium">AI-POWERED</span>
+                <!-- Text -->
+                <div class="flex items-center font-display font-bold text-2xl tracking-tight uppercase">
+                    <span class="text-white">Scrapy</span>
+                    <span class="text-brand">X</span>
+                </div>
+                <span class="ml-2 text-[10px] bg-brand/10 text-brand px-2 py-0.5 rounded-full border border-brand/20 font-medium self-start mt-1">AI</span>
             </a>
         </div>
 
         <!-- Main Content -->
-        <div class="relative z-10 max-w-lg">
-            <h1 class="text-5xl font-bold text-white mb-6 leading-tight">
-                Welcome back to <br>
-                <span class="text-brand">OneClick.</span>
+        <div class="relative z-10 max-w-xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 mb-6 animate-fade-in-up">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
+                </span>
+                <span class="text-xs font-bold text-brand tracking-wider uppercase">v2.0 Now Live</span>
+            </div>
+
+            <h1 class="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight tracking-tight">
+                Turn Websites into <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-blue-400 to-purple-500 animate-gradient-x">Structured Data.</span>
             </h1>
-            <p class="text-gray-400 text-lg mb-10 leading-relaxed">
-                Log in to access your scraping dashboard, manage agents, and export your data.
+            
+            <p class="text-gray-400 text-lg mb-10 leading-relaxed font-light max-w-md">
+                Stop writing brittle scrapers. Use our <strong>AI Agents</strong> to extract clean, ready-to-use data from any URL in seconds.
             </p>
 
-            <!-- Feature Cards -->
-            <div class="space-y-4">
-                <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4 hover:bg-white/10 transition-colors cursor-default">
-                    <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand shrink-0">
-                        <i class="fa-solid fa-chart-line"></i>
+            <!-- Creative Feature Stack -->
+            <div class="space-y-4 relative">
+                <!-- Connecting Line -->
+                <div class="absolute left-6 top-4 bottom-4 w-0.5 bg-gradient-to-b from-brand/50 to-transparent"></div>
+
+                <!-- Feature 1 -->
+                <div class="group relative bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-4 pl-20 hover:bg-white/5 transition-all duration-300 hover:translate-x-2 hover:border-brand/30">
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-dark-bg border border-brand text-brand flex items-center justify-center z-10 shadow-[0_0_15px_rgba(0,212,197,0.3)]">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
                     </div>
-                    <div>
-                        <h3 class="text-white font-semibold mb-1">Real-time Analytics</h3>
-                        <p class="text-sm text-gray-400">Monitor your scraping jobs and data extraction progress live.</p>
-                    </div>
+                    <h3 class="text-white font-bold text-base mb-1 group-hover:text-brand transition-colors">AI-Powered Extraction</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">No CSS selectors needed. Our LLM understands product details, reviews, and tables automatically.</p>
                 </div>
 
-                <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4 hover:bg-white/10 transition-colors cursor-default">
-                    <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand shrink-0">
-                        <i class="fa-solid fa-robot"></i>
+                <!-- Feature 2 -->
+                <div class="group relative bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-4 pl-20 hover:bg-white/5 transition-all duration-300 hover:translate-x-2 hover:border-blue-500/30 delay-75">
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-dark-bg border border-blue-500 text-blue-500 flex items-center justify-center z-10 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                        <i class="fa-solid fa-shield-halved text-xs"></i>
                     </div>
-                    <div>
-                        <h3 class="text-white font-semibold mb-1">Agent Management</h3>
-                        <p class="text-sm text-gray-400">Configure and deploy your custom AI scraping agents.</p>
-                    </div>
+                    <h3 class="text-white font-bold text-base mb-1 group-hover:text-blue-400 transition-colors">Anti-Blocking Shield</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Built-in residential proxies and browser fingerprinting to bypass CAPTCHAs and firewalls.</p>
                 </div>
+
+                <!-- Feature 3 -->
+                <div class="group relative bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-4 pl-20 hover:bg-white/5 transition-all duration-300 hover:translate-x-2 hover:border-purple-500/30 delay-150">
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-dark-bg border border-purple-500 text-purple-500 flex items-center justify-center z-10 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                        <i class="fa-solid fa-file-export text-xs"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-base mb-1 group-hover:text-purple-400 transition-colors">Instant Export</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Download as CSV, JSON, or Excel. Integrate directly via API or Webhooks.</p>
+                </div>
+            </div>
+            
+            <!-- Stats Row -->
+            <div class="mt-8 flex items-center gap-6 text-xs font-mono text-gray-500 border-t border-white/5 pt-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span>System Operational</span>
+                </div>
+                <div>•</div>
+                <div>1.2M+ Pages Scraped</div>
+                <div>•</div>
+                <div>99.9% Uptime</div>
             </div>
         </div>
 
-        <!-- Testimonial -->
-        <div class="relative z-10 bg-black/20 backdrop-blur-sm rounded-2xl p-6 border border-white/5 mt-8">
-            <p class="text-gray-300 italic mb-4">"OneClick has completely revolutionized our data workflow. It's fast, reliable, and incredibly easy to use."</p>
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gray-700 overflow-hidden">
-                    <img src="https://ui-avatars.com/api/?name=Sarah+Chen&background=random" alt="Sarah Chen">
-                </div>
-                <div>
-                    <div class="text-white font-semibold text-sm">Sarah Chen</div>
-                    <div class="text-brand text-xs font-medium uppercase tracking-wider">Data Scientist @ DataCorp</div>
-                </div>
-            </div>
-        </div>
+        <!-- Testimonial (Hidden for cleaner layout or moved) -->
+        <!-- <div class="relative z-10 mt-12 group"> ... </div> -->
     </div>
 
     <!-- Right Side (Form) -->
@@ -128,9 +163,11 @@
             {% if messages %}
             <div class="mb-6">
                 {% for message in messages %}
-                <div class="p-4 rounded-lg {% if message.tags == 'error' %}bg-red-500/10 text-red-500 border border-red-500/20{% else %}bg-brand/10 text-brand border border-brand/20{% endif %} text-sm font-medium">
+                {% if message.tags == 'error' %}
+                <div class="p-4 rounded-lg bg-red-500/10 text-red-500 border border-red-500/20 text-sm font-medium">
                     {{ message }}
                 </div>
+                {% endif %}
                 {% endfor %}
             </div>
             {% endif %}

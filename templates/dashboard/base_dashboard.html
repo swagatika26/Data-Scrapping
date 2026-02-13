@@ -1,0 +1,382 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OneClick DataScrape{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#00d4c5',
+                            hover: '#00b8aa',
+                            glow: '#00d4c580',
+                        },
+                        dark: {
+                            bg: '#030712',       /* Deep almost black */
+                            sidebar: '#0B1121',  /* Slightly lighter */
+                            card: '#0f172a',     /* Card bg */
+                            border: 'rgba(255, 255, 255, 0.08)',
+                            surface: '#1e293b',
+                            input: '#1e293b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shimmer': 'shimmer 2s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
+                        },
+                        float: {
+                            '0%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-20px) rotate(2deg)' },
+                            '100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        
+        /* Sidebar Toggle Styles */
+        #dashboard-sidebar {
+            width: 6rem; /* 96px default (mini) - Increased from 5rem */
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #dashboard-sidebar.is-expanded {
+            width: 20rem; /* Expanded width - Increased from 18rem */
+            background: rgba(11, 17, 33, 0.85); /* Slightly more opaque when expanded */
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+        }
+        
+        /* Content visibility transitions */
+        .sidebar-text {
+            display: none;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        #dashboard-sidebar.is-expanded .sidebar-text {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Staggered animation for sidebar items when expanded */
+        #dashboard-sidebar.is-expanded .sidebar-text {
+            animation: fadeInSlide 0.4s forwards;
+        }
+        
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Layout adjustments for expanded state */
+        #dashboard-sidebar.is-expanded .sidebar-link {
+            justify-content: flex-start;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        #dashboard-sidebar .sidebar-link {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .glass-card:hover {
+            background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border-color: rgba(0, 212, 197, 0.3);
+            box-shadow: 0 0 15px rgba(0, 212, 197, 0.15);
+            transform: translateY(-2px);
+        }
+        .glass-panel {
+            background: rgba(10, 15, 28, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+        
+        /* Background Blobs */
+        .bg-blob-1 {
+            position: fixed; top: -10%; left: -10%; width: 50%; height: 50%;
+            background: radial-gradient(circle, rgba(0, 212, 197, 0.15) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(80px); z-index: -1; animation: blob 15s infinite alternate;
+        }
+        .bg-blob-2 {
+            position: fixed; bottom: -10%; right: -10%; width: 50%; height: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(80px); z-index: -1; animation: blob 20s infinite alternate-reverse;
+        }
+
+        /* Page specific styles override */
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-dark-bg text-gray-300 font-sans antialiased overflow-hidden selection:bg-brand selection:text-white">
+
+    <!-- Background Effects -->
+    <div class="bg-blob-1"></div>
+    <div class="bg-blob-2"></div>
+
+    <div class="flex h-screen">
+        
+        <!-- Sidebar -->
+        <aside id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 glass border-r-0 border-r border-dark-border flex flex-col justify-between shrink-0 transition-all duration-300 overflow-hidden group/sidebar">
+            <!-- Logo & Menu -->
+            <div>
+                <!-- Logo - Click to Toggle -->
+                <div class="h-24 flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors" onclick="toggleSidebar()" title="Click to toggle sidebar">
+                    <div class="flex items-center gap-3">
+                        <!-- New Logo Design -->
+                        <div class="relative w-10 h-10 shrink-0 rounded-full bg-[#0B1120] border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-brand/50 transition-colors shadow-[0_0_15px_rgba(0,212,197,0.2)]">
+                            <!-- X Background -->
+                            <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                                <div class="w-[140%] h-[1px] bg-white rotate-45 absolute"></div>
+                                <div class="w-[140%] h-[1px] bg-white -rotate-45 absolute"></div>
+                            </div>
+                            <!-- Bars -->
+                            <div class="flex items-center gap-[4px] relative z-10">
+                                <div class="w-[4px] h-3 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_10px_rgba(0,212,197,0.4)]"></div>
+                                <div class="w-[4px] h-5 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_10px_rgba(0,212,197,0.4)]"></div>
+                                <div class="w-[4px] h-3 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_10px_rgba(0,212,197,0.4)]"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-text hidden whitespace-nowrap overflow-hidden">
+                            <div class="flex items-center font-display font-bold text-2xl tracking-tight uppercase leading-none">
+                                <span class="text-white">Scrapy</span>
+                                <span class="text-brand">X</span>
+                            </div>
+                            <p class="text-[10px] text-gray-500 font-medium tracking-[0.2em] mt-1 uppercase">AI Scraper</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="px-2 space-y-2 mt-4 flex flex-col w-full">
+                    <a href="{% url 'dashboard' %}" data-tooltip="Dashboard" class="sidebar-link flex items-center gap-3 py-3 rounded-xl {% if request.resolver_match.url_name == 'dashboard' %}bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)]{% else %}text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5{% endif %} transition-all group relative overflow-hidden">
+                        {% if request.resolver_match.url_name == 'dashboard' %}
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        {% endif %}
+                        <i class="fa-solid fa-border-all text-lg w-6 text-center relative z-10 shrink-0 {% if request.resolver_match.url_name != 'dashboard' %}group-hover:text-brand transition-colors{% endif %}"></i>
+                        <span class="sidebar-text hidden relative z-10 whitespace-nowrap">Dashboard</span>
+                    </a>
+                    
+                    <a href="{% url 'new_scrape' %}" data-tooltip="Scraper" class="sidebar-link flex items-center gap-3 py-3 rounded-xl {% if request.resolver_match.url_name == 'new_scrape' %}bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)]{% else %}text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5{% endif %} transition-all group relative overflow-hidden">
+                        {% if request.resolver_match.url_name == 'new_scrape' %}
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        {% endif %}
+                        <i class="fa-solid fa-globe text-lg w-6 text-center relative z-10 shrink-0 {% if request.resolver_match.url_name != 'new_scrape' %}group-hover:text-brand transition-colors{% endif %}"></i>
+                        <span class="sidebar-text hidden relative z-10 whitespace-nowrap">Scraper</span>
+                    </a>
+                    
+                    <a href="{% url 'history' %}" data-tooltip="History" class="sidebar-link flex items-center gap-3 py-3 rounded-xl {% if request.resolver_match.url_name == 'history' %}bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)]{% else %}text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5{% endif %} transition-all group relative overflow-hidden">
+                        {% if request.resolver_match.url_name == 'history' %}
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        {% endif %}
+                        <i class="fa-solid fa-clock-rotate-left text-lg w-6 text-center relative z-10 shrink-0 {% if request.resolver_match.url_name != 'history' %}group-hover:text-brand transition-colors{% endif %}"></i>
+                        <span class="sidebar-text hidden relative z-10 whitespace-nowrap">History</span>
+                    </a>
+                    
+                    <a href="#" data-tooltip="API Reference" class="sidebar-link flex items-center gap-3 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
+                        <i class="fa-solid fa-code text-lg w-6 text-center group-hover:text-brand transition-colors shrink-0"></i>
+                        <span class="sidebar-text hidden whitespace-nowrap">API Reference</span>
+                    </a>
+                    
+                    <a href="{% url 'settings' %}" data-tooltip="Settings" class="sidebar-link flex items-center gap-3 py-3 rounded-xl {% if request.resolver_match.url_name == 'settings' %}bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)]{% else %}text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5{% endif %} transition-all group relative overflow-hidden">
+                        {% if request.resolver_match.url_name == 'settings' %}
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        {% endif %}
+                        <i class="fa-solid fa-gear text-lg w-6 text-center relative z-10 shrink-0 {% if request.resolver_match.url_name != 'settings' %}group-hover:text-brand transition-colors{% endif %}"></i>
+                        <span class="sidebar-text hidden relative z-10 whitespace-nowrap">Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Bottom Section (Usage & User) -->
+            <div class="p-2 space-y-4">
+                <!-- Usage Card (Hidden when mini) -->
+                <div class="sidebar-text hidden glass-card rounded-xl p-4 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-brand/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-brand/20 transition-all duration-500"></div>
+                    <div class="flex justify-between items-end mb-2 relative z-10">
+                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider font-display">Daily Usage</span>
+                        <span class="text-xs font-bold text-brand font-mono">{{ usage_percentage|default:"0" }}%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-dark-bg/50 rounded-full overflow-hidden mb-2 relative z-10 ring-1 ring-white/5">
+                        <div class="h-full bg-gradient-to-r from-brand to-blue-500 w-[{{ usage_percentage|default:'0' }}%] rounded-full shadow-[0_0_10px_rgba(0,212,197,0.5)]"></div>
+                    </div>
+                    <p class="text-[10px] text-gray-500 relative z-10 font-mono">{{ usage_today|default:"0" }} / {{ daily_limit|default:"100" }} Credits</p>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center gap-2 p-2 justify-center">
+                    <a href="{% url 'settings_section' 'profile' %}" data-tooltip="Profile" class="sidebar-link flex-1 flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center text-brand font-bold shadow-lg group-hover:shadow-brand/20 transition-all shrink-0 overflow-hidden">
+                            {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" alt="Profile" class="w-full h-full object-cover">
+                            {% else %}
+                                {{ user.username|make_list|first|upper }}
+                            {% endif %}
+                        </div>
+                        <div class="sidebar-text hidden flex-1 min-w-0">
+                            <p class="text-sm font-bold text-white truncate group-hover:text-brand transition-colors">{{ user.username|default:"Alex Rivera" }}</p>
+                            <div class="flex flex-col">
+                                <p class="text-[10px] text-gray-400 font-mono">ID: <span class="text-brand">{{ user.id|default:'N/A' }}</span></p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+        </aside>
+
+        <!-- Main Content -->
+        <!-- Note: ml-24 is 6rem, which matches the collapsed sidebar width -->
+        <main class="flex-1 ml-24 overflow-y-auto relative z-10 scroll-smooth">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    {% if messages %}
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none">
+        {% for message in messages %}
+        <div class="pointer-events-auto bg-dark-card border border-white/10 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-slide-up backdrop-blur-md min-w-[300px]">
+            {% if message.tags == 'error' %}
+                <i class="fa-solid fa-circle-exclamation text-red-500"></i>
+            {% else %}
+                <i class="fa-solid fa-circle-check text-brand"></i>
+            {% endif %}
+            <span class="text-sm font-medium flex-1">{{ message }}</span>
+            <button onclick="this.parentElement.remove()" class="text-gray-500 hover:text-white transition-colors ml-2"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        // Auto-dismiss toasts
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const toasts = document.querySelectorAll('#toast-container > div');
+                toasts.forEach((t, index) => {
+                    setTimeout(() => {
+                        t.style.transition = 'all 0.5s ease';
+                        t.style.opacity = '0';
+                        t.style.transform = 'translateY(20px)';
+                        setTimeout(() => t.remove(), 500);
+                    }, index * 200); // Stagger dismissal
+                });
+            }, 4000);
+        });
+    </script>
+    {% endif %}
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('dashboard-sidebar');
+            sidebar.classList.toggle('is-expanded');
+        }
+    </script>
+    
+    <!-- Sidebar Tooltip -->
+    <div id="sidebar-tooltip" class="fixed z-[100] bg-dark-surface border border-white/10 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-xl opacity-0 transition-opacity duration-200 pointer-events-none transform -translate-y-1/2 left-0 top-0 hidden">
+        Tooltip
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltip = document.getElementById('sidebar-tooltip');
+            const sidebar = document.getElementById('dashboard-sidebar');
+            const links = document.querySelectorAll('[data-tooltip]');
+
+            links.forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    if (sidebar.classList.contains('is-expanded')) return;
+                    
+                    const text = link.getAttribute('data-tooltip');
+                    tooltip.textContent = text;
+                    tooltip.classList.remove('hidden');
+                    
+                    // Force layout update
+                    void tooltip.offsetWidth;
+                    
+                    const rect = link.getBoundingClientRect();
+                    tooltip.style.top = `${rect.top + rect.height / 2}px`;
+                    tooltip.style.left = `${rect.right + 12}px`;
+                    tooltip.style.opacity = '1';
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                    setTimeout(() => {
+                        if (tooltip.style.opacity === '0') {
+                            tooltip.classList.add('hidden');
+                        }
+                    }, 200);
+                });
+            });
+        });
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

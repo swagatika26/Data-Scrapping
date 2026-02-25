@@ -93,7 +93,11 @@
                             </div>
                         </div>
                         <div class="flex-1 text-center md:text-left">
-                            <h3 class="text-2xl font-bold text-white font-display">{{ user.first_name }} {{ user.last_name|default:user.username }}</h3>
+                            {% if user.first_name or user.last_name %}
+                            <h3 class="text-2xl font-bold text-white font-display">{{ user.first_name }}{% if user.last_name %} {{ user.last_name }}{% endif %}</h3>
+                            {% else %}
+                            <h3 class="text-2xl font-bold text-white font-display">{{ user.username }}</h3>
+                            {% endif %}
                             <p class="text-sm text-gray-400 mt-1 flex items-center justify-center md:justify-start gap-2">
                                 <span>{{ user.job_title|default:"Senior Data Architect" }}</span>
                                 <span class="w-1 h-1 rounded-full bg-gray-500"></span>
@@ -215,7 +219,7 @@
                     <!-- Background decoration -->
                     <div class="absolute top-0 right-0 w-64 h-64 bg-brand/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-brand/10 transition-all"></div>
 
-                    <div class="flex flex-col xl:flex-row justify-between items-center mb-8 gap-6 relative z-10">
+                    <div class="flex flex-col xl:flex-row justify-between items-center gap-6 relative z-10">
                         <div class="flex items-center gap-4 shrink-0 w-full xl:w-auto">
                             <div class="w-14 h-14 rounded-xl bg-brand/10 flex items-center justify-center text-brand text-2xl border border-brand/20">
                                 <i class="fa-solid fa-rocket"></i>
@@ -229,31 +233,30 @@
                             </div>
                         </div>
 
-                        <!-- Compact Credit Usage (Moved) -->
-                        <div class="flex-1 w-full xl:max-w-xl mx-4 bg-black/40 rounded-xl p-4 border border-white/5 relative overflow-hidden group">
-                             <div class="flex justify-between items-end mb-2 relative z-10">
-                                <div>
-                                    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">MONTHLY CREDIT USAGE</p>
-                                    <div class="flex items-baseline gap-2">
-                                        <span class="text-2xl font-bold text-white font-display">{{ credits_used|intcomma }}</span>
-                                        <span class="text-gray-500 font-mono text-sm">/ {{ credits_limit|intcomma }}</span>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-brand font-bold text-sm"><i class="fa-solid fa-chart-line mr-1"></i> {{ credits_percent|default:0 }}% Consumed</p>
-                                    <p class="text-xs text-gray-500">Resetting in 12 days</p>
-                                </div>
-                            </div>
-                            <div class="h-2 w-full bg-dark-bg rounded-full overflow-hidden border border-white/5">
-                                <div class="h-full bg-brand rounded-full relative overflow-hidden shadow-[0_0_10px_rgba(0,212,197,0.3)]" style="width: {{ credits_percent|default:0 }}%;"></div>
-                            </div>
-                        </div>
-
                         <div class="flex flex-col items-end shrink-0 w-full xl:w-auto">
                             <button class="w-full xl:w-auto px-6 py-2 bg-brand hover:bg-brand-hover text-dark-bg font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(0,212,197,0.3)] hover:shadow-[0_0_25px_rgba(0,212,197,0.5)]" onclick="togglePlanModal()">
                                 Manage Subscription
                             </button>
                             <p class="text-[10px] text-gray-500 mt-1.5 text-center xl:text-right"><i class="fa-solid fa-clock mr-1"></i>Changes apply on {{ renewal_date }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 bg-black/40 rounded-2xl p-6 border border-white/5 relative overflow-hidden">
+                        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
+                            <div>
+                                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Monthly Credit Usage</p>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-3xl font-bold text-white font-display">{{ credits_used|intcomma }}</span>
+                                    <span class="text-gray-500 font-mono text-sm">/ {{ credits_limit|intcomma }}</span>
+                                </div>
+                            </div>
+                            <div class="text-left md:text-right">
+                                <p class="text-brand font-bold text-sm"><i class="fa-solid fa-chart-line mr-1"></i> {{ credits_percent|default:0 }}% Consumed</p>
+                                <p class="text-xs text-gray-500">Resetting in 12 days</p>
+                            </div>
+                        </div>
+                        <div class="h-3 w-full bg-dark-bg rounded-full overflow-hidden border border-white/5">
+                            <div class="h-full bg-brand rounded-full relative overflow-hidden shadow-[0_0_10px_rgba(0,212,197,0.3)]" style="width: {{ credits_percent|default:0 }}%;"></div>
                         </div>
                     </div>
                 </div>

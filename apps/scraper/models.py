@@ -31,3 +31,19 @@ class ScrapedData(models.Model):
 
     def __str__(self):
         return f"Data for Job {self.job_id}"
+
+class ScrapeLog(models.Model):
+    LEVEL_CHOICES = (
+        ('INFO', 'Info'),
+        ('WARNING', 'Warning'),
+        ('ERROR', 'Error'),
+    )
+
+    job = models.ForeignKey(ScraperJob, on_delete=models.CASCADE, related_name='logs')
+    level = models.CharField(max_length=10, choices=LEVEL_CHOICES, default='INFO')
+    message = models.TextField()
+    metadata = models.JSONField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.job_id} - {self.level}"

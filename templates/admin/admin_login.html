@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Gateway - ScrapyX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: radial-gradient(1200px 600px at 20% 50%, rgba(72, 59, 255, 0.35), transparent 60%),
+                        linear-gradient(120deg, #0b0f14, #0e1116 40%, #111418);
+            color: #e8edf7;
+        }
+        .nav-link {
+            color: #98a2b3;
+            font-size: 0.85rem;
+        }
+        .nav-link:hover {
+            color: #ffffff;
+        }
+        .panel {
+            background: #0b0e12;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+        }
+        .glass {
+            background: rgba(14, 18, 26, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .neural-core {
+            width: 210px;
+            height: 210px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, #0b0f14 35%, #0c1b24 60%, #0b0e12 100%);
+            box-shadow: 0 0 0 14px rgba(72, 59, 255, 0.2), 0 0 60px rgba(72, 59, 255, 0.45);
+            border: 2px solid rgba(46, 211, 201, 0.5);
+            display: grid;
+            place-items: center;
+        }
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2ed3c9;
+            box-shadow: 0 0 12px #2ed3c9;
+        }
+        .form-control {
+            background: #0d121a;
+            border-color: rgba(255, 255, 255, 0.08);
+            color: #e8edf7;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(46, 211, 201, 0.25);
+            border-color: #2ed3c9;
+        }
+        .btn-accent {
+            background: #2ed3c9;
+            color: #061316;
+            border: none;
+        }
+        .btn-accent:hover {
+            background: #29bdb5;
+            color: #061316;
+        }
+        .tag {
+            background: rgba(46, 211, 201, 0.1);
+            color: #2ed3c9;
+            border: 1px solid rgba(46, 211, 201, 0.2);
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.7rem;
+        }
+        .footer-stat {
+            color: #98a2b3;
+            font-size: 0.75rem;
+        }
+        .admin-brand {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .admin-logo {
+            width: 82px;
+            height: 82px;
+            flex: 0 0 auto;
+            filter: drop-shadow(0 0 20px rgba(46, 211, 201, 0.25));
+        }
+        .admin-wordmark {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            line-height: 1;
+        }
+        .admin-wordmark .accent {
+            color: #17d4c3;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg py-3">
+        <div class="container">
+            <a class="admin-brand" href="{% url 'home' %}">
+                <svg class="admin-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="logoBars" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#2ed3c9"/>
+                            <stop offset="100%" stop-color="#8b5cf6"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="60" cy="60" r="50" fill="#0b0f14" stroke="#242c35" stroke-width="4"/>
+                    <line x1="25" y1="25" x2="95" y2="95" stroke="#2b333d" stroke-width="4"/>
+                    <line x1="95" y1="25" x2="25" y2="95" stroke="#2b333d" stroke-width="4"/>
+                    <rect x="45" y="42" width="10" height="36" rx="6" fill="url(#logoBars)"/>
+                    <rect x="60" y="34" width="10" height="52" rx="6" fill="url(#logoBars)"/>
+                    <rect x="75" y="42" width="10" height="36" rx="6" fill="url(#logoBars)"/>
+                </svg>
+                <span class="admin-wordmark"><span>SCRAPY</span><span class="accent">X</span></span>
+            </a>
+            <div class="d-flex gap-4">
+                <a class="nav-link" href="{% url 'admin_dashboard' %}">System Status</a>
+            </div>
+            <span class="text-secondary small d-none d-lg-inline">SECURE NODE: C8B2...F42</span>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-7">
+                <div class="panel p-4 h-100">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="pulse-dot"></div>
+                        <div class="text-uppercase small text-secondary">Encrypted Core</div>
+                    </div>
+                    <div class="d-flex flex-column align-items-start gap-4">
+                        <div class="neural-core">
+                            <div class="text-center">
+                                <div class="text-uppercase small text-secondary">Encrypted Core</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="fw-semibold">Neural Extraction Node</h4>
+                            <p class="text-secondary mb-3">ScrapyX Elite Edition leverages distributed AI clusters to bypass complex anti-bot measures with 99.9% precision.</p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="tag">V4.2.8 STABLE</span>
+                                <span class="tag">END-TO-END ENCRYPTED</span>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-4 flex-wrap">
+                            <div class="footer-stat">SYSTEM LOAD: 14.2%</div>
+                            <div class="footer-stat">ACTIVE NODES: 8,421 ONLINE</div>
+                            <div class="footer-stat">CLUSTER LATENCY: 24ms</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="panel glass p-4 h-100">
+                    <h4 class="fw-semibold mb-1">Secure Admin Gateway</h4>
+                    <p class="text-secondary mb-4">Enter administrative credentials to access node control.</p>
+
+                    {% if messages %}
+                    <div class="mb-3">
+                        {% for message in messages %}
+                        <div class="alert alert-danger py-2 mb-2">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" id="admin-login-form" class="d-grid gap-3">
+                        {% csrf_token %}
+                        <div>
+                            <label class="form-label text-secondary text-uppercase small">Admin Identifier</label>
+                            <input type="text" name="username" class="form-control" placeholder="ADM-000-X" required>
+                        </div>
+                        <div>
+                            <label class="form-label text-secondary text-uppercase small">Access Password</label>
+                            <input type="password" name="password" class="form-control" placeholder="••••••••••" required>
+                        </div>
+                        <div>
+                            <label class="form-label text-secondary text-uppercase small">Security Key / Biometric</label>
+                            <input type="text" name="security_key" class="form-control" placeholder="Wait for external key..." aria-describedby="keyHelp" required>
+                            <div id="keyHelp" class="form-text text-secondary">Authorized personnel only. Session activity is monitored.</div>
+                        </div>
+                        <button type="submit" class="btn btn-accent py-2 fw-semibold">Authorize Access</button>
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-link text-secondary p-0" onclick="resetTerminal()">Reset Terminal</button>
+                            <a class="btn btn-link text-secondary p-0" href="mailto:security@scrapyx.local">Request Hardware Key</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function resetTerminal() {
+            const form = document.getElementById('admin-login-form');
+            form.reset();
+        }
+    </script>
+</body>
+</html>

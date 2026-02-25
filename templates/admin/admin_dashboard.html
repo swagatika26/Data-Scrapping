@@ -1,0 +1,3518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard - ScrapyX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+        body {
+            background: #0d1015;
+            color: #e6edf6;
+            font-family: "Inter", "Segoe UI", sans-serif;
+        }
+        body.theme-light {
+            background: #eef2f8;
+            color: #0f172a;
+        }
+        body.theme-light .sidebar {
+            background: #f8fafc;
+            border-right: 1px solid rgba(15, 23, 42, 0.08);
+        }
+        body.theme-light .admin-brand {
+            color: #0f172a;
+        }
+        body.theme-light .admin-wordmark {
+            color: #0f172a;
+        }
+        body.theme-light .nav-pill {
+            color: #475569;
+        }
+        body.theme-light .nav-pill.active,
+        body.theme-light .nav-pill:hover {
+            background: rgba(59, 130, 246, 0.12);
+            color: #0b1220;
+        }
+        body.theme-light .status-card,
+        body.theme-light .card-panel,
+        body.theme-light .billing-card,
+        body.theme-light .error-card,
+        body.theme-light .settings-card,
+        body.theme-light .user-kpi,
+        body.theme-light .support-card,
+        body.theme-light .system-card {
+            background: #ffffff;
+            border-color: rgba(15, 23, 42, 0.08);
+            color: #0f172a;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+        }
+        body.theme-light .error-table,
+        body.theme-light .billing-table,
+        body.theme-light .error-preview {
+            background: #ffffff;
+            border-color: rgba(15, 23, 42, 0.08);
+            color: #0f172a;
+        }
+        body.theme-light .text-secondary {
+            color: #64748b !important;
+        }
+        body.theme-light .topbar {
+            background: #ffffff;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        }
+        body.theme-light .chip {
+            background: rgba(59, 130, 246, 0.12);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        body.theme-light .progress {
+            background: #e2e8f0;
+        }
+        body.theme-light .btn-ghost {
+            border-color: rgba(15, 23, 42, 0.14);
+            color: #334155;
+        }
+        body.theme-light .btn-ghost:hover {
+            border-color: rgba(59, 130, 246, 0.35);
+            color: #0f172a;
+        }
+        body.theme-light .settings-input,
+        body.theme-light .error-search-input,
+        body.theme-light .form-select,
+        body.theme-light .form-control {
+            background: #f8fafc;
+            border-color: rgba(15, 23, 42, 0.12);
+            color: #0f172a;
+        }
+        body.theme-light .error-search-icon {
+            color: #94a3b8;
+        }
+        body.theme-light .table-dark {
+            --bs-table-bg: #f8fafc;
+            --bs-table-striped-bg: #eef2f7;
+            --bs-table-color: #0f172a;
+            --bs-table-border-color: rgba(15, 23, 42, 0.08);
+        }
+        body.theme-light .billing-status.paid {
+            background: rgba(16, 185, 129, 0.16);
+            color: #047857;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        body.theme-light .billing-status.pending {
+            background: rgba(245, 158, 11, 0.16);
+            color: #b45309;
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        body.theme-light .billing-status.failed {
+            background: rgba(239, 68, 68, 0.16);
+            color: #b91c1c;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        body.theme-light .error-pill.critical {
+            background: rgba(239, 68, 68, 0.18);
+            color: #b91c1c;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        body.theme-light .error-pill.warning {
+            background: rgba(245, 158, 11, 0.18);
+            color: #b45309;
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        body.theme-light .error-pill.info {
+            background: rgba(59, 130, 246, 0.18);
+            color: #1d4ed8;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        body.theme-light .profile-card,
+        body.theme-light .profile-stat {
+            background: #ffffff;
+            border-color: rgba(15, 23, 42, 0.08);
+            color: #0f172a;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+        }
+        body.theme-light .profile-avatar-action {
+            color: #2563eb;
+        }
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 260px;
+            background: #0b0f14;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 24px 18px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+        .sidebar .brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .admin-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #ffffff;
+        }
+        .admin-logo {
+            width: 56px;
+            height: 56px;
+            flex: 0 0 auto;
+            filter: drop-shadow(0 0 14px rgba(46, 211, 201, 0.25));
+        }
+        .admin-wordmark {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+        .admin-wordmark .accent {
+            color: #17d4c3;
+        }
+        .nav-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            color: #9aa4b2;
+            text-decoration: none;
+            margin-bottom: 6px;
+        }
+        .nav-pill.active, .nav-pill:hover {
+            background: rgba(46, 211, 201, 0.12);
+            color: #e6edf6;
+        }
+        .status-card {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 16px;
+            color: #aeb7c4;
+        }
+        .content {
+            flex: 1;
+            padding: 24px 28px 60px;
+            min-height: 100vh;
+        }
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+        .topbar h6 {
+            margin: 0;
+            color: #8c98a8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.72rem;
+        }
+        .topbar h4 {
+            margin: 0;
+        }
+        .search-input {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #e6edf6;
+            min-width: 360px;
+            padding-left: 38px;
+            padding-right: 64px;
+            height: 38px;
+        }
+        .search-input::placeholder {
+            color: #6b7280;
+        }
+        .search-input:focus {
+            background: #0f1622;
+            color: #e6edf6;
+            border-color: rgba(46, 211, 201, 0.6);
+            box-shadow: 0 0 0 0.2rem rgba(46, 211, 201, 0.18);
+        }
+        .topbar .admin-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: nowrap;
+            margin-left: auto;
+            margin-right: 32px;
+        }
+        .search-wrap {
+            position: relative;
+        }
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        .search-keys {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-flex;
+            gap: 6px;
+        }
+        .keycap {
+            width: 22px;
+            height: 18px;
+            border-radius: 6px;
+            background: #0f141d;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #94a3b8;
+            font-size: 0.6rem;
+            display: grid;
+            place-items: center;
+        }
+        .chip.system-live {
+            padding: 6px 12px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .admin-bell {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #0f141d;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: grid;
+            place-items: center;
+            color: #cbd5e1;
+        }
+        .admin-panel-link {
+            gap: 10px;
+            padding: 6px 10px;
+            background: #0f141d;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: none;
+        }
+        .admin-panel-link:hover {
+            border-color: rgba(46, 211, 201, 0.5);
+            box-shadow: none;
+        }
+        .admin-panel-avatar {
+            width: 34px;
+            height: 34px;
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .admin-panel-text {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+        .admin-panel-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .admin-panel-role {
+            font-size: 0.7rem;
+            color: #8c98a8;
+        }
+        .admin-panel-pill {
+            display: none;
+        }
+        .card-panel {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 18px;
+        }
+        .trend-panel {
+            background: linear-gradient(160deg, rgba(17, 24, 36, 0.95), rgba(13, 19, 30, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 22px 40px rgba(0, 0, 0, 0.45);
+            position: relative;
+            overflow: hidden;
+        }
+        .trend-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e6edf6;
+        }
+        .trend-legend {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 0.75rem;
+            color: #cbd5e1;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            background: #22d3ee;
+            box-shadow: 0 0 8px rgba(34, 211, 238, 0.5);
+        }
+        .legend-dot.retries {
+            background: #64748b;
+            box-shadow: none;
+        }
+        .metric-card {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+            height: 100%;
+        }
+        .overview-metric {
+            background: linear-gradient(160deg, rgba(18, 24, 34, 0.95), rgba(14, 19, 28, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .metric-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 1rem;
+            color: #e6edf6;
+            background: rgba(46, 211, 201, 0.18);
+            border: 1px solid rgba(46, 211, 201, 0.35);
+        }
+        .metric-delta {
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.16);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .metric-delta.neutral {
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.35);
+        }
+        .metric-delta.alert {
+            color: #fbbf24;
+            background: rgba(245, 158, 11, 0.16);
+            border-color: rgba(245, 158, 11, 0.35);
+        }
+        .metric-title {
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #8c98a8;
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .metric-subtitle {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .metric-spark {
+            margin-top: 12px;
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+        }
+        .metric-spark span {
+            width: 14px;
+            border-radius: 6px;
+            background: linear-gradient(180deg, rgba(46, 211, 201, 0.9), rgba(46, 211, 201, 0.2));
+            display: inline-block;
+        }
+        .metric-spark.purple span {
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.9), rgba(139, 92, 246, 0.2));
+        }
+        .metric-spark.blue span {
+            background: linear-gradient(180deg, rgba(56, 189, 248, 0.9), rgba(56, 189, 248, 0.2));
+        }
+        .metric-spark.orange span {
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.9), rgba(245, 158, 11, 0.2));
+        }
+        .chip {
+            background: rgba(46, 211, 201, 0.12);
+            color: #2ed3c9;
+            border: 1px solid rgba(46, 211, 201, 0.2);
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-size: 0.7rem;
+        }
+        .map-card {
+            height: 280px;
+            background: radial-gradient(circle at 20% 30%, rgba(46, 211, 201, 0.15), transparent 45%), #0f141d;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .map-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 18px 18px;
+            opacity: 0.35;
+        }
+        .map-overlay {
+            position: absolute;
+            right: 18px;
+            bottom: 18px;
+            background: rgba(15, 23, 32, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            z-index: 2;
+            width: 170px;
+        }
+        .map-overlay-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #cbd5e1;
+            margin-top: 6px;
+        }
+        .map-overlay-item:first-of-type {
+            margin-top: 8px;
+        }
+        .map-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.7);
+            z-index: 2;
+        }
+        .map-dot.dot-1 { top: 42%; left: 26%; background: #2ed3c9; }
+        .map-dot.dot-2 { top: 58%; left: 48%; }
+        .map-dot.dot-3 { top: 35%; left: 72%; background: #4ade80; }
+        .overview-table .table-dark tbody tr td {
+            font-size: 0.82rem;
+        }
+        .overview-table .status-pill {
+            font-size: 0.6rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.35);
+        }
+        .overview-table .status-pill.success {
+            background: rgba(16, 185, 129, 0.16);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+        .overview-table .status-pill.failed {
+            background: rgba(239, 68, 68, 0.16);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+        .health-card {
+            background: #101723;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 14px;
+        }
+        .health-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #94a3b8;
+        }
+        .health-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .user-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .user-kpi {
+            background: linear-gradient(150deg, rgba(17, 24, 36, 0.95), rgba(12, 18, 28, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 14px;
+            height: 100%;
+        }
+        .user-kpi-title {
+            font-size: 0.68rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+        .user-kpi-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .user-kpi-sub {
+            font-size: 0.7rem;
+            color: #34d399;
+        }
+        .user-toolbar {
+            display: grid;
+            grid-template-columns: 1fr 160px 120px;
+            gap: 10px;
+        }
+        .user-toolbar .form-control,
+        .user-toolbar .form-select {
+            background: #0f141d;
+            color: #e6edf6;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .user-table .status-pill {
+            font-size: 0.6rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.16);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .user-table .status-pill.suspended {
+            background: rgba(239, 68, 68, 0.16);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+        .user-table .status-pill.inactive {
+            background: rgba(148, 163, 184, 0.15);
+            color: #94a3b8;
+            border-color: rgba(148, 163, 184, 0.35);
+        }
+        .plan-pill {
+            font-size: 0.6rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+        }
+        .plan-pill.pro {
+            background: rgba(139, 92, 246, 0.18);
+            color: #c4b5fd;
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+        .plan-pill.enterprise {
+            background: rgba(16, 185, 129, 0.18);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        .credit-bar {
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.15);
+            overflow: hidden;
+        }
+        .credit-bar span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(34, 211, 238, 0.9), rgba(46, 211, 201, 0.4));
+        }
+        .user-actions .btn {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+        }
+        .analytics-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .analytics-chip {
+            background: rgba(34, 211, 238, 0.15);
+            color: #22d3ee;
+            border: 1px solid rgba(34, 211, 238, 0.35);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+        .analytics-kpi {
+            background: linear-gradient(150deg, rgba(17, 24, 36, 0.95), rgba(12, 18, 28, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 14px;
+            height: 100%;
+        }
+        .analytics-kpi-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+        .analytics-kpi-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .analytics-kpi-sub {
+            font-size: 0.7rem;
+            color: #34d399;
+        }
+        .analytics-kpi-sub.down {
+            color: #f87171;
+        }
+        .analytics-toolbar {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 160px)) 120px;
+            gap: 10px;
+            align-items: center;
+        }
+        .analytics-toolbar .form-control {
+            background: #0f141d;
+            color: #e6edf6;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .analytics-panel {
+            background: #101723;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+            height: 100%;
+        }
+        .source-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .source-bar {
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.15);
+            overflow: hidden;
+        }
+        .source-bar span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(34, 211, 238, 0.9), rgba(46, 211, 201, 0.35));
+        }
+        .analytics-table td {
+            font-size: 0.8rem;
+        }
+        .analytics-bounce {
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .analytics-bounce.high {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+        .system-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .system-breadcrumb {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #94a3b8;
+        }
+        .system-status-pill {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .system-status-pill.degraded {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+        .system-card {
+            background: #101723;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+            height: 100%;
+        }
+        .system-uptime {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 16px;
+        }
+        .system-uptime-item {
+            text-align: center;
+        }
+        .system-uptime-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .system-uptime-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: #94a3b8;
+        }
+        .system-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            position: relative;
+            background: conic-gradient(#22d3ee var(--progress), rgba(148, 163, 184, 0.2) 0);
+        }
+        .system-ring::after {
+            content: '';
+            position: absolute;
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: #0f141d;
+        }
+        .system-ring-content {
+            position: relative;
+            text-align: center;
+            z-index: 1;
+        }
+        .system-ring-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .system-ring-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #94a3b8;
+        }
+        .system-bar {
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.15);
+            overflow: hidden;
+        }
+        .system-bar span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(34, 211, 238, 0.9), rgba(46, 211, 201, 0.35));
+        }
+        .intensity-grid {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(0, 1fr));
+            gap: 6px;
+        }
+        .intensity-cell {
+            width: 100%;
+            padding-top: 100%;
+            border-radius: 4px;
+            background: rgba(148, 163, 184, 0.15);
+            position: relative;
+        }
+        .intensity-cell.level-1 { background: rgba(45, 212, 191, 0.25); }
+        .intensity-cell.level-2 { background: rgba(45, 212, 191, 0.4); }
+        .intensity-cell.level-3 { background: rgba(34, 211, 238, 0.6); }
+        .intensity-cell.level-4 { background: rgba(34, 211, 238, 0.85); }
+        .system-table td {
+            font-size: 0.8rem;
+        }
+        .system-event {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .system-event:last-child {
+            border-bottom: none;
+        }
+        .support-layout {
+            display: grid;
+            grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(220px, 260px);
+            gap: 16px;
+            min-height: calc(100vh - 180px);
+        }
+        .support-panel {
+            background: #101723;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+            height: 100%;
+        }
+        .support-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .support-chip {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(45, 212, 191, 0.15);
+            color: #22d3ee;
+            border: 1px solid rgba(45, 212, 191, 0.35);
+        }
+        .support-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .support-tab {
+            text-align: center;
+            padding: 6px 10px;
+            border-radius: 10px;
+            text-decoration: none;
+            background: rgba(148, 163, 184, 0.12);
+            color: #cbd5e1;
+            font-size: 0.7rem;
+        }
+        .support-tab.active {
+            background: rgba(45, 212, 191, 0.2);
+            color: #e6edf6;
+            border: 1px solid rgba(45, 212, 191, 0.35);
+        }
+        .ticket-card {
+            background: rgba(15, 23, 32, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .ticket-card.active {
+            border-color: rgba(45, 212, 191, 0.6);
+            box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.08);
+        }
+        .ticket-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .ticket-meta {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .ticket-pill {
+            font-size: 0.6rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .ticket-pill.urgent {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+        }
+        .ticket-pill.high {
+            background: rgba(56, 189, 248, 0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+        }
+        .ticket-pill.normal {
+            background: rgba(148, 163, 184, 0.15);
+            color: #cbd5e1;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+        }
+        .ticket-status {
+            font-size: 0.6rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .ticket-status.escalated {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.35);
+        }
+        .ticket-status.resolved {
+            background: rgba(148, 163, 184, 0.15);
+            color: #94a3b8;
+            border-color: rgba(148, 163, 184, 0.35);
+        }
+        .support-message {
+            background: rgba(15, 23, 32, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .support-message.agent {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .support-compose textarea {
+            background: #0f141d;
+            color: #e6edf6;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .support-thread {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 12px;
+        }
+        .support-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+        .support-compose {
+            background: rgba(15, 23, 32, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .support-compose-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #94a3b8;
+        }
+        .support-compose-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .support-compose-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .support-compose textarea {
+            height: 44px;
+            resize: none;
+            margin: 0;
+        }
+        .support-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.8rem;
+        }
+        .support-stat:last-child {
+            border-bottom: none;
+        }
+        .support-project {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 10px;
+        }
+        .support-project:last-child {
+            border-bottom: none;
+        }
+        .support-project-title {
+            font-weight: 600;
+            font-size: 0.8rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 160px;
+        }
+        .support-project-meta {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .support-project .ticket-status {
+            flex: 0 0 auto;
+        }
+        .billing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .billing-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .billing-card {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .billing-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+        .billing-delta {
+            font-size: 0.75rem;
+            color: #22c55e;
+        }
+        .billing-delta.negative {
+            color: #f87171;
+        }
+        .billing-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 280px;
+            gap: 16px;
+        }
+        .billing-chart-panel {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .billing-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .billing-toggle {
+            display: inline-flex;
+            gap: 6px;
+            background: rgba(148, 163, 184, 0.12);
+            border-radius: 999px;
+            padding: 4px;
+        }
+        .billing-toggle span {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .billing-toggle .active {
+            background: rgba(45, 212, 191, 0.2);
+            color: #e6edf6;
+            border: 1px solid rgba(45, 212, 191, 0.35);
+        }
+        .billing-plan-list {
+            margin-top: 12px;
+        }
+        .billing-plan-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 0.8rem;
+        }
+        .billing-status {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .billing-status.paid {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .billing-status.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+        .billing-status.failed {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+        }
+        .billing-table td, .billing-table th {
+            border-color: rgba(255, 255, 255, 0.06);
+            font-size: 0.8rem;
+        }
+        .billing-sidebar-card {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .billing-payout {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.8rem;
+        }
+        .billing-payout:last-child {
+            border-bottom: none;
+        }
+        .error-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .error-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .error-card {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .error-card-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+        .error-card-sub {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+        .error-toolbar {
+            display: grid;
+            grid-template-columns: minmax(200px, 1fr) 160px 160px auto;
+            gap: 10px;
+            align-items: center;
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 12px;
+        }
+        .error-search {
+            position: relative;
+            width: 100%;
+        }
+        .error-search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+        .error-search-input {
+            background: #0f141d;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #e6edf6;
+            padding-left: 36px;
+            height: 38px;
+        }
+        .error-search-input::placeholder {
+            color: #6b7280;
+        }
+        .error-search-input:focus {
+            background: #0f1622;
+            color: #e6edf6;
+            border-color: rgba(46, 211, 201, 0.6);
+            box-shadow: 0 0 0 0.2rem rgba(46, 211, 201, 0.18);
+        }
+        .error-table {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 8px 12px 12px;
+        }
+        .error-pill {
+            font-size: 0.65rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .error-pill.critical {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+        }
+        .error-pill.warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+        .error-pill.info {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.35);
+        }
+        .error-preview {
+            background: #0f141d;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+            min-height: 140px;
+            font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 0.75rem;
+            color: #e6edf6;
+            white-space: pre-wrap;
+        }
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .settings-card {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .settings-card h6 {
+            margin-bottom: 4px;
+        }
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+        .settings-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .settings-sub {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+        .settings-input {
+            background: #0f141d;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #e6edf6;
+        }
+        .settings-input:focus {
+            background: #0f1622;
+            color: #e6edf6;
+            border-color: rgba(46, 211, 201, 0.6);
+            box-shadow: 0 0 0 0.2rem rgba(46, 211, 201, 0.18);
+        }
+        .settings-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 1200px) {
+            .error-kpis {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .error-toolbar {
+                grid-template-columns: 1fr;
+            }
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .error-kpis {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 1200px) {
+            .billing-kpis {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .billing-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .billing-kpis {
+                grid-template-columns: 1fr;
+            }
+        }
+        .table-dark th, .table-dark td {
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+        }
+        .btn-ghost:hover {
+            border-color: rgba(46, 211, 201, 0.4);
+            color: #e6edf6;
+        }
+        .admin-panel-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            text-decoration: none;
+            background: linear-gradient(120deg, rgba(15, 23, 32, 0.95), rgba(10, 14, 20, 0.95));
+            border: 1px solid rgba(46, 211, 201, 0.3);
+            color: #e6edf6;
+            box-shadow: 0 0 0 2px rgba(46, 211, 201, 0.05), 0 10px 24px rgba(0, 0, 0, 0.35);
+        }
+        .admin-panel-link:hover {
+            border-color: rgba(46, 211, 201, 0.6);
+            color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(46, 211, 201, 0.12), 0 14px 30px rgba(0, 0, 0, 0.4);
+        }
+        .admin-panel-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(46, 211, 201, 0.45), rgba(15, 23, 32, 0.9));
+            border: 1px solid rgba(46, 211, 201, 0.5);
+            display: grid;
+            place-items: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #e6edf6;
+        }
+        .admin-panel-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .admin-panel-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #0b0f14;
+            background: linear-gradient(120deg, #2ed3c9, #8b5cf6);
+        }
+        .profile-hero {
+            background: linear-gradient(140deg, rgba(20, 26, 36, 0.95), rgba(14, 20, 28, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 20px;
+        }
+        .profile-avatar {
+            width: 86px;
+            height: 86px;
+            border-radius: 18px;
+            background: #101827;
+            border: 1px solid rgba(46, 211, 201, 0.35);
+            display: grid;
+            place-items: center;
+            color: #e6edf6;
+            font-weight: 700;
+            font-size: 1.2rem;
+            overflow: hidden;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-avatar-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .profile-avatar-action {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #2ed3c9;
+            cursor: pointer;
+        }
+        .profile-avatar-action:hover {
+            color: #6ee7e0;
+        }
+        .profile-avatar-input {
+            display: none;
+        }
+        .avatar-cropper-frame {
+            width: 220px;
+            height: 220px;
+            border-radius: 16px;
+            border: 1px solid rgba(46, 211, 201, 0.35);
+            background: #0f141d;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .avatar-cropper-frame img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: none;
+            cursor: grab;
+            user-select: none;
+        }
+        .avatar-cropper-frame img:active {
+            cursor: grabbing;
+        }
+        .profile-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: #12c6b6;
+            background: rgba(18, 198, 182, 0.12);
+            border: 1px solid rgba(18, 198, 182, 0.35);
+        }
+        .profile-actions .btn {
+            border-radius: 12px;
+            padding: 8px 14px;
+        }
+        .profile-stat {
+            background: #0f1622;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+        .profile-card {
+            background: #111722;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .profile-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: #7d8796;
+        }
+        .profile-value {
+            font-size: 0.9rem;
+            color: #e6edf6;
+        }
+        .profile-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .profile-list-item:last-child {
+            border-bottom: none;
+        }
+        .profile-stream-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .profile-stream-item:last-child {
+            border-bottom: none;
+        }
+        .session-pill {
+            font-size: 0.65rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+        .session-pill.offline {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+        .profile-toggle {
+            width: 44px;
+            height: 24px;
+            border-radius: 999px;
+            background: #0f1720;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+        .profile-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #94a3b8;
+            transition: all 0.2s ease;
+        }
+        .profile-toggle.active {
+            background: rgba(46, 211, 201, 0.2);
+            border-color: rgba(46, 211, 201, 0.6);
+        }
+        .profile-toggle.active::after {
+            left: 22px;
+            background: #2ed3c9;
+        }
+    </style>
+</head>
+<body class="{% if theme_mode == 'light' %}theme-light{% endif %}">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand mb-4">
+                <div class="admin-brand">
+                    <svg class="admin-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="logoBarsDashboard" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#2ed3c9"/>
+                                <stop offset="100%" stop-color="#8b5cf6"/>
+                            </linearGradient>
+                        </defs>
+                        <circle cx="60" cy="60" r="50" fill="#0b0f14" stroke="#242c35" stroke-width="4"/>
+                        <line x1="25" y1="25" x2="95" y2="95" stroke="#2b333d" stroke-width="4"/>
+                        <line x1="95" y1="25" x2="25" y2="95" stroke="#2b333d" stroke-width="4"/>
+                        <rect x="45" y="42" width="10" height="36" rx="6" fill="url(#logoBarsDashboard)"/>
+                        <rect x="60" y="34" width="10" height="52" rx="6" fill="url(#logoBarsDashboard)"/>
+                        <rect x="75" y="42" width="10" height="36" rx="6" fill="url(#logoBarsDashboard)"/>
+                    </svg>
+                    <div>
+                        <div class="admin-wordmark"><span>SCRAPY</span><span class="accent">X</span></div>
+                        <div class="text-secondary small">Elite Edition</div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <a href="{% url 'admin_dashboard' %}" class="nav-pill{% if active_section == 'overview' %} active{% endif %}">Global Overview</a>
+                <a href="{% url 'admin_dashboard_section' 'profile' %}" class="nav-pill{% if active_section == 'profile' %} active{% endif %}">Admin Profile</a>
+                <a href="{% url 'admin_dashboard_section' 'users' %}" class="nav-pill{% if active_section == 'users' %} active{% endif %}">User Management</a>
+                <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="nav-pill{% if active_section == 'jobs' %} active{% endif %}">Scraper Infrastructure</a>
+                <a href="{% url 'admin_dashboard_section' 'analytics' %}" class="nav-pill{% if active_section == 'analytics' %} active{% endif %}">Analytics</a>
+                <a href="{% url 'admin_dashboard_section' 'billing' %}" class="nav-pill{% if active_section == 'billing' %} active{% endif %}">Billing</a>
+                <a href="{% url 'admin_dashboard_section' 'errors' %}" class="nav-pill{% if active_section == 'errors' %} active{% endif %}">Error Logs</a>
+                <a href="{% url 'admin_dashboard_section' 'system' %}" class="nav-pill{% if active_section == 'system' %} active{% endif %}">System Health</a>
+                <a href="{% url 'admin_dashboard_section' 'activity' %}" class="nav-pill{% if active_section == 'activity' %} active{% endif %}">Support Tickets</a>
+                <a href="{% url 'admin_dashboard_section' 'settings' %}" class="nav-pill{% if active_section == 'settings' %} active{% endif %}">Settings</a>
+                <a href="{% url 'logout' %}" class="nav-pill">Logout</a>
+            </nav>
+            <div class="status-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>Elite Plan Status</div>
+                    <span class="chip">84%</span>
+                </div>
+                <div class="mt-2 small">Cloud Credits</div>
+                <div class="progress mt-2" style="height:6px;">
+                    <div class="progress-bar bg-info" style="width: 84%"></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="topbar">
+                <div>
+                    <h6>Admin | {{ page_title }}</h6>
+                    <h4>Welcome back, Control Hub</h4>
+                </div>
+                <form method="get" class="admin-actions">
+                    <div class="search-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" name="q" class="form-control search-input" placeholder="Search infrastructure...">
+                        <span class="search-keys">
+                            <span class="keycap">⌘</span>
+                            <span class="keycap">K</span>
+                        </span>
+                    </div>
+                    <span class="chip system-live">System Live</span>
+                    <span class="admin-bell">🔔</span>
+                    <a href="{% url 'admin_dashboard_section' 'profile' %}" class="admin-panel-link">
+                        <span class="admin-panel-avatar">{{ request.user.username|slice:":1"|upper }}</span>
+                        <span class="admin-panel-text">
+                            <span class="admin-panel-name">{{ request.user.username }}</span>
+                            <span class="admin-panel-role">Head of Ops</span>
+                        </span>
+                    </a>
+                </form>
+            </div>
+
+            {% if active_section == 'profile' %}
+            <section class="mb-4">
+                <div class="profile-hero">
+                    <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between gap-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <form method="post" action="{% url 'admin_profile_update' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="profile-avatar-wrap">
+                                    <div class="profile-avatar">
+                                        {% if request.user.avatar %}
+                                        <img src="{{ request.user.avatar.url }}" alt="{{ request.user.username }}">
+                                        {% else %}
+                                        {{ request.user.username|slice:":1"|upper }}
+                                        {% endif %}
+                                    </div>
+                                    <label class="profile-avatar-action">
+                                        Edit picture
+                                        <input type="file" name="avatar" class="profile-avatar-input" accept="image/*" onchange="openAvatarCropper(this)">
+                                    </label>
+                                </div>
+                            </form>
+                            <div>
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <h4 class="mb-0">{{ request.user.get_full_name|default:request.user.username }}</h4>
+                                    <span class="profile-badge">Super Admin</span>
+                                </div>
+                                <div class="text-secondary small">{{ request.user.job_title|default:"Head of Digital Intelligence · Global Infrastructure Dept." }}</div>
+                            </div>
+                        </div>
+                        <div class="profile-actions d-flex flex-column gap-2">
+                            <button class="btn btn-info text-dark fw-semibold" data-bs-toggle="collapse" data-bs-target="#profileEditForm">Edit Profile</button>
+                            <a class="btn btn-outline-light" href="{% url 'admin_audit_report' %}">Download Audit Report</a>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-4">
+                            <div class="profile-stat">
+                                <div class="profile-label">Security Score</div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="fs-5 fw-semibold text-info">{{ admin_security_score }}%</div>
+                                    <div class="text-secondary small">Encrypted</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="profile-stat">
+                                <div class="profile-label">Total Scrapes</div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="fs-5 fw-semibold">{{ admin_total_scrapes }}</div>
+                                    <div class="text-secondary small">All time</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="profile-stat">
+                                <div class="profile-label">Last Activity</div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="fs-5 fw-semibold">
+                                        {% if admin_last_activity %}{{ admin_last_activity|timesince }} ago{% else %}Just now{% endif %}
+                                    </div>
+                                    <div class="text-secondary small">Console</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="collapse mt-3" id="profileEditForm">
+                        <form method="post" action="{% url 'admin_profile_update' %}" class="row g-3">
+                            {% csrf_token %}
+                            <div class="col-md-4">
+                                <label class="profile-label">Full Name</label>
+                                <input type="text" name="full_name" class="form-control bg-dark text-white border-secondary" value="{{ request.user.get_full_name|default:request.user.username }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="profile-label">Job Title</label>
+                                <input type="text" name="job_title" class="form-control bg-dark text-white border-secondary" value="{{ request.user.job_title|default_if_none:'' }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="profile-label">Location</label>
+                                <input type="text" name="location" class="form-control bg-dark text-white border-secondary" value="{{ request.user.location|default_if_none:'' }}">
+                            </div>
+                            <div class="col-12">
+                                <label class="profile-label">Bio</label>
+                                <textarea name="bio" rows="3" class="form-control bg-dark text-white border-secondary">{{ request.user.bio|default_if_none:'' }}</textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-info text-dark fw-semibold">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="row g-3 mb-4">
+                <div class="col-lg-7">
+                    <div class="profile-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="text-uppercase text-secondary small">Identity Profile</div>
+                            <button class="btn btn-ghost btn-sm" data-bs-toggle="collapse" data-bs-target="#profileEditForm">Manage Identity</button>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="profile-label">Email Address</div>
+                                <div class="profile-value">{{ request.user.email|default:"admin@scrapyx.ai" }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-label">Department</div>
+                                <div class="profile-value">{{ request.user.job_title|default:"Advanced Data Mining" }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-label">Timezone</div>
+                                <div class="profile-value">{{ admin_timezone }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-label">Employee ID</div>
+                                <div class="profile-value">SX-{{ request.user.id|stringformat:"04d" }}-ADM</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-card mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="text-uppercase text-secondary small">Administrative Stream</div>
+                            <span class="chip">Filter</span>
+                        </div>
+                        {% for item in admin_stream %}
+                        <div class="profile-stream-item">
+                            <div>
+                                <div class="fw-semibold">{{ item.title }}</div>
+                                <div class="text-secondary small">{{ item.description }}</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-secondary small">{{ item.ip }}</div>
+                                <div class="text-secondary small">{{ item.timestamp|timesince }} ago</div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-secondary small">No recent activity.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="profile-card">
+                        <div class="text-uppercase text-secondary small mb-3">Security Control</div>
+                        <div class="profile-list-item">
+                            <div>
+                                <div class="fw-semibold">Two-Factor Auth</div>
+                                <div class="text-secondary small">Enforced for admins</div>
+                            </div>
+                            <form method="post" action="{% url 'admin_toggle_2fa' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="profile-toggle{% if admin_two_factor_enabled %} active{% endif %}"></button>
+                            </form>
+                        </div>
+                        <div class="profile-list-item">
+                            <div>
+                                <div class="fw-semibold">API Access Token</div>
+                                <div class="text-secondary small">{{ admin_api_token_masked }}</div>
+                            </div>
+                            <form method="post" action="{% url 'admin_rotate_token' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-ghost btn-sm">Rotate</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="profile-card mt-3">
+                        <div class="text-uppercase text-secondary small mb-3">Active Sessions</div>
+                        {% for session in admin_sessions %}
+                        <div class="profile-list-item">
+                            <div>
+                                <div class="fw-semibold">{{ session.location }}</div>
+                                <div class="text-secondary small">{{ session.device }}</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-secondary small">{{ session.ip }}</div>
+                                <span class="session-pill{% if session.status != 'ONLINE' %} offline{% endif %}">{{ session.status }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <form method="post" action="{% url 'admin_logout_all' %}" class="mt-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger w-100">Sign Out From All Devices</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+
+            {% if active_section == 'overview' %}
+            <section id="overview" class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="metric-card overview-metric">
+                        <div class="metric-header">
+                            <div class="metric-icon">💳</div>
+                            <span class="metric-delta">+12.4%</span>
+                        </div>
+                        <div class="metric-title mt-3">Total Revenue (MRR)</div>
+                        <div class="metric-value">${{ total_revenue }}</div>
+                        <div class="metric-subtitle">Encrypted billing streams</div>
+                        <div class="metric-spark">
+                            <span style="height:12px"></span>
+                            <span style="height:18px"></span>
+                            <span style="height:10px"></span>
+                            <span style="height:22px"></span>
+                            <span style="height:16px"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card overview-metric">
+                        <div class="metric-header">
+                            <div class="metric-icon">🧑‍💻</div>
+                            <span class="metric-delta neutral">30 Day Cycle</span>
+                        </div>
+                        <div class="metric-title mt-3">Active Users</div>
+                        <div class="metric-value">{{ active_users }}</div>
+                        <div class="metric-subtitle">Operator engagement</div>
+                        <div class="metric-spark purple">
+                            <span style="height:10px"></span>
+                            <span style="height:22px"></span>
+                            <span style="height:16px"></span>
+                            <span style="height:26px"></span>
+                            <span style="height:14px"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card overview-metric">
+                        <div class="metric-header">
+                            <div class="metric-icon">✅</div>
+                            <span class="metric-delta">High Precision</span>
+                        </div>
+                        <div class="metric-title mt-3">Success Rate</div>
+                        <div class="metric-value">{{ success_rate }}%</div>
+                        <div class="metric-subtitle">Operational accuracy</div>
+                        <div class="metric-spark blue">
+                            <span style="height:16px"></span>
+                            <span style="height:14px"></span>
+                            <span style="height:20px"></span>
+                            <span style="height:24px"></span>
+                            <span style="height:18px"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card overview-metric">
+                        <div class="metric-header">
+                            <div class="metric-icon">🛰️</div>
+                            <span class="metric-delta alert">DB {{ db_size_mb }} MB</span>
+                        </div>
+                        <div class="metric-title mt-3">Cluster Load</div>
+                        <div class="metric-value">{{ cluster_load|default:"N/A" }}%</div>
+                        <div class="metric-subtitle">Live node latency</div>
+                        <div class="metric-spark orange">
+                            <span style="height:14px"></span>
+                            <span style="height:18px"></span>
+                            <span style="height:12px"></span>
+                            <span style="height:20px"></span>
+                            <span style="height:16px"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="row g-3 mb-4">
+                <div class="col-lg-7">
+                    <div class="card-panel h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <div class="text-uppercase text-secondary small">Geo-Pulse Command</div>
+                                <div class="text-secondary small">Real-time scraping node distribution</div>
+                            </div>
+                            <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="btn btn-ghost btn-sm">View All Jobs</a>
+                        </div>
+                        <div class="map-card">
+                            <div class="map-dot dot-1"></div>
+                            <div class="map-dot dot-2"></div>
+                            <div class="map-dot dot-3"></div>
+                            <div class="map-overlay">
+                                <div class="text-uppercase text-secondary small">Top Operators</div>
+                                {% for operator in most_active_users %}
+                                <div class="map-overlay-item">
+                                    <span>{{ operator.user__username|default:"System" }}</span>
+                                    <span>{{ operator.count }}</span>
+                                </div>
+                                {% empty %}
+                                <div class="map-overlay-item">
+                                    <span>No activity</span>
+                                    <span>0</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="card-panel trend-panel h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <div class="trend-title">Scrape Volume Trends</div>
+                                <div class="text-secondary small">Throughput analysis across all active jobs</div>
+                            </div>
+                            <div class="trend-legend">
+                                <span class="legend-item"><span class="legend-dot"></span>Success</span>
+                                <span class="legend-item"><span class="legend-dot retries"></span>Retries</span>
+                            </div>
+                        </div>
+                        <canvas id="usersGrowthChart" height="220"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="row g-3 mb-4">
+                <div class="col-lg-8">
+                    <div class="card-panel overview-table h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="text-uppercase text-secondary small">Recent High-Volume Jobs</div>
+                            <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="btn btn-ghost btn-sm">View All Jobs</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Job ID</th>
+                                        <th>User</th>
+                                        <th>Target URL</th>
+                                        <th>Data Points</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for job in jobs|slice:":5" %}
+                                    <tr>
+                                        <td>{{ job.id }}</td>
+                                        <td>{{ job.user.username }}</td>
+                                        <td class="text-truncate" style="max-width: 220px;">{{ job.url }}</td>
+                                        <td>{{ job.data_count }}</td>
+                                        <td>
+                                            <span class="status-pill{% if job.status == 'COMPLETED' %} success{% elif job.status == 'FAILED' %} failed{% endif %}">{{ job.status }}</span>
+                                        </td>
+                                        <td class="d-flex gap-2">
+                                            <button class="btn btn-sm btn-ghost" type="button" data-job-id="{{ job.id }}" onclick="openLogs(this)">Quick Inspect</button>
+                                            {% if job.status == 'FAILED' %}
+                                            <form method="post" action="{% url 'admin_job_retry' job.id %}">
+                                                {% csrf_token %}
+                                                <button class="btn btn-sm btn-warning" type="submit">Retry</button>
+                                            </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="6" class="text-muted">No jobs found</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-panel h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="text-uppercase text-secondary small">Infrastructure Health</div>
+                            <a href="{% url 'admin_dashboard_section' 'system' %}" class="btn btn-ghost btn-sm">View System</a>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="health-card">
+                                    <div class="health-title">CPU Usage</div>
+                                    <div class="health-value">{{ system_health.cpu_usage|default:"N/A" }}%</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="health-card">
+                                    <div class="health-title">Memory Usage</div>
+                                    <div class="health-value">{{ system_health.memory_usage|default:"N/A" }}%</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="health-card">
+                                    <div class="health-title">Disk Usage</div>
+                                    <div class="health-value">{{ system_health.disk_usage|default:"N/A" }}%</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="health-card">
+                                    <div class="health-title">Uptime (sec)</div>
+                                    <div class="health-value">{{ system_health.uptime_seconds|default:"N/A" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {% endif %}
+
+            {% if active_section == 'analytics' %}
+            <section id="analytics" class="mb-4">
+                <div class="analytics-header mb-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="mb-0">Traffic Analytics</h5>
+                            <span class="analytics-chip">Live Updates</span>
+                        </div>
+                        <div class="text-secondary small">Real-time traffic performance for your ScrapyX instances.</div>
+                    </div>
+                    <form method="get" action="{% url 'admin_dashboard_section' 'analytics' %}" class="analytics-toolbar">
+                        <input type="date" name="analytics_start" class="form-control form-control-sm" value="{{ analytics_start }}">
+                        <input type="date" name="analytics_end" class="form-control form-control-sm" value="{{ analytics_end }}">
+                        <button class="btn btn-sm btn-ghost" type="submit">Filters</button>
+                    </form>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <div class="analytics-kpi">
+                            <div class="analytics-kpi-label">Total Visits</div>
+                            <div class="analytics-kpi-value">{{ total_visits_display }}</div>
+                            <div class="analytics-kpi-sub">+{{ success_rate }}% vs last month</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="analytics-kpi">
+                            <div class="analytics-kpi-label">Unique Visitors</div>
+                            <div class="analytics-kpi-value">{{ unique_visitors_display }}</div>
+                            <div class="analytics-kpi-sub down">-2.4% vs last month</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="analytics-kpi">
+                            <div class="analytics-kpi-label">Avg. Session</div>
+                            <div class="analytics-kpi-value">{{ avg_session_display }}</div>
+                            <div class="analytics-kpi-sub">+5.8%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="analytics-kpi">
+                            <div class="analytics-kpi-label">Bounce Rate</div>
+                            <div class="analytics-kpi-value">{{ bounce_rate }}%</div>
+                            <div class="analytics-kpi-sub">+1.2%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-lg-8">
+                        <div class="analytics-panel">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <div class="text-uppercase text-secondary small">Daily Traffic Trend</div>
+                                    <div class="text-secondary small">October 2025 performance metrics</div>
+                                </div>
+                                <div class="text-secondary small">Visits</div>
+                            </div>
+                            <canvas id="trafficChart" height="180"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="analytics-panel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="text-uppercase text-secondary small">Traffic Sources</div>
+                                <a href="{% url 'admin_dashboard_section' 'activity' %}" class="btn btn-ghost btn-sm">View Source Breakdown</a>
+                            </div>
+                            {% for source in traffic_sources %}
+                            <div class="source-item">
+                                <div class="d-flex justify-content-between text-secondary small">
+                                    <span>{{ source.label }}</span>
+                                    <span>{{ source.percent }}%</span>
+                                </div>
+                                <div class="source-bar"><span style="width: {{ source.percent }}%"></span></div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="analytics-panel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="text-uppercase text-secondary small">Top Performing Pages</div>
+                        <span class="text-secondary small">Pages with the highest user engagement</span>
+                    </div>
+                    <div class="table-responsive analytics-table">
+                        <table class="table table-dark table-sm align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Page URL</th>
+                                    <th>Pageviews</th>
+                                    <th>Uniques</th>
+                                    <th>Avg. Time</th>
+                                    <th>Bounce</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for page in top_pages %}
+                                <tr>
+                                    <td class="text-truncate" style="max-width: 320px;">{{ page.path }}</td>
+                                    <td>{{ page.pageviews }}</td>
+                                    <td>{{ page.uniques }}</td>
+                                    <td>{{ page.avg_time }}</td>
+                                    <td>
+                                        <span class="analytics-bounce{% if page.bounce_rate >= 40 %} high{% endif %}">{{ page.bounce_rate }}%</span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" class="text-muted">No traffic captured for this range.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            {% endif %}
+
+            {% if active_section == 'billing' %}
+            <section id="billing" class="mb-4">
+                <div class="billing-header mb-3">
+                    <div>
+                        <div class="text-uppercase text-secondary small">Financial Overview</div>
+                        <h5 class="mb-1">Billing Control Center</h5>
+                        <div class="text-secondary small">Track revenue, churn, and payout schedules in real time.</div>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'admin_dashboard_section' 'billing' %}" class="btn btn-ghost btn-sm">Last 30 Days</a>
+                        <form method="post" action="{% url 'admin_billing_export' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-ghost btn-sm" type="submit">Export PDF</button>
+                        </form>
+                        <form method="post" action="{% url 'admin_billing_run' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-info text-dark btn-sm" type="submit">New Billing Run</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="billing-kpis mb-3">
+                    <div class="billing-card">
+                        <div class="text-uppercase text-secondary small">Monthly Recurring Revenue</div>
+                        <div class="billing-value">{{ billing_mrr_display }}</div>
+                        <div class="billing-delta{% if '-' in billing_mrr_delta %} negative{% endif %}">{{ billing_mrr_delta }}</div>
+                    </div>
+                    <div class="billing-card">
+                        <div class="text-uppercase text-secondary small">Net Churn Rate</div>
+                        <div class="billing-value">{{ billing_churn_rate }}%</div>
+                        <div class="billing-delta{% if billing_churn_delta > 0 %} negative{% endif %}">
+                            {{ billing_churn_delta|floatformat:2 }}%
+                        </div>
+                    </div>
+                    <div class="billing-card">
+                        <div class="text-uppercase text-secondary small">Active Subscriptions</div>
+                        <div class="billing-value">{{ billing_active_subscriptions }}</div>
+                        <div class="billing-delta">+{{ subscriptions_growth_rate }}%</div>
+                    </div>
+                    <div class="billing-card">
+                        <div class="text-uppercase text-secondary small">Average Revenue (ARPU)</div>
+                        <div class="billing-value">{{ billing_arpu_display }}</div>
+                        <div class="billing-delta">+2.9%</div>
+                    </div>
+                </div>
+                <div class="billing-layout mb-3">
+                    <div class="billing-chart-panel">
+                        <div class="billing-chart-header">
+                            <div>
+                                <div class="text-uppercase text-secondary small">Revenue Growth</div>
+                                <div class="text-secondary small">Historical performance across product tiers</div>
+                            </div>
+                            <div class="billing-toggle">
+                                <span class="active">Monthly</span>
+                                <span>Quarterly</span>
+                            </div>
+                        </div>
+                        <canvas id="billingRevenueChart" height="180"></canvas>
+                    </div>
+                    <div class="billing-chart-panel">
+                        <div class="billing-chart-header">
+                            <div>
+                                <div class="text-uppercase text-secondary small">Revenue by Plan</div>
+                                <div class="text-secondary small">Subscription mix share</div>
+                            </div>
+                        </div>
+                        <canvas id="billingPlanChart" height="180"></canvas>
+                        <div class="billing-plan-list">
+                            {% for plan in billing_plan_breakdown %}
+                            <div class="billing-plan-item">
+                                <span>{{ plan.label }}</span>
+                                <span>${{ plan.amount|floatformat:0 }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="billing-layout">
+                    <div class="billing-chart-panel">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="text-uppercase text-secondary small">Recent Transactions</div>
+                            <span class="text-secondary small">Last 6 updates</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-sm align-middle billing-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Plan</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in recent_transactions %}
+                                    <tr>
+                                        <td>{{ row.customer }}</td>
+                                        <td>{{ row.plan }}</td>
+                                        <td>{{ row.amount }}</td>
+                                        <td><span class="billing-status {{ row.status_class|lower }}">{{ row.status }}</span></td>
+                                        <td>{{ row.date|date:"M d, Y" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="5" class="text-muted">No billing activity captured.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="billing-sidebar-card">
+                            <div class="text-uppercase text-secondary small mb-2">Upcoming Payout</div>
+                            <div class="billing-value">{{ available_balance_display }}</div>
+                            <div class="text-secondary small mb-3">Next Payout · {{ next_payout_date }}</div>
+                            <form method="post" action="{% url 'admin_billing_request_payout' %}">
+                                {% csrf_token %}
+                                <button class="btn btn-info text-dark w-100 btn-sm" type="submit">Request Immediate Payout</button>
+                            </form>
+                        </div>
+                        <div class="billing-sidebar-card">
+                            <div class="text-uppercase text-secondary small mb-2">Payout History</div>
+                            {% for payout in payout_schedule %}
+                            <div class="billing-payout d-flex justify-content-between">
+                                <span class="text-secondary small">{{ payout.label }}</span>
+                                <span class="text-info">{{ payout.amount }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {% endif %}
+
+            {% if active_section == 'errors' %}
+            <section id="errors" class="mb-4">
+                <div class="error-header mb-3">
+                    <div>
+                        <h5 class="mb-1">Error Logs</h5>
+                        <div class="text-secondary small">System diagnostics for mission-critical data extraction.</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="badge rounded-pill bg-danger text-dark">Live Feed</span>
+                        <a href="{% url 'admin_dashboard_section' 'errors' %}" class="btn btn-ghost btn-sm">Refresh</a>
+                        <a href="{% url 'admin_error_logs_export' %}?error_q={{ error_query|urlencode }}&error_spider={{ error_spider|urlencode }}&error_severity={{ error_severity|urlencode }}" class="btn btn-ghost btn-sm">Export Logs</a>
+                        <form method="post" action="{% url 'admin_error_logs_rerun_failed' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-info text-dark btn-sm" type="submit">Re-run Failed</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="error-kpis mb-3">
+                    <div class="error-card">
+                        <div class="text-uppercase text-secondary small">Total Errors</div>
+                        <div class="error-card-value">{{ total_errors }}</div>
+                        <div class="error-card-sub">vs last 30 days</div>
+                    </div>
+                    <div class="error-card">
+                        <div class="text-uppercase text-secondary small">Critical Failures</div>
+                        <div class="error-card-value text-danger">{{ critical_failures }}</div>
+                        <div class="error-card-sub">vs 38 prev.</div>
+                    </div>
+                    <div class="error-card">
+                        <div class="text-uppercase text-secondary small">Auto Retries</div>
+                        <div class="error-card-value">{{ auto_retries }}</div>
+                        <div class="error-card-sub">triggered</div>
+                    </div>
+                    <div class="error-card">
+                        <div class="text-uppercase text-secondary small">Avg Success Rate</div>
+                        <div class="error-card-value">{{ avg_success_rate }}%</div>
+                        <div class="error-card-sub">last 30 days</div>
+                    </div>
+                </div>
+                <form method="get" action="{% url 'admin_dashboard_section' 'errors' %}" class="error-toolbar mb-3">
+                    <div class="error-search">
+                        <span class="error-search-icon">🔍</span>
+                        <input type="text" name="error_q" value="{{ error_query }}" class="form-control form-control-sm error-search-input" placeholder="Search by message or Spider ID">
+                    </div>
+                    <select name="error_spider" class="form-select form-select-sm bg-dark text-white border-secondary">
+                        <option value="all">All Spiders</option>
+                        {% for spider in error_spider_options %}
+                        <option value="{{ spider.id }}" {% if error_spider|stringformat:'s' == spider.id|stringformat:'s' %}selected{% endif %}>{{ spider.label }}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="error_severity" class="form-select form-select-sm bg-dark text-white border-secondary">
+                        <option value="all">All Severity</option>
+                        <option value="critical" {% if error_severity == 'critical' %}selected{% endif %}>Critical</option>
+                        <option value="warning" {% if error_severity == 'warning' %}selected{% endif %}>Warning</option>
+                        <option value="info" {% if error_severity == 'info' %}selected{% endif %}>Info</option>
+                    </select>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-primary" type="submit">Apply</button>
+                        <a href="{% url 'admin_dashboard_section' 'errors' %}" class="btn btn-sm btn-ghost">Clear Filters</a>
+                    </div>
+                </form>
+                <div class="error-table mb-3">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-sm align-middle billing-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Spider ID</th>
+                                    <th>Severity</th>
+                                    <th>Error Type</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in error_rows %}
+                                <tr>
+                                    <td>{{ row.timestamp|date:"Y-m-d H:i:s" }}</td>
+                                    <td>{{ row.spider_id }}</td>
+                                    <td><span class="error-pill {{ row.severity_class }}">{{ row.severity }}</span></td>
+                                    <td>{{ row.error_type }}</td>
+                                    <td class="text-truncate" style="max-width: 320px;">
+                                        <a class="text-info text-decoration-none" href="{% url 'admin_dashboard_section' 'errors' %}?log={{ row.id }}&error_q={{ error_query|urlencode }}&error_spider={{ error_spider|urlencode }}&error_severity={{ error_severity|urlencode }}&error_page={{ error_logs.number }}">{{ row.message }}</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" class="text-muted">No error logs available.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div class="text-secondary small">Showing {{ error_logs.start_index }}-{{ error_logs.end_index }} of {{ error_logs.paginator.count }}</div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                {% if error_logs.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?error_page={{ error_logs.previous_page_number }}&error_q={{ error_query|urlencode }}&error_spider={{ error_spider|urlencode }}&error_severity={{ error_severity|urlencode }}">Prev</a>
+                                </li>
+                                {% endif %}
+                                <li class="page-item active"><span class="page-link">{{ error_logs.number }}</span></li>
+                                {% if error_logs.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?error_page={{ error_logs.next_page_number }}&error_q={{ error_query|urlencode }}&error_spider={{ error_spider|urlencode }}&error_severity={{ error_severity|urlencode }}">Next</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-uppercase text-secondary small mb-2">Selected Traceback Preview</div>
+                    <div class="error-preview">{{ selected_error.traceback }}</div>
+                </div>
+            </section>
+
+            {% endif %}
+
+            {% if active_section == 'settings' %}
+            <section id="settings" class="mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <div>
+                        <h5 class="mb-1">Admin Settings</h5>
+                        <div class="text-secondary small">Control platform safety, alerting, and workflow limits.</div>
+                    </div>
+                    <div class="settings-actions">
+                        <a href="{% url 'admin_dashboard_section' 'settings' %}" class="btn btn-ghost btn-sm">Refresh</a>
+                        <form method="post" action="{% url 'admin_settings_reset' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-warning btn-sm" type="submit">Reset Defaults</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h6>Operational Controls</h6>
+                        <div class="text-secondary small mb-2">Live toggles for core platform behavior.</div>
+                        <div class="settings-row">
+                            <div>
+                                <div class="settings-label">Theme Mode</div>
+                                <div class="settings-sub">{{ theme_mode|title }} mode enabled.</div>
+                            </div>
+                            <form method="post" action="{% url 'admin_settings_toggle_theme' %}">
+                                {% csrf_token %}
+                                <button class="profile-toggle{% if theme_mode == 'dark' %} active{% endif %}" type="submit"></button>
+                            </form>
+                        </div>
+                        <div class="settings-row">
+                            <div>
+                                <div class="settings-label">Maintenance Mode</div>
+                                <div class="settings-sub">Pause new jobs and display maintenance banner.</div>
+                            </div>
+                            <form method="post" action="{% url 'admin_settings_toggle_maintenance' %}">
+                                {% csrf_token %}
+                                <button class="profile-toggle{% if maintenance_mode %} active{% endif %}" type="submit"></button>
+                            </form>
+                        </div>
+                        <div class="settings-row">
+                            <div>
+                                <div class="settings-label">Auto Retry Failed Jobs</div>
+                                <div class="settings-sub">Retry failed scrapes automatically.</div>
+                            </div>
+                            <form method="post" action="{% url 'admin_settings_toggle_auto_retry' %}">
+                                {% csrf_token %}
+                                <button class="profile-toggle{% if auto_retry_enabled %} active{% endif %}" type="submit"></button>
+                            </form>
+                        </div>
+                        <div class="settings-row">
+                            <div>
+                                <div class="settings-label">Email Alerting</div>
+                                <div class="settings-sub">Send outage and threshold notifications.</div>
+                            </div>
+                            <form method="post" action="{% url 'admin_settings_toggle_email_alerts' %}">
+                                {% csrf_token %}
+                                <button class="profile-toggle{% if email_alerts_enabled %} active{% endif %}" type="submit"></button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="settings-card">
+                        <h6>Webhook Delivery</h6>
+                        <div class="text-secondary small mb-2">Push alerts to your automation stack.</div>
+                        <div class="mb-3">
+                            <label class="form-label small text-secondary mb-1">Webhook URL</label>
+                            <input type="text" class="form-control form-control-sm settings-input" value="{{ webhook_url }}" readonly>
+                        </div>
+                        <div class="settings-actions">
+                            <form method="post" action="{% url 'admin_settings_rotate_webhook' %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-primary" type="submit">Rotate Webhook</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="settings-card">
+                        <h6>Scraper Limits</h6>
+                        <div class="text-secondary small mb-2">Tune concurrency and retry safety rails.</div>
+                        <form method="post" action="{% url 'admin_settings_save_limits' %}">
+                            {% csrf_token %}
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <label class="form-label small text-secondary mb-1">Retry Limit</label>
+                                    <input type="number" min="0" name="retry_limit" class="form-control form-control-sm settings-input" value="{{ retry_limit }}">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small text-secondary mb-1">Timeout (sec)</label>
+                                    <input type="number" min="5" name="timeout_seconds" class="form-control form-control-sm settings-input" value="{{ timeout_seconds }}">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small text-secondary mb-1">Concurrency</label>
+                                    <input type="number" min="1" name="concurrency_limit" class="form-control form-control-sm settings-input" value="{{ concurrency_limit }}">
+                                </div>
+                            </div>
+                            <div class="settings-actions mt-3">
+                                <button class="btn btn-sm btn-info text-dark" type="submit">Save Limits</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="settings-card">
+                        <h6>Alerting & Retention</h6>
+                        <div class="text-secondary small mb-2">Adjust monitoring thresholds and log lifespan.</div>
+                        <form method="post" action="{% url 'admin_settings_save_alerts' %}">
+                            {% csrf_token %}
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label small text-secondary mb-1">Error Alert Threshold</label>
+                                    <input type="number" min="1" name="error_alert_threshold" class="form-control form-control-sm settings-input" value="{{ error_alert_threshold }}">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small text-secondary mb-1">Log Retention (days)</label>
+                                    <input type="number" min="1" name="log_retention_days" class="form-control form-control-sm settings-input" value="{{ log_retention_days }}">
+                                </div>
+                            </div>
+                            <div class="settings-actions mt-3">
+                                <button class="btn btn-sm btn-info text-dark" type="submit">Save Alerts</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            {% endif %}
+
+            {% if active_section == 'users' %}
+            <section id="users" class="card-panel mb-4">
+                <div class="user-header mb-3">
+                    <div>
+                        <h5 class="mb-1">User Management</h5>
+                        <div class="text-secondary small">Overview of active subscriptions, credit limits, and scraper access across the platform.</div>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'admin_export_users' %}?user_q={{ user_query|urlencode }}&user_status={{ user_status|urlencode }}" class="btn btn-ghost btn-sm">Export CSV</a>
+                        <button class="btn btn-info text-dark btn-sm" data-bs-toggle="modal" data-bs-target="#newUserModal">New User</button>
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <div class="user-kpi">
+                            <div class="user-kpi-title">Total Active Users</div>
+                            <div class="user-kpi-value">{{ users_active_count }}</div>
+                            <div class="user-kpi-sub">+{{ users_growth_rate }}%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="user-kpi">
+                            <div class="user-kpi-title">Total Credits Consumed</div>
+                            <div class="user-kpi-value">{{ credits_consumed_display }}</div>
+                            <div class="user-kpi-sub">{{ credits_delta_display }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="user-kpi">
+                            <div class="user-kpi-title">Active Subscriptions</div>
+                            <div class="user-kpi-value">{{ active_subscriptions }}</div>
+                            <div class="user-kpi-sub">+{{ subscriptions_growth_rate }}%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="user-kpi">
+                            <div class="user-kpi-title">Platform Health</div>
+                            <div class="user-kpi-value">{{ platform_health }}%</div>
+                            <div class="user-kpi-sub">Optimal</div>
+                        </div>
+                    </div>
+                </div>
+                <form method="get" action="{% url 'admin_dashboard_section' 'users' %}" class="user-toolbar mb-3">
+                    <input type="text" name="user_q" class="form-control form-control-sm" placeholder="Search users by name, email, or ID" value="{{ user_query }}">
+                    <select name="user_status" class="form-select form-select-sm">
+                        <option value="">All Status</option>
+                        <option value="active" {% if user_status == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if user_status == 'inactive' %}selected{% endif %}>Inactive</option>
+                        <option value="suspended" {% if user_status == 'suspended' %}selected{% endif %}>Suspended</option>
+                    </select>
+                    <button class="btn btn-sm btn-primary" type="submit">Filter</button>
+                </form>
+                <div class="table-responsive user-table">
+                    <table class="table table-dark table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>User Identity</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                                <th>Credit Usage</th>
+                                <th>Joined Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="admin-panel-avatar">{{ user.username|slice:":1"|upper }}</span>
+                                        <div>
+                                            <div class="fw-semibold">{{ user.get_full_name|default:user.username }}</div>
+                                            <div class="text-secondary small">{{ user.email|default:"-" }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="plan-pill{% if user.plan_label == 'Professional' %} pro{% elif user.plan_label == 'Enterprise' %} enterprise{% endif %}">{{ user.plan_label }}</span>
+                                </td>
+                                <td>
+                                    <span class="status-pill{% if user.status_label == 'Suspended' %} suspended{% elif user.status_label == 'Inactive' %} inactive{% endif %}">{{ user.status_label }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-between text-secondary small">
+                                        <span>{{ user.credits_used_display }}</span>
+                                        <span>{{ user.credits_limit_display }}</span>
+                                    </div>
+                                    <div class="credit-bar mt-1"><span style="width: {{ user.credits_usage_percent }}%"></span></div>
+                                </td>
+                                <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                                <td class="d-flex gap-2 user-actions">
+                                    <form method="post" action="{% url 'admin_user_change_role' user.id %}" class="d-flex gap-1">
+                                        {% csrf_token %}
+                                        <select name="role" class="form-select form-select-sm bg-dark text-white border-secondary">
+                                            <option value="ADMIN" {% if user.role == 'ADMIN' %}selected{% endif %}>ADMIN</option>
+                                            <option value="USER" {% if user.role == 'USER' %}selected{% endif %}>USER</option>
+                                        </select>
+                                        <button class="btn btn-sm btn-ghost" type="submit">Update</button>
+                                    </form>
+                                    <form method="post" action="{% url 'admin_user_toggle_active' user.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-ghost" type="submit">{% if user.is_active %}Deactivate{% else %}Activate{% endif %}</button>
+                                    </form>
+                                    <form method="post" action="{% url 'admin_user_toggle_ban' user.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-warning" type="submit">{% if user.is_banned %}Unban{% else %}Suspend{% endif %}</button>
+                                    </form>
+                                    <form method="post" action="{% url 'admin_user_delete' user.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6" class="text-muted">No users found</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 text-secondary small">
+                    <div>Showing {{ users.start_index }}-{{ users.end_index }} of {{ users.paginator.count }} results</div>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            {% if users.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?users_page={{ users.previous_page_number }}&user_q={{ user_query|urlencode }}&user_status={{ user_status|urlencode }}">Prev</a></li>
+                            {% endif %}
+                            <li class="page-item active"><span class="page-link">{{ users.number }}</span></li>
+                            {% if users.has_next %}
+                            <li class="page-item"><a class="page-link" href="?users_page={{ users.next_page_number }}&user_q={{ user_query|urlencode }}&user_status={{ user_status|urlencode }}">Next</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+
+            <div class="modal fade" id="newUserModal" tabindex="-1">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content bg-dark text-white">
+                        <div class="modal-header border-secondary">
+                            <h5 class="modal-title">New User</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'admin_create_user' %}" class="row g-3">
+                                {% csrf_token %}
+                                <div class="col-md-6">
+                                    <label class="profile-label">Username</label>
+                                    <input type="text" name="username" class="form-control bg-dark text-white border-secondary" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="profile-label">Email</label>
+                                    <input type="email" name="email" class="form-control bg-dark text-white border-secondary" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="profile-label">Role</label>
+                                    <select name="role" class="form-select bg-dark text-white border-secondary">
+                                        <option value="USER">USER</option>
+                                        <option value="ADMIN">ADMIN</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="profile-label">Status</label>
+                                    <select name="status" class="form-select bg-dark text-white border-secondary">
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="profile-label">Password</label>
+                                    <input type="text" name="password" class="form-control bg-dark text-white border-secondary" placeholder="Auto-generate if empty">
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-info text-dark fw-semibold">Create User</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
+
+            {% if active_section == 'jobs' %}
+            <section id="jobs" class="card-panel mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="text-uppercase text-secondary small">Recent High-Volume Jobs</div>
+                    <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="btn btn-ghost btn-sm">View All Jobs</a>
+                </div>
+                <form method="get" class="row g-2 mb-3">
+                    <div class="col-md-3">
+                        <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary">
+                            <option value="">All Status</option>
+                            <option value="PENDING" {% if status_filter == 'PENDING' %}selected{% endif %}>Pending</option>
+                            <option value="PROCESSING" {% if status_filter == 'PROCESSING' %}selected{% endif %}>Running</option>
+                            <option value="COMPLETED" {% if status_filter == 'COMPLETED' %}selected{% endif %}>Completed</option>
+                            <option value="FAILED" {% if status_filter == 'FAILED' %}selected{% endif %}>Failed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="user" class="form-select form-select-sm bg-dark text-white border-secondary">
+                            <option value="">All Users</option>
+                            {% for u in all_users %}
+                            <option value="{{ u.id }}" {% if user_filter == u.id|stringformat:'s' %}selected{% endif %}>{{ u.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" name="start_date" value="{{ start_date }}" class="form-control form-control-sm bg-dark text-white border-secondary">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" name="end_date" value="{{ end_date }}" class="form-control form-control-sm bg-dark text-white border-secondary">
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-sm btn-primary" type="submit">Filter</button>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-dark table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>Job ID</th>
+                                <th>User</th>
+                                <th>Target URL</th>
+                                <th>Data Points</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in jobs %}
+                            <tr>
+                                <td>{{ job.id }}</td>
+                                <td>{{ job.user.username }}</td>
+                                <td class="text-truncate" style="max-width: 220px;">{{ job.url }}</td>
+                                <td>{{ job.data_count }}</td>
+                                <td>{{ job.status }}</td>
+                                <td class="d-flex gap-2">
+                                    <form method="post" action="{% url 'admin_job_delete' job.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                    </form>
+                                    {% if job.status == 'FAILED' %}
+                                    <form method="post" action="{% url 'admin_job_retry' job.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-warning" type="submit">Retry</button>
+                                    </form>
+                                    {% endif %}
+                                    <button class="btn btn-sm btn-ghost" type="button" data-job-id="{{ job.id }}" onclick="openLogs(this)">Logs</button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6" class="text-muted">No jobs found</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            {% if jobs.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?jobs_page={{ jobs.previous_page_number }}">Prev</a></li>
+                            {% endif %}
+                            <li class="page-item active"><span class="page-link">{{ jobs.number }}</span></li>
+                            {% if jobs.has_next %}
+                            <li class="page-item"><a class="page-link" href="?jobs_page={{ jobs.next_page_number }}">Next</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+
+            {% endif %}
+
+            {% if active_section == 'system' %}
+            <section id="system" class="mb-4">
+                <div class="system-header mb-3">
+                    <div>
+                        <div class="system-breadcrumb">System &gt; Health Pulse</div>
+                        <h5 class="mb-1">System Health Pulse</h5>
+                        <div class="text-secondary small">Realtime metrics across cluster workloads and storage grids.</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="system-status-pill{% if system_status != 'STABLE' %} degraded{% endif %}">Status: {{ system_status }}</span>
+                        <a href="{% url 'admin_dashboard_section' 'system' %}" class="btn btn-ghost btn-sm">Refresh: Real-time</a>
+                        <span class="admin-panel-avatar">{{ request.user.username|slice:":1"|upper }}</span>
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-lg-4">
+                        <div class="system-card h-100">
+                            <div class="text-uppercase text-secondary small">Total System Uptime</div>
+                            <div class="system-uptime">
+                                <div class="system-uptime-item">
+                                    <div class="system-uptime-value">{{ uptime_days }}</div>
+                                    <div class="system-uptime-label">Days</div>
+                                </div>
+                                <div class="system-uptime-item">
+                                    <div class="system-uptime-value">{{ uptime_hours }}</div>
+                                    <div class="system-uptime-label">Hours</div>
+                                </div>
+                                <div class="system-uptime-item">
+                                    <div class="system-uptime-value">{{ uptime_mins }}</div>
+                                    <div class="system-uptime-label">Mins</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="system-card h-100 text-center">
+                            <div class="system-ring" style="--progress: {{ cpu_efficiency }}%;">
+                                <div class="system-ring-content">
+                                    <div class="system-ring-value">{{ cpu_efficiency }}%</div>
+                                    <div class="system-ring-label">Load</div>
+                                </div>
+                            </div>
+                            <div class="text-uppercase text-secondary small">CPU Efficiency</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="system-card h-100 text-center">
+                            <div class="system-ring" style="--progress: {{ memory_cluster }}%;">
+                                <div class="system-ring-content">
+                                    <div class="system-ring-value">{{ memory_cluster }}%</div>
+                                    <div class="system-ring-label">Util</div>
+                                </div>
+                            </div>
+                            <div class="text-uppercase text-secondary small">Memory Cluster</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-lg-8">
+                        <div class="system-card h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="text-uppercase text-secondary small">Storage &amp; Data Volume</div>
+                                <form method="post" action="{% url 'admin_system_toggle_autoscale' %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-ghost" type="submit">Auto-Scaling {{ autoscale_enabled|yesno:"On,Off" }}</button>
+                                </form>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between text-secondary small">
+                                    <span>SSD Primary Cluster</span>
+                                    <span>{{ storage_used_tb }} TB / {{ storage_total_tb }} TB</span>
+                                </div>
+                                <div class="system-bar mt-1"><span style="width: {{ disk_usage }}%"></span></div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between text-secondary small">
+                                    <span>Database Shard Load</span>
+                                    <span>{{ database_rows_display }} Rows</span>
+                                </div>
+                                <div class="system-bar mt-1"><span style="width: {{ cpu_efficiency }}%"></span></div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between text-secondary small">
+                                    <span>Active Rotating Proxies</span>
+                                    <span>{{ active_proxies }} / {{ total_proxies }} Nodes</span>
+                                </div>
+                                <div class="system-bar mt-1"><span style="width: {{ cpu_efficiency }}%"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="system-card h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="text-uppercase text-secondary small">Scraping Intensity</div>
+                                <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="btn btn-ghost btn-sm">More Active</a>
+                            </div>
+                            <div class="intensity-grid">
+                                {% for cell in scraping_intensity %}
+                                <div class="intensity-cell level-{{ cell.level }}" title="{{ cell.count }}"></div>
+                                {% endfor %}
+                            </div>
+                            <div class="d-flex justify-content-between text-secondary small mt-3">
+                                <span>Last 24 Hours</span>
+                                <span>More Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="system-card mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="text-uppercase text-secondary small">Live Cluster Nodes</div>
+                        <span class="text-secondary small">{{ live_nodes|length }} Active Nodes</span>
+                    </div>
+                    <div class="table-responsive system-table">
+                        <table class="table table-dark table-sm align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Node ID</th>
+                                    <th>Status</th>
+                                    <th>Region</th>
+                                    <th>Latency</th>
+                                    <th>Throughput</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for node in live_nodes %}
+                                <tr>
+                                    <td>{{ node.node_id }}</td>
+                                    <td>
+                                        <span class="status-pill{% if node.status != 'ONLINE' %} failed{% else %} success{% endif %}">{{ node.status }}</span>
+                                    </td>
+                                    <td>{{ node.region }}</td>
+                                    <td>{{ node.latency }}ms</td>
+                                    <td>{{ node.throughput }} GB/s</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="system-card">
+                    <div class="text-uppercase text-secondary small mb-2">Real-time System Events</div>
+                    {% for event in system_events %}
+                    <div class="system-event">
+                        <div>
+                            <div class="fw-semibold">{{ event.action|cut:"_"|title }}</div>
+                            <div class="text-secondary small">{{ event.metadata.detail|default:"Cluster task completed." }}</div>
+                        </div>
+                        <div class="text-secondary small">{{ event.timestamp|timesince }} ago</div>
+                    </div>
+                    {% empty %}
+                    <div class="text-secondary small">No system events captured.</div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            {% endif %}
+
+            {% if active_section == 'activity' %}
+            <section id="activity" class="support-layout mb-4">
+                <div class="support-panel">
+                    <div class="support-header">
+                        <div>
+                            <div class="text-uppercase text-secondary small">Support Command</div>
+                            <div class="fw-semibold">Ticket Queue</div>
+                        </div>
+                        <span class="support-chip">Queue Active: {{ support_tickets|length }} Tickets</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <a href="{% url 'admin_dashboard_section' 'activity' %}" class="text-info small">Clear Filters</a>
+                        <span class="text-secondary small">Status: Online</span>
+                    </div>
+                    <div class="support-tabs">
+                        <a href="{% url 'admin_dashboard_section' 'activity' %}?support_filter=all{% if support_query %}&support_q={{ support_query|urlencode }}{% endif %}" class="support-tab{% if support_filter == 'all' %} active{% endif %}">All</a>
+                        <a href="{% url 'admin_dashboard_section' 'activity' %}?support_filter=assigned{% if support_query %}&support_q={{ support_query|urlencode }}{% endif %}" class="support-tab{% if support_filter == 'assigned' %} active{% endif %}">Assigned</a>
+                        <a href="{% url 'admin_dashboard_section' 'activity' %}?support_filter=unassigned{% if support_query %}&support_q={{ support_query|urlencode }}{% endif %}" class="support-tab{% if support_filter == 'unassigned' %} active{% endif %}">Unassigned</a>
+                    </div>
+                    <form method="get" action="{% url 'admin_dashboard_section' 'activity' %}" class="mt-3">
+                        <input type="text" name="support_q" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Search tickets..." value="{{ support_query }}">
+                        <input type="hidden" name="support_filter" value="{{ support_filter }}">
+                    </form>
+                    <div class="mt-3">
+                        {% for ticket in support_tickets %}
+                        <a href="{% url 'admin_dashboard_section' 'activity' %}?ticket={{ ticket.id }}&support_filter={{ support_filter }}{% if support_query %}&support_q={{ support_query|urlencode }}{% endif %}" class="text-decoration-none text-white">
+                            <div class="ticket-card{% if selected_ticket and selected_ticket.id == ticket.id %} active{% endif %}">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="ticket-title">{{ ticket.title }}</div>
+                                    <span class="ticket-status{% if ticket.status == 'Escalated' %} escalated{% elif ticket.status == 'Resolved' %} resolved{% endif %}">{{ ticket.status }}</span>
+                                </div>
+                                <div class="ticket-meta">{{ ticket.customer_name }} · {{ ticket.updated_at|timesince }} ago</div>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <span class="ticket-pill{% if ticket.priority == 'Urgent' %} urgent{% elif ticket.priority == 'High' %} high{% else %} normal{% endif %}">{{ ticket.priority }}</span>
+                                    <span class="ticket-meta">{{ ticket.plan }}</span>
+                                </div>
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="text-secondary small">No support tickets available.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="support-panel support-thread">
+                    {% if selected_ticket %}
+                    <div class="support-header">
+                        <div>
+                            <div class="fw-semibold">{{ selected_ticket.customer_name }}</div>
+                            <div class="text-secondary small">{{ selected_ticket.customer_email }} · {{ selected_ticket.plan }}</div>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <form method="post" action="{% url 'admin_support_assign' selected_ticket.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-ghost" type="submit">Assign to Me</button>
+                            </form>
+                            <form method="post" action="{% url 'admin_support_escalate' selected_ticket.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-warning" type="submit">Escalate</button>
+                            </form>
+                            <form method="post" action="{% url 'admin_support_resolve' selected_ticket.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-info text-dark" type="submit">Resolve</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="text-secondary small">Ticket ID: {{ selected_ticket.id }} · Priority: {{ selected_ticket.priority }}</div>
+                    <div class="support-messages">
+                        {% for message in ticket_messages %}
+                        <div class="support-message{% if message.role == 'agent' %} agent{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <div class="fw-semibold">{{ message.author }}</div>
+                                <div class="text-secondary small">{{ message.timestamp|timesince }} ago</div>
+                            </div>
+                            <div class="text-secondary small">{{ message.message }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <form method="post" action="{% url 'admin_support_reply' selected_ticket.id %}" class="support-compose">
+                        {% csrf_token %}
+                        <div class="support-compose-toolbar">
+                            <div class="support-compose-actions">
+                                <span>📌 Canned Responses</span>
+                                <span>📎 Attach</span>
+                            </div>
+                            <div class="support-compose-actions">
+                                <span>Format</span>
+                                <span>🅱</span>
+                                <span>ⅈ</span>
+                            </div>
+                        </div>
+                        <div class="support-compose-input">
+                            <textarea name="message" rows="2" class="form-control form-control-sm" placeholder="Type your reply..."></textarea>
+                            <button class="btn btn-sm btn-info text-dark" type="submit">Send Reply</button>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="text-secondary small">Select a ticket from the queue to view details.</div>
+                    {% endif %}
+                </div>
+                <div class="d-flex flex-column gap-3">
+                    <div class="support-panel">
+                        <div class="text-uppercase text-secondary small mb-2">User Statistics</div>
+                        <div class="support-stat"><span>Success Rate</span><span class="text-info">{{ support_success_rate }}%</span></div>
+                        <div class="support-stat"><span>API Calls (24h)</span><span>{{ api_calls_label }}</span></div>
+                    </div>
+                    <div class="support-panel">
+                        <div class="text-uppercase text-secondary small mb-2">Active Projects</div>
+                        {% for project in active_projects %}
+                        <div class="support-project">
+                            <div>
+                                <div class="support-project-title">{{ project.name }}</div>
+                                <div class="support-project-meta">Node: {{ project.region }}</div>
+                            </div>
+                            <span class="ticket-status{% if project.status == 'FAILED' %} escalated{% elif project.status == 'COMPLETED' %} resolved{% endif %}">{{ project.status }}</span>
+                        </div>
+                        {% empty %}
+                        <div class="text-secondary small">No active projects.</div>
+                        {% endfor %}
+                    </div>
+                    <div class="support-panel">
+                        <div class="text-uppercase text-secondary small mb-2">Internal Notes</div>
+                        <div class="text-secondary small">Track customer sentiment and escalations here.</div>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+        </main>
+    </div>
+
+    {{ user_growth_labels|json_script:"user-growth-labels" }}
+    {{ user_growth_data|json_script:"user-growth-data" }}
+    {{ jobs_labels|json_script:"jobs-labels" }}
+    {{ jobs_data|json_script:"jobs-data" }}
+    {{ failed_success_data|json_script:"failed-success-data" }}
+    {{ traffic_labels|json_script:"traffic-labels" }}
+    {{ traffic_data|json_script:"traffic-data" }}
+    {{ billing_labels|json_script:"billing-labels" }}
+    {{ billing_data|json_script:"billing-data" }}
+    {{ billing_plan_labels|json_script:"billing-plan-labels" }}
+    {{ billing_plan_data|json_script:"billing-plan-data" }}
+
+    <div class="modal fade" id="avatarCropModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Crop image</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="avatar-cropper-frame">
+                        <img id="avatarCropImage" alt="Crop preview">
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-3">
+                        <span class="text-secondary small">Zoom</span>
+                        <input type="range" id="avatarCropZoom" min="1" max="3" step="0.01" value="1" class="form-range">
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-ghost btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-info text-dark btn-sm" id="avatarCropApply">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="logsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Job Logs</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="logsContent" class="small text-secondary">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const userGrowthLabels = JSON.parse(document.getElementById('user-growth-labels').textContent);
+        const userGrowthData = JSON.parse(document.getElementById('user-growth-data').textContent);
+        const jobsLabels = JSON.parse(document.getElementById('jobs-labels').textContent);
+        const jobsData = JSON.parse(document.getElementById('jobs-data').textContent);
+        const failedSuccessData = JSON.parse(document.getElementById('failed-success-data').textContent);
+        const trafficLabels = JSON.parse(document.getElementById('traffic-labels').textContent);
+        const trafficData = JSON.parse(document.getElementById('traffic-data').textContent);
+        const billingLabels = JSON.parse(document.getElementById('billing-labels').textContent);
+        const billingData = JSON.parse(document.getElementById('billing-data').textContent);
+        const billingPlanLabels = JSON.parse(document.getElementById('billing-plan-labels').textContent);
+        const billingPlanData = JSON.parse(document.getElementById('billing-plan-data').textContent);
+
+        const usersGrowthChart = document.getElementById('usersGrowthChart');
+        if (usersGrowthChart) {
+            const chartContext = usersGrowthChart.getContext('2d');
+            const volumeGradient = chartContext.createLinearGradient(0, 0, 0, 240);
+            volumeGradient.addColorStop(0, 'rgba(34, 211, 238, 0.4)');
+            volumeGradient.addColorStop(1, 'rgba(34, 211, 238, 0)');
+            const retriesData = jobsData.map(value => Math.max(1, Math.round(value * 0.18)));
+            new Chart(usersGrowthChart, {
+                type: 'line',
+                data: {
+                    labels: jobsLabels,
+                    datasets: [
+                        {
+                            label: 'Success',
+                            data: jobsData,
+                            borderColor: '#22d3ee',
+                            backgroundColor: volumeGradient,
+                            fill: true,
+                            tension: 0.45,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#2dd4bf',
+                            pointBorderWidth: 0,
+                        },
+                        {
+                            label: 'Retries',
+                            data: retriesData,
+                            borderColor: '#64748b',
+                            backgroundColor: 'transparent',
+                            tension: 0.45,
+                            pointRadius: 0,
+                            borderDash: [6, 6],
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                            ticks: { color: '#94a3b8', maxRotation: 0, autoSkip: true },
+                        },
+                        y: {
+                            grid: { color: 'rgba(148, 163, 184, 0.08)' },
+                            ticks: { color: '#94a3b8' },
+                        },
+                    },
+                }
+            });
+        }
+        const jobsPerDayChart = document.getElementById('jobsPerDayChart');
+        if (jobsPerDayChart) {
+            new Chart(jobsPerDayChart, {
+                type: 'bar',
+                data: { labels: jobsLabels, datasets: [{ label: 'Jobs', data: jobsData, backgroundColor: '#8b5cf6' }] },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+        }
+        const failedSuccessChart = document.getElementById('failedSuccessChart');
+        if (failedSuccessChart) {
+            new Chart(failedSuccessChart, {
+                type: 'pie',
+                data: { labels: ['Failed', 'Completed'], datasets: [{ data: failedSuccessData, backgroundColor: ['#ef4444', '#22c55e'] }] },
+                options: { responsive: true }
+            });
+        }
+        const trafficChart = document.getElementById('trafficChart');
+        if (trafficChart) {
+            const trafficContext = trafficChart.getContext('2d');
+            const trafficGradient = trafficContext.createLinearGradient(0, 0, 0, 200);
+            trafficGradient.addColorStop(0, 'rgba(34, 211, 238, 0.35)');
+            trafficGradient.addColorStop(1, 'rgba(34, 211, 238, 0)');
+            new Chart(trafficChart, {
+                type: 'line',
+                data: {
+                    labels: trafficLabels,
+                    datasets: [{
+                        label: 'Traffic',
+                        data: trafficData,
+                        borderColor: '#22d3ee',
+                        backgroundColor: trafficGradient,
+                        fill: true,
+                        tension: 0.45,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#22d3ee',
+                        pointBorderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                            ticks: { color: '#94a3b8' },
+                        },
+                        y: {
+                            grid: { color: 'rgba(148, 163, 184, 0.08)' },
+                            ticks: { color: '#94a3b8' },
+                        },
+                    },
+                }
+            });
+        }
+        const billingRevenueChart = document.getElementById('billingRevenueChart');
+        if (billingRevenueChart) {
+            const billingContext = billingRevenueChart.getContext('2d');
+            const billingGradient = billingContext.createLinearGradient(0, 0, 0, 200);
+            billingGradient.addColorStop(0, 'rgba(45, 212, 191, 0.35)');
+            billingGradient.addColorStop(1, 'rgba(45, 212, 191, 0)');
+            new Chart(billingRevenueChart, {
+                type: 'line',
+                data: {
+                    labels: billingLabels,
+                    datasets: [{
+                        label: 'Revenue',
+                        data: billingData,
+                        borderColor: '#2ed3c9',
+                        backgroundColor: billingGradient,
+                        fill: true,
+                        tension: 0.45,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#2dd4bf',
+                        pointBorderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                            ticks: { color: '#94a3b8' },
+                        },
+                        y: {
+                            grid: { color: 'rgba(148, 163, 184, 0.08)' },
+                            ticks: { color: '#94a3b8' },
+                        },
+                    },
+                }
+            });
+        }
+        const billingPlanChart = document.getElementById('billingPlanChart');
+        if (billingPlanChart) {
+            new Chart(billingPlanChart, {
+                type: 'doughnut',
+                data: {
+                    labels: billingPlanLabels,
+                    datasets: [{
+                        data: billingPlanData,
+                        backgroundColor: ['#22d3ee', '#8b5cf6', '#64748b'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                }
+            });
+        }
+
+        const avatarCropModalElement = document.getElementById('avatarCropModal');
+        const avatarCropModal = avatarCropModalElement ? new bootstrap.Modal(avatarCropModalElement) : null;
+        const avatarCropImage = document.getElementById('avatarCropImage');
+        const avatarCropZoom = document.getElementById('avatarCropZoom');
+        const avatarCropApply = document.getElementById('avatarCropApply');
+        const avatarCropFrame = document.querySelector('.avatar-cropper-frame');
+        const avatarCropState = {
+            input: null,
+            scaleBase: 1,
+            zoom: 1,
+            offsetX: 0,
+            offsetY: 0,
+            applied: false,
+            dragging: false,
+            startX: 0,
+            startY: 0,
+            startOffsetX: 0,
+            startOffsetY: 0,
+            imageLoaded: false,
+        };
+
+        function updateAvatarCropTransform() {
+            if (!avatarCropImage || !avatarCropFrame || !avatarCropState.imageLoaded) {
+                return;
+            }
+            const scale = avatarCropState.scaleBase * avatarCropState.zoom;
+            const maxOffsetX = Math.max(0, (avatarCropImage.naturalWidth * scale - avatarCropFrame.clientWidth) / 2);
+            const maxOffsetY = Math.max(0, (avatarCropImage.naturalHeight * scale - avatarCropFrame.clientHeight) / 2);
+            avatarCropState.offsetX = Math.min(maxOffsetX, Math.max(-maxOffsetX, avatarCropState.offsetX));
+            avatarCropState.offsetY = Math.min(maxOffsetY, Math.max(-maxOffsetY, avatarCropState.offsetY));
+            avatarCropImage.style.transform = `translate(${avatarCropState.offsetX}px, ${avatarCropState.offsetY}px) translate(-50%, -50%) scale(${scale})`;
+        }
+
+        function finalizeAvatarCrop() {
+            if (!avatarCropImage || !avatarCropFrame || !avatarCropState.imageLoaded) {
+                return;
+            }
+            const frameRect = avatarCropFrame.getBoundingClientRect();
+            if (!frameRect.width || !frameRect.height) {
+                return;
+            }
+            avatarCropState.scaleBase = Math.max(frameRect.width / avatarCropImage.naturalWidth, frameRect.height / avatarCropImage.naturalHeight);
+            avatarCropState.zoom = 1;
+            avatarCropState.offsetX = 0;
+            avatarCropState.offsetY = 0;
+            if (avatarCropZoom) {
+                avatarCropZoom.value = '1';
+            }
+            updateAvatarCropTransform();
+        }
+
+        function openAvatarCropper(input) {
+            if (!avatarCropModal || !avatarCropImage) {
+                return;
+            }
+            const file = input.files && input.files[0];
+            if (!file) {
+                return;
+            }
+            avatarCropState.input = input;
+            avatarCropState.applied = false;
+            avatarCropState.imageLoaded = false;
+            const objectUrl = URL.createObjectURL(file);
+            avatarCropImage.onload = () => {
+                avatarCropState.imageLoaded = true;
+                finalizeAvatarCrop();
+                URL.revokeObjectURL(objectUrl);
+            };
+            avatarCropImage.src = objectUrl;
+            avatarCropModal.show();
+        }
+
+        if (avatarCropModalElement) {
+            avatarCropModalElement.addEventListener('shown.bs.modal', finalizeAvatarCrop);
+            avatarCropModalElement.addEventListener('hidden.bs.modal', () => {
+                if (avatarCropState.input && !avatarCropState.applied) {
+                    avatarCropState.input.value = '';
+                }
+            });
+        }
+
+        if (avatarCropZoom) {
+            avatarCropZoom.addEventListener('input', () => {
+                avatarCropState.zoom = parseFloat(avatarCropZoom.value || '1');
+                updateAvatarCropTransform();
+            });
+        }
+
+        if (avatarCropImage) {
+            avatarCropImage.addEventListener('pointerdown', event => {
+                avatarCropState.dragging = true;
+                avatarCropImage.setPointerCapture(event.pointerId);
+                avatarCropState.startX = event.clientX;
+                avatarCropState.startY = event.clientY;
+                avatarCropState.startOffsetX = avatarCropState.offsetX;
+                avatarCropState.startOffsetY = avatarCropState.offsetY;
+            });
+            avatarCropImage.addEventListener('pointermove', event => {
+                if (!avatarCropState.dragging) {
+                    return;
+                }
+                avatarCropState.offsetX = avatarCropState.startOffsetX + (event.clientX - avatarCropState.startX);
+                avatarCropState.offsetY = avatarCropState.startOffsetY + (event.clientY - avatarCropState.startY);
+                updateAvatarCropTransform();
+            });
+            avatarCropImage.addEventListener('pointerup', () => {
+                avatarCropState.dragging = false;
+            });
+            avatarCropImage.addEventListener('pointercancel', () => {
+                avatarCropState.dragging = false;
+            });
+        }
+
+        if (avatarCropApply) {
+            avatarCropApply.addEventListener('click', () => {
+                if (!avatarCropState.input || !avatarCropImage || !avatarCropFrame || !avatarCropState.imageLoaded) {
+                    return;
+                }
+                const scale = avatarCropState.scaleBase * avatarCropState.zoom;
+                const frameWidth = avatarCropFrame.clientWidth;
+                const frameHeight = avatarCropFrame.clientHeight;
+                const imageCenterX = frameWidth / 2 + avatarCropState.offsetX;
+                const imageCenterY = frameHeight / 2 + avatarCropState.offsetY;
+                const imageTopLeftX = imageCenterX - (avatarCropImage.naturalWidth * scale) / 2;
+                const imageTopLeftY = imageCenterY - (avatarCropImage.naturalHeight * scale) / 2;
+                let sourceX = (0 - imageTopLeftX) / scale;
+                let sourceY = (0 - imageTopLeftY) / scale;
+                let sourceW = frameWidth / scale;
+                let sourceH = frameHeight / scale;
+                sourceX = Math.max(0, Math.min(avatarCropImage.naturalWidth - sourceW, sourceX));
+                sourceY = Math.max(0, Math.min(avatarCropImage.naturalHeight - sourceH, sourceY));
+                const canvas = document.createElement('canvas');
+                const outputSize = 256;
+                canvas.width = outputSize;
+                canvas.height = outputSize;
+                const context = canvas.getContext('2d');
+                context.drawImage(avatarCropImage, sourceX, sourceY, sourceW, sourceH, 0, 0, outputSize, outputSize);
+                canvas.toBlob(blob => {
+                    if (!blob) {
+                        return;
+                    }
+                    const croppedFile = new File([blob], 'avatar.png', { type: 'image/png' });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(croppedFile);
+                    avatarCropState.input.files = dataTransfer.files;
+                    avatarCropState.applied = true;
+                    if (avatarCropModal) {
+                        avatarCropModal.hide();
+                    }
+                    avatarCropState.input.form.submit();
+                }, 'image/png');
+            });
+        }
+
+        const logsModal = new bootstrap.Modal(document.getElementById('logsModal'));
+        const logsContent = document.getElementById('logsContent');
+
+        function openLogs(button) {
+            const jobId = button.getAttribute('data-job-id');
+            logsContent.textContent = 'Loading...';
+            fetch(`/admin-dashboard/jobs/${jobId}/logs/`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.logs || data.logs.length === 0) {
+                        logsContent.textContent = 'No logs available.';
+                        return;
+                    }
+                    logsContent.innerHTML = data.logs.map(log => {
+                        return `<div class="border-bottom border-secondary py-2"><div class="fw-bold">${log.level}</div><div>${log.message}</div><div class="text-secondary">${log.timestamp}</div></div>`;
+                    }).join('');
+                })
+                .catch(() => {
+                    logsContent.textContent = 'Failed to load logs.';
+                });
+            logsModal.show();
+        }
+    </script>
+</body>
+</html>

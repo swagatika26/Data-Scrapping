@@ -55,7 +55,7 @@
 
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Stat Card 1 -->
         <a href="{% url 'history' %}" class="glass-card rounded-2xl p-6 relative overflow-hidden group transition-all duration-300 animate-slide-up block hover:border-blue-500/30" style="animation-delay: 0.1s">
             <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/20 rounded-full blur-2xl group-hover:bg-blue-500/30 transition-all"></div>
@@ -95,18 +95,6 @@
             <h3 class="text-3xl font-display font-bold text-white group-hover:text-red-100 transition-colors">{{ failed_scrapes }}</h3>
         </a>
 
-        <!-- Stat Card 4 -->
-        <a href="{% url 'history' %}" class="glass-card rounded-2xl p-6 relative overflow-hidden group transition-all duration-300 animate-slide-up block hover:border-purple-500/30" style="animation-delay: 0.4s">
-            <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/20 rounded-full blur-2xl group-hover:bg-purple-500/30 transition-all"></div>
-            <div class="flex justify-between items-start mb-4 relative z-10">
-                <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:text-purple-300 group-hover:scale-110 transition-all duration-300 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
-                    <i class="fa-solid fa-stopwatch text-xl"></i>
-                </div>
-                <span class="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-1 rounded border border-purple-500/20">AVG</span>
-            </div>
-            <p class="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-1">Time Saved</p>
-            <h3 class="text-3xl font-display font-bold text-white group-hover:text-purple-100 transition-colors">{{ time_saved }}</h3>
-        </a>
     </div>
 
     <!-- Recent Activity Section -->

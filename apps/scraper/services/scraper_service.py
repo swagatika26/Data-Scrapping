@@ -14,7 +14,7 @@ class ScraperService:
     Service layer for handling scraping logic with enhanced support for JS-heavy sites via structured data.
     """
     
-    def try_playwright(self, url):
+    def try_playwright(self, url, timeout_ms=90000):
         """Attempt to scrape using Playwright to bypass 403/CAPTCHA."""
         try:
             # Import here to avoid hard dependency at module level
@@ -63,7 +63,7 @@ class ScraperService:
                 
                 try:
                     logger.info(f"Playwright navigating to {url}")
-                    page.goto(url, timeout=90000, wait_until="domcontentloaded")
+                    page.goto(url, timeout=timeout_ms, wait_until="domcontentloaded")
                     page.wait_for_timeout(5000) # Wait for dynamic content/checks
                     
                     # Scroll down to trigger lazy loading
@@ -105,7 +105,7 @@ class ScraperService:
             logger.error(f"Playwright setup failed: {e}")
             return None
     
-    def execute_scrape(self, url, rules=None):
+    def execute_scrape(self, url, options=None):
         """
         Execute the scraping logic with robust fallback strategies.
         """
@@ -123,6 +123,9 @@ class ScraperService:
         
         try:
             html_content = None
+            options = options or {}
+            req_timeout = int(options.get('timeout', 30))
+            retry_limit = max(1, int(options.get('retry_limit', 3)))
             
             # 1. Try Requests first
             try:
@@ -141,23 +144,27 @@ class ScraperService:
                     'Connection': 'keep-alive',
                 }
                 
-                # Add a random delay to be polite and avoid basic rate limiting
-                time.sleep(random.uniform(1, 2))
-                
-                # Use a session to persist cookies
-                session = requests.Session()
-                response = session.get(url, headers=headers, timeout=30)
-                
-                # Check for 403 or CAPTCHA
-                if response.status_code == 403 or "captcha" in response.url.lower() or (len(response.content) < 5000 and "captcha" in response.text.lower()):
-                    logger.warning(f"Requests blocked (Status: {response.status_code}), switching to Playwright...")
-                    html_content = self.try_playwright(url)
-                else:
-                    response.raise_for_status()
-                    html_content = response.content
+                attempt = 0
+                last_exc = None
+                while attempt < retry_limit and not html_content:
+                    time.sleep(random.uniform(0.8, 1.6))
+                    session = requests.Session()
+                    try:
+                        response = session.get(url, headers=headers, timeout=req_timeout)
+                        if response.status_code == 403 or "captcha" in response.url.lower() or (len(response.content) < 5000 and "captcha" in response.text.lower()):
+                            logger.warning(f"Requests blocked (Status: {response.status_code}), switching to Playwright...")
+                            break
+                        response.raise_for_status()
+                        html_content = response.content
+                    except Exception as e:
+                        last_exc = e
+                        attempt += 1
+                if not html_content and last_exc:
+                    logger.warning(f"Requests failed after {retry_limit} attempts: {last_exc}, switching to Playwright...")
+                    html_content = self.try_playwright(url, timeout_ms=req_timeout * 1000)
             except Exception as e:
                 logger.warning(f"Requests failed: {e}, switching to Playwright...")
-                html_content = self.try_playwright(url)
+                html_content = self.try_playwright(url, timeout_ms=req_timeout * 1000)
             
             if not html_content:
                 raise Exception("Failed to retrieve content via both Requests and Playwright.")

@@ -18,10 +18,10 @@
     </div>
     
     <div class="flex items-center gap-4">
-        <button class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-all relative">
+        <a href="{% url 'notifications' %}" class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-all relative" title="Notifications">
             <i class="fa-regular fa-bell"></i>
             <span class="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full bg-red-500 border border-dark-bg"></span>
-        </button>
+        </a>
     </div>
 </header>
 
@@ -29,14 +29,10 @@
 <div class="flex-1 overflow-y-auto p-8 scroll-smooth h-[calc(100vh-4rem)]">
     <div class="max-w-6xl mx-auto flex gap-10">
         
-        <!-- Inner Sidebar (Account Control) -->
+        {% if active_section != 'profile' %}
         <div class="w-64 shrink-0 hidden lg:block sticky top-0 animate-slide-up">
             <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 px-4">Account Control</h3>
             <nav class="space-y-1">
-                <a href="{% url 'settings_section' 'profile' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all {% if active_section == 'profile' or not active_section %}text-white bg-white/5 font-medium border-l-2 border-brand shadow-inner{% else %}text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent{% endif %}">
-                    <i class="fa-regular fa-user w-5 {% if active_section == 'profile' or not active_section %}text-brand{% endif %}"></i>
-                    <span>Profile</span>
-                </a>
                 <a href="{% url 'settings_section' 'plan' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all {% if active_section == 'plan' %}text-white bg-white/5 font-medium border-l-2 border-brand shadow-inner{% else %}text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent{% endif %}">
                     <i class="fa-regular fa-credit-card w-5 {% if active_section == 'plan' %}text-brand{% endif %}"></i>
                     <span>Plan & Billing</span>
@@ -62,6 +58,7 @@
                 </a>
             </div>
         </div>
+        {% endif %}
 
         <!-- Right Settings Content -->
         <div class="flex-1 space-y-10 pb-20 animate-slide-up" style="animation-delay: 0.1s;">

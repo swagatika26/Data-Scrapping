@@ -7,7 +7,10 @@ import random
 import time
 import re
 from django.conf import settings
-from serpapi import GoogleSearch
+try:
+    from serpapi import GoogleSearch  # optional
+except Exception:
+    GoogleSearch = None
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +43,7 @@ def search_web(query, num_results=1, rich_results=False):
     serpapi_key = getattr(settings, 'SERPAPI_KEY', None)
     if serpapi_key:
         serpapi_key = serpapi_key.strip().strip('"').strip("'")
-    if serpapi_key:
+    if serpapi_key and GoogleSearch:
         try:
             logger.info("Using SerpAPI for search...")
             params = {

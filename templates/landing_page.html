@@ -5,10 +5,14 @@
 {% block content %}
 <!-- Hero Section -->
 <section class="relative pt-32 pb-40 overflow-hidden">
-    <!-- Background Effects -->
-    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-brand/20 rounded-full blur-[100px] -z-10 animate-pulse-slow"></div>
-    <div class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] -z-10"></div>
+    <!-- Advanced Background -->
+    <div class="absolute inset-0 -z-20">
+        <!-- Base Dark Gradient -->
+        <div class="absolute inset-0 bg-gradient-to-b from-[#020617] via-[#050B14] to-[#020617]"></div>
+        
+        <!-- Canvas Particles -->
+        <canvas class="particle-network-canvas absolute inset-0 w-full h-full opacity-80 mix-blend-screen pointer-events-none" data-speed="0.5" data-count="150" data-range="120"></canvas>
+    </div>
     
     <!-- Floating Elements (Decorative) -->
     <div class="absolute top-40 left-10 lg:left-20 animate-float-slow hidden md:block">
@@ -77,7 +81,7 @@
         </div>
 
         <!-- Dashboard Preview 3D Effect -->
-        <div class="relative mx-auto max-w-2xl perspective-1000 animate-fade-in-up animation-delay-400 group">
+        <div class="relative mx-auto max-w-3xl perspective-1000 animate-fade-in-up animation-delay-400 group">
             <!-- Glow behind -->
             <div class="absolute -inset-4 bg-gradient-to-t from-brand/20 to-purple-600/20 rounded-[2rem] blur-2xl opacity-50 group-hover:opacity-70 transition-opacity duration-700"></div>
             
@@ -103,61 +107,180 @@
 
                 <!-- App Content Mockup -->
                 <div class="p-1">
-                     <div class="bg-dark-bg aspect-[16/9] w-full relative overflow-hidden">
-                        <!-- Sidebar Mock -->
-                        <div class="absolute left-0 top-0 bottom-0 w-64 bg-dark-card border-r border-dark-border p-6 hidden md:block">
-                            <div class="space-y-6">
-                                <div class="h-2 w-20 bg-dark-border rounded"></div>
-                                <div class="space-y-3">
-                                    <div class="h-10 w-full bg-brand/10 rounded-lg border border-brand/20"></div>
-                                    <div class="h-10 w-full bg-dark-border/30 rounded-lg"></div>
-                                    <div class="h-10 w-full bg-dark-border/30 rounded-lg"></div>
-                                </div>
-                            </div>
-                        </div>
+                     <div class="bg-dark-bg aspect-[16/9] w-full relative overflow-hidden group/video">
                         
-                        <!-- Main Area -->
-                        <div class="absolute left-0 md:left-64 right-0 top-0 bottom-0 p-8">
-                            <div class="flex justify-between items-center mb-8">
-                                <div class="h-8 w-48 bg-dark-border/50 rounded-lg"></div>
-                                <div class="h-10 w-32 bg-brand rounded-lg shadow-lg shadow-brand/20"></div>
-                            </div>
-                            
-                            <!-- Data Grid -->
-                            <div class="grid grid-cols-4 gap-4 mb-6">
-                                <div class="h-24 bg-dark-card border border-dark-border rounded-xl p-4"></div>
-                                <div class="h-24 bg-dark-card border border-dark-border rounded-xl p-4"></div>
-                                <div class="h-24 bg-dark-card border border-dark-border rounded-xl p-4"></div>
-                                <div class="h-24 bg-dark-card border border-dark-border rounded-xl p-4"></div>
-                            </div>
-                            
-                            <!-- Table -->
-                            <div class="w-full h-full bg-dark-card border border-dark-border rounded-xl overflow-hidden">
-                                <div class="h-10 border-b border-dark-border bg-dark-bg/50"></div>
-                                <div class="p-4 space-y-3">
-                                    <div class="h-12 w-full bg-dark-bg/30 rounded-lg flex items-center px-4 gap-4">
-                                        <div class="w-8 h-8 rounded bg-gray-700"></div>
-                                        <div class="h-2 w-32 bg-gray-700 rounded"></div>
+                        <!-- Simulated UI Container -->
+                        <div class="absolute inset-0 flex flex-col p-6" id="simulated-app">
+                            <!-- Search Bar Area -->
+                            <div class="flex items-center gap-4 mb-8">
+                                <div class="flex-1 relative">
+                                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
                                     </div>
-                                    <div class="h-12 w-full bg-dark-bg/30 rounded-lg flex items-center px-4 gap-4">
-                                        <div class="w-8 h-8 rounded bg-gray-700"></div>
-                                        <div class="h-2 w-24 bg-gray-700 rounded"></div>
+                                    <input type="text" readonly id="simulated-search-input" class="w-full bg-dark-card border border-dark-border rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none font-mono text-sm" placeholder="">
+                                    <div class="absolute right-2 top-1/2 -translate-y-1/2">
+                                        <div class="hidden" id="simulated-spinner">
+                                            <i class="fa-solid fa-circle-notch fa-spin text-brand"></i>
+                                        </div>
                                     </div>
-                                    <div class="h-12 w-full bg-dark-bg/30 rounded-lg flex items-center px-4 gap-4">
-                                        <div class="w-8 h-8 rounded bg-gray-700"></div>
-                                        <div class="h-2 w-40 bg-gray-700 rounded"></div>
+                                </div>
+                                <button id="simulated-search-btn" class="bg-brand text-dark-bg font-bold py-3 px-6 rounded-xl transition-transform transform active:scale-95">
+                                    Scrape
+                                </button>
+                            </div>
+
+                            <!-- Results Area -->
+                            <div class="flex-1 bg-dark-card border border-dark-border rounded-xl overflow-hidden flex flex-col">
+                                <!-- Table Header -->
+                                <div class="grid grid-cols-4 gap-4 p-4 border-b border-dark-border bg-dark-bg/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                    <div class="col-span-2">Product Name</div>
+                                    <div>Price</div>
+                                    <div>Rating</div>
+                                </div>
+                                <!-- Table Body -->
+                                <div class="flex-1 overflow-hidden relative">
+                                    <div id="simulated-results-container" class="p-2 space-y-1">
+                                        <!-- Rows will be injected here by JS -->
+                                    </div>
+                                    
+                                    <!-- Empty State / Placeholder -->
+                                    <div id="simulated-empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-600">
+                                        <i class="fa-solid fa-terminal text-4xl mb-4 opacity-50"></i>
+                                        <p class="text-sm">Ready to extract data</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Mouse Cursor -->
+                        <div id="simulated-cursor" class="absolute w-4 h-4 pointer-events-none transition-all duration-300 z-50">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-lg">
+                                <path d="M3 3L10.07 19.97L12.58 12.58L19.97 10.07L3 3Z" fill="white" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+
                      </div>
                 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Search Simulation
+        const input = document.getElementById('simulated-search-input');
+        const btn = document.getElementById('simulated-search-btn');
+        const resultsContainer = document.getElementById('simulated-results-container');
+        const emptyState = document.getElementById('simulated-empty-state');
+        const spinner = document.getElementById('simulated-spinner');
+        const cursor = document.getElementById('simulated-cursor');
+        
+        const demoQuery = "https://amazon.com/s?k=iphone+15+pro";
+        
+        const demoData = [
+            { name: "Apple iPhone 15 Pro (128 GB) - Natural Titanium", price: "$999.00", rating: "4.6 ★" },
+            { name: "Apple iPhone 15 Pro Max (256 GB) - Blue Titanium", price: "$1,199.00", rating: "4.7 ★" },
+            { name: "Apple iPhone 15 (128 GB) - Black", price: "$799.00", rating: "4.5 ★" },
+            { name: "Apple iPhone 13 (128GB) - Midnight", price: "$599.00", rating: "4.6 ★" },
+            { name: "Apple iPhone SE (3rd Gen, 64GB) - Starlight", price: "$429.00", rating: "4.3 ★" }
+        ];
+
+        // Helper to delay
+        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        // Animation Loop
+        async function runSimulation() {
+            // Reset
+            input.value = "";
+            input.placeholder = "Enter URL or search query...";
+            resultsContainer.innerHTML = "";
+            emptyState.style.opacity = "1";
+            spinner.classList.add('hidden');
+            btn.classList.remove('scale-95');
+            
+            // Move cursor to start
+            cursor.style.top = "80%";
+            cursor.style.left = "80%";
+            await wait(1000);
+
+            // Move cursor to input
+            cursor.style.top = "40px";
+            cursor.style.left = "100px";
+            await wait(800);
+
+            // Type
+            input.placeholder = "";
+            for (let i = 0; i < demoQuery.length; i++) {
+                input.value += demoQuery[i];
+                await wait(Math.random() * 50 + 30); // Random typing speed
+            }
+            await wait(500);
+
+            // Move cursor to button
+            const btnRect = btn.getBoundingClientRect();
+            // Since cursor is absolute in container, we approximate for this demo layout
+            // Button is roughly at top right of the container
+            cursor.style.top = "40px";
+            cursor.style.left = "calc(100% - 80px)";
+            await wait(800);
+
+            // Click effect
+            btn.classList.add('scale-95'); // Press down
+            await wait(150);
+            btn.classList.remove('scale-95'); // Release
+            
+            // Loading state
+            emptyState.style.opacity = "0";
+            spinner.classList.remove('hidden');
+            await wait(1500); // Simulate network/processing
+
+            // Show Results
+            spinner.classList.add('hidden');
+            
+            for (const item of demoData) {
+                const row = document.createElement('div');
+                row.className = "grid grid-cols-4 gap-4 p-3 bg-dark-bg border border-dark-border rounded-lg animate-fade-in-up text-sm items-center hover:border-brand/50 transition-colors";
+                row.innerHTML = `
+                    <div class="col-span-2 font-medium text-white truncate">${item.name}</div>
+                    <div class="text-brand font-mono">${item.price}</div>
+                    <div class="text-yellow-500 text-xs">${item.rating}</div>
+                `;
+                resultsContainer.appendChild(row);
+                await wait(200); // Staggered appearance
+            }
+
+            // Move cursor away
+            cursor.style.top = "90%";
+            cursor.style.left = "90%";
+            
+            // Wait before restarting
+            await wait(5000);
+            runSimulation();
+        }
+
+        // Start
+        runSimulation();
+    });
+</script>
             </div>
         </div>
     </div>
 </section>
 
 <style>
+    @keyframes blob {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+    }
+    .animate-blob {
+        animation: blob 10s infinite;
+    }
+    .animation-delay-2000 {
+        animation-delay: 2s;
+    }
+    .animation-delay-4000 {
+        animation-delay: 4s;
+    }
+    
     @keyframes float-slow {
         0%, 100% { transform: translateY(0) rotate(-6deg); }
         50% { transform: translateY(-20px) rotate(-3deg); }
@@ -212,118 +335,33 @@
     </div>
 </section>
 
-<!-- Features Section -->
-<section id="features" class="py-24 relative">
-    <div class="container mx-auto px-6">
-        <div class="mb-16 md:max-w-2xl">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Powerful Features, <span class="text-brand">Zero Complexity</span></h2>
-            <p class="text-gray-400">Everything you need to turn the entire web into your personal, structured database.</p>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Feature 1 -->
-            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-brand/50 transition-colors group">
-                <div class="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-brain text-xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">AI Detection</h3>
-                <p class="text-gray-400 text-sm leading-relaxed">
-                    Automatically identifies lists, tables, and pagination with human-like precision. No selector configuration needed.
-                </p>
-            </div>
-
-            <!-- Feature 2 -->
-            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-brand/50 transition-colors group">
-                <div class="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-cloud text-xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">Cloud Processing</h3>
-                <p class="text-gray-400 text-sm leading-relaxed">
-                    Run heavy scraping tasks in the background across 1,000s of concurrent sessions without slowing down your computer.
-                </p>
-            </div>
-
-            <!-- Feature 3 -->
-            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-brand/50 transition-colors group">
-                <div class="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-file-export text-xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">Universal Export</h3>
-                <p class="text-gray-400 text-sm leading-relaxed">
-                    One-click export to Google Sheets, Excel, JSON, or via Webhooks to your own custom API or CRM.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Pricing Section -->
-<section id="pricing" class="py-24 bg-dark-bg">
-    <div class="container mx-auto px-6">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Transparent Pricing</h2>
-            <p class="text-gray-400">Scale from hobby projects to enterprise-grade data operations.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
-            <!-- Starter -->
-            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border">
-                <h3 class="text-lg font-medium text-white mb-2">Starter</h3>
-                <div class="text-4xl font-bold text-white mb-6">$0 <span class="text-base font-normal text-gray-500">/mo</span></div>
-                <ul class="space-y-4 mb-8 text-sm text-gray-400">
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 500 Credits / month</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Standard AI Detection</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gray-600"></i> No API Access</li>
-                </ul>
-                <a href="#" class="block w-full py-3 border border-dark-border rounded-lg text-center text-white hover:bg-dark-border transition-colors">Get Started</a>
-            </div>
-
-            <!-- Pro (Highlighted) -->
-            <div class="relative bg-dark-card p-8 rounded-2xl border border-brand shadow-[0_0_40px_rgba(0,212,197,0.1)] transform md:-translate-y-4">
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand text-dark-bg text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Most Popular</div>
-                <h3 class="text-lg font-medium text-white mb-2">Pro</h3>
-                <div class="text-4xl font-bold text-white mb-6">$49 <span class="text-base font-normal text-gray-500">/mo</span></div>
-                <ul class="space-y-4 mb-8 text-sm text-gray-300">
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 10,000 Credits / month</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Advanced AI (LLM Powered)</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Custom Webhooks</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 10 Concurrent Sessions</li>
-                </ul>
-                <a href="#" class="block w-full py-3 bg-brand text-dark-bg font-bold rounded-lg text-center hover:bg-brand-hover transition-colors shadow-lg shadow-brand/20">Go Pro Now</a>
-            </div>
-
-            <!-- Enterprise -->
-            <div class="bg-dark-card p-8 rounded-2xl border border-dark-border">
-                <h3 class="text-lg font-medium text-white mb-2">Enterprise</h3>
-                <div class="text-4xl font-bold text-white mb-6">Custom</div>
-                <ul class="space-y-4 mb-8 text-sm text-gray-400">
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Unlimited Credits</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Dedicated AI Models</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> SLA Guarantee</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> API Access</li>
-                </ul>
-                <a href="#" class="block w-full py-3 border border-dark-border rounded-lg text-center text-white hover:bg-dark-border transition-colors">Contact Sales</a>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- CTA Section -->
-<section class="py-24">
+<section class="py-24 relative">
     <div class="container mx-auto px-6">
-        <div class="bg-gradient-to-br from-brand to-teal-600 rounded-3xl p-12 md:p-20 text-center relative overflow-hidden">
-            <!-- Decorative circles -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-            <div class="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full -ml-16 -mb-16 blur-2xl"></div>
+        <div class="relative bg-dark-card/30 border border-white/10 rounded-3xl p-12 md:p-20 text-center overflow-hidden group backdrop-blur-xl">
+            
+            <!-- Glassmorphism Reflection -->
+            <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+            
+            <div class="absolute -top-24 -left-24 w-64 h-64 bg-brand/20 rounded-full blur-[80px]"></div>
+            <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-purple-500/20 rounded-full blur-[80px]"></div>
 
             <div class="relative z-10 max-w-3xl mx-auto">
-                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Ready to automate your data workflow?</h2>
-                <p class="text-white/90 text-lg mb-10">Join 10,000+ data engineers and analysts who have replaced manual scraping with ScrapyX.</p>
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="#" class="w-full sm:w-auto bg-white text-teal-700 font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-colors shadow-lg">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight drop-shadow-lg">
+                    Ready to automate your <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-teal-200">data workflow?</span>
+                </h2>
+                <p class="text-gray-300 text-lg mb-10 leading-relaxed drop-shadow-md">
+                    Join 10,000+ data engineers and analysts who have replaced manual scraping with ScrapyX.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <a href="{% url 'signup' %}" class="w-full sm:w-auto bg-brand text-dark-bg font-bold py-4 px-10 rounded-full hover:bg-brand-hover hover:shadow-[0_0_40px_rgba(0,212,197,0.4)] transition-all transform hover:-translate-y-1 shadow-lg">
                         Create Free Account
                     </a>
-                    <a href="#" class="w-full sm:w-auto bg-teal-800/50 text-white font-semibold py-4 px-8 rounded-xl hover:bg-teal-800/70 transition-colors backdrop-blur-sm">
+                    <a href="#" class="w-full sm:w-auto bg-dark-bg/50 text-white font-semibold py-4 px-10 rounded-full border border-white/10 hover:border-brand/50 hover:bg-white/5 transition-all backdrop-blur-md shadow-lg">
                         Schedule Demo
                     </a>
                 </div>

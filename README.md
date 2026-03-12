@@ -1,6 +1,6 @@
-# OneClick DataScrape
+# ScrapyX
 
-OneClick DataScrape is a Django-based web application designed for scraping data, managing users, and exporting results.
+ScrapyX is a Django-based web application designed for scraping data, managing users, and exporting results.
 
 ## Project Structure
 

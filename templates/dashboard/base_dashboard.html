@@ -238,12 +238,17 @@
                         <span class="sidebar-text hidden relative z-10 whitespace-nowrap">History</span>
                     </a>
                     
-                    <a href="#" data-tooltip="API Reference" class="sidebar-link flex items-center gap-3 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-                        <i class="fa-solid fa-code text-lg w-6 text-center group-hover:text-brand transition-colors shrink-0"></i>
-                        <span class="sidebar-text hidden whitespace-nowrap">API Reference</span>
+                    <a href="{% url 'messages' %}" data-tooltip="Messages" class="sidebar-link flex items-center gap-3 py-3 rounded-xl {% if request.resolver_match.url_name == 'messages' %}bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)]{% else %}text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5{% endif %} transition-all group relative overflow-hidden">
+                        {% if request.resolver_match.url_name == 'messages' %}
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        {% endif %}
+                        <i class="fa-solid fa-message text-lg w-6 text-center relative z-10 shrink-0 {% if request.resolver_match.url_name != 'messages' %}group-hover:text-brand transition-colors{% endif %}"></i>
+                        <span class="sidebar-text hidden relative z-10 whitespace-nowrap">Messages</span>
                     </a>
                     
-                    <a href="{% url 'settings' %}" data-tooltip="Settings" class="sidebar-link flex items-center gap-3 py-3 rounded-xl {% if request.resolver_match.url_name == 'settings' %}bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)]{% else %}text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5{% endif %} transition-all group relative overflow-hidden">
+                    
+                    
+                    <a href="{% url 'settings_section' 'plan' %}" data-tooltip="Settings" class="sidebar-link flex items-center gap-3 py-3 rounded-xl {% if request.resolver_match.url_name == 'settings' %}bg-brand/10 text-brand font-medium border border-brand/20 shadow-[0_0_10px_rgba(0,212,197,0.1)]{% else %}text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5{% endif %} transition-all group relative overflow-hidden">
                         {% if request.resolver_match.url_name == 'settings' %}
                         <div class="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         {% endif %}
@@ -270,7 +275,7 @@
 
                 <!-- User Profile -->
                 <div class="flex items-center gap-2 p-2 justify-center">
-                    <a href="{% url 'settings_section' 'profile' %}" data-tooltip="Profile" class="sidebar-link flex-1 flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
+                    <button type="button" id="profileMenuToggle" data-tooltip="Profile" class="sidebar-link flex-1 flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center text-brand font-bold shadow-lg group-hover:shadow-brand/20 transition-all shrink-0 overflow-hidden">
                             {% if user.avatar %}
                                 <img src="{{ user.avatar.url }}" alt="Profile" class="w-full h-full object-cover">
@@ -284,7 +289,7 @@
                                 <p class="text-[10px] text-gray-400 font-mono">ID: <span class="text-brand">{{ user.id|default:'N/A' }}</span></p>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
             </div>
             
@@ -297,6 +302,39 @@
         </main>
     </div>
 
+    <div id="profileMenu" class="fixed bottom-16 left-6 bg-dark-surface border border-white/10 rounded-xl shadow-xl p-3 w-56 hidden z-50">
+        <div class="flex items-center gap-2 mb-2">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 overflow-hidden">
+                {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="Profile" class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center text-brand font-bold">{{ user.username|make_list|first|upper }}</div>
+                {% endif %}
+            </div>
+            <div class="text-white font-semibold truncate">{{ user.username }}</div>
+        </div>
+        <div class="flex flex-col gap-2">
+            <a href="{% url 'settings_section' 'profile' %}" class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-gray-300 hover:text-white hover:bg-white/10">Profile Settings</a>
+            <a href="{% url 'logout' %}" class="px-3 py-2 rounded-lg bg-red-500/20 border border-red-500/30 text-sm text-red-200 hover:text-white hover:bg-red-500/40">Sign Out</a>
+        </div>
+    </div>
+    <script>
+        (function () {
+            const toggle = document.getElementById('profileMenuToggle');
+            const menu = document.getElementById('profileMenu');
+            document.addEventListener('click', (e) => {
+                if (toggle && toggle.contains(e.target)) {
+                    if (menu) {
+                        menu.classList.toggle('hidden');
+                    }
+                } else {
+                    if (menu && !menu.contains(e.target)) {
+                        menu.classList.add('hidden');
+                    }
+                }
+            });
+        })();
+    </script>
     <!-- Toast Notifications -->
     {% if messages %}
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none">

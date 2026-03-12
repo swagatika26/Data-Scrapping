@@ -1,0 +1,101 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Notifications - ScrapyX{% endblock %}
+
+{% block content %}
+<header class="sticky top-0 z-20 glass border-b border-white/5 px-8 py-4">
+  <div class="relative">
+    <input type="text" class="w-full bg-dark-bg border border-white/10 rounded-xl px-4 py-2 text-sm text-gray-400" placeholder="Search notifications...">
+  </div>
+</header>
+
+<div class="p-8 h-[calc(100vh-4rem)] overflow-y-auto">
+  <div class="max-w-5xl mx-auto space-y-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-display font-bold text-white">Notifications</h2>
+        <div class="text-gray-500 text-sm">Manage your scraping alerts and system updates.</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="{% url 'notifications' %}" class="text-xs font-bold text-gray-400 hover:text-white">Mark all as read</a>
+        <button class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-300 hover:bg-white/10">Filter</button>
+      </div>
+    </div>
+
+    {% if today_items %}
+    <div>
+      <div class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">Today</div>
+      <div class="space-y-3">
+        {% for n in today_items %}
+        <div class="rounded-2xl p-4 border border-white/10 bg-white/5 flex items-start justify-between">
+          <div class="flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full flex items-center justify-center {% if n.status == 'success' %}text-green-400 bg-green-400/10 border border-green-400/20{% elif n.status == 'error' %}text-red-400 bg-red-400/10 border border-red-400/20{% elif n.status == 'warning' %}text-yellow-400 bg-yellow-400/10 border border-yellow-400/20{% else %}text-blue-400 bg-blue-400/10 border border-blue-400/20{% endif %}">
+              <i class="fa-solid {% if n.status == 'success' %}fa-check{% elif n.status == 'error' %}fa-triangle-exclamation{% elif n.status == 'warning' %}fa-exclamation{% else %}fa-info{% endif %}"></i>
+            </span>
+            <div>
+              <div class="text-sm font-bold text-white">{{ n.title }}</div>
+              <div class="text-sm text-gray-400">{{ n.description }}</div>
+              <div class="mt-2 flex gap-2">
+                <a href="{% url 'history' %}?status=COMPLETED" class="px-3 py-1 rounded-lg bg-brand text-dark-bg text-xs font-bold">View Results</a>
+                <a href="#" class="px-3 py-1 rounded-lg bg-white/10 border border-white/20 text-xs text-gray-200">Download CSV</a>
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-500 whitespace-nowrap">{{ n.timestamp|timesince }} ago</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if yesterday_items %}
+    <div>
+      <div class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">Yesterday</div>
+      <div class="space-y-3">
+        {% for n in yesterday_items %}
+        <div class="rounded-2xl p-4 border border-white/10 bg-white/5 flex items-start justify-between">
+          <div class="flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full flex items-center justify-center {% if n.status == 'success' %}text-green-400 bg-green-400/10 border border-green-400/20{% elif n.status == 'error' %}text-red-400 bg-red-400/10 border border-red-400/20{% elif n.status == 'warning' %}text-yellow-400 bg-yellow-400/10 border border-yellow-400/20{% else %}text-blue-400 bg-blue-400/10 border border-blue-400/20{% endif %}">
+              <i class="fa-solid {% if n.status == 'success' %}fa-check{% elif n.status == 'error' %}fa-triangle-exclamation{% elif n.status == 'warning' %}fa-exclamation{% else %}fa-info{% endif %}"></i>
+            </span>
+            <div>
+              <div class="text-sm font-bold text-white">{{ n.title }}</div>
+              <div class="text-sm text-gray-400">{{ n.description }}</div>
+              <div class="mt-2 flex gap-2">
+                <a href="{% url 'history' %}?status=FAILED" class="px-3 py-1 rounded-lg bg-red-500/80 text-white text-xs font-bold">View Log</a>
+                <a href="{% url 'new_scrape' %}" class="px-3 py-1 rounded-lg bg-white/10 border border-white/20 text-xs text-gray-200">Retry Task</a>
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-500 whitespace-nowrap">{{ n.timestamp|date:"M d, h:i A" }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if last_week_items %}
+    <div>
+      <div class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">Last Week</div>
+      <div class="space-y-3">
+        {% for n in last_week_items %}
+        <div class="rounded-2xl p-4 border border-white/10 bg-white/5 flex items-start justify-between">
+          <div class="flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full flex items-center justify-center text-blue-400 bg-blue-400/10 border border-blue-400/20">
+              <i class="fa-solid fa-info"></i>
+            </span>
+            <div>
+              <div class="text-sm font-bold text-white">{{ n.title }}</div>
+              <div class="text-sm text-gray-400">{{ n.description }}</div>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-500 whitespace-nowrap">{{ n.timestamp|date:"M d, Y" }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

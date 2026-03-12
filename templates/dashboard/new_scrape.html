@@ -36,10 +36,10 @@
     <!-- Right Actions -->
     <div class="flex items-center gap-6">
         <!-- Notifications -->
-        <button class="relative text-gray-400 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+        <a href="{% url 'notifications' %}" class="relative text-gray-400 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5" title="Notifications">
             <i class="fa-solid fa-bell text-lg"></i>
             <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-dark-bg animate-pulse"></span>
-        </button>
+        </a>
     </div>
 </header>
 
@@ -56,14 +56,14 @@
     </div>
 
     <!-- Main Form -->
-    <form id="scrape-form" action="{% url 'scrape_progress' %}" method="GET" class="animate-slide-up delay-100">
+    <form id="scrape-form" action="{% url 'scrape_progress' %}" method="GET" class="animate-slide-up delay-100" novalidate>
         
         <!-- URL Input -->
         <div class="group relative glass-card p-2 flex items-center gap-3 rounded-2xl mb-8 transition-all hover:border-brand/50 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/10">
             <div class="pl-5 text-gray-400 group-focus-within:text-brand transition-colors">
                 <i class="fa-solid fa-link text-lg" id="input-icon"></i>
             </div>
-            <input type="text" name="url" id="url-input" required placeholder="Paste target URL or enter search query..." 
+            <input type="text" name="url" id="url-input" placeholder="Paste target URL or enter search query..." 
                 class="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:ring-0 text-lg h-14 font-medium w-full font-sans">
             <button type="submit" id="submit-btn" class="bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3.5 px-8 rounded-xl transition-all flex items-center gap-2.5 shadow-[0_0_20px_rgba(0,212,197,0.3)] hover:shadow-[0_0_30px_rgba(0,212,197,0.5)] hover:-translate-y-0.5 active:translate-y-0">
                 <span id="btn-text">Analyze</span>
@@ -191,20 +191,13 @@
                 </div>
             </div>
 
-            <!-- Footer -->
-            <div class="mt-10 pt-8 border-t border-white/10 flex items-center justify-between">
-                <div class="flex items-center gap-2 text-xs text-gray-400">
-                    <i class="fa-solid fa-info-circle text-brand"></i>
-                    <span>Estimates are based on average page size.</span>
-                </div>
-                <button type="button" class="text-sm font-bold text-gray-500 hover:text-white transition-colors px-4 py-2" onclick="alert('Template saved successfully!')">
-                    <i class="fa-regular fa-bookmark mr-2"></i>Save Template
-                </button>
-            </div>
+            
         </div>
 
     </form>
 </div>
+<!-- Toast Container -->
+<div id="client-toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 {% endblock %}
 
 {% block scripts %}
@@ -212,6 +205,25 @@
     // Format selection logic
     const formatButtons = document.querySelectorAll('.format-btn');
     const formatInput = document.getElementById('export_format_input');
+    // Simple toast
+    const toastContainer = document.getElementById('client-toast-container');
+    function showToast(message, variant = 'error') {
+        if (!toastContainer) return;
+        const toast = document.createElement('div');
+        const base = 'pointer-events-auto px-4 py-3 rounded-xl shadow-2xl border min-w-[280px] text-sm font-medium animate-slide-up transition-all';
+        const theme = variant === 'warning'
+            ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300'
+            : variant === 'success'
+            ? 'bg-green-500/10 border-green-500/30 text-green-300'
+            : 'bg-red-500/10 border-red-500/30 text-red-300';
+        toast.className = `${base} ${theme}`;
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('opacity-0');
+            setTimeout(() => toast.remove(), 300);
+        }, 3200);
+    }
 
     // Initial set (CSV)
     const setFormat = (btn) => {
@@ -286,6 +298,12 @@
     scrapeForm.addEventListener('submit', function(e) {
         const query = urlInput.value.trim();
         const looksLikeDomain = query.length > 0 && !query.includes(' ') && query.includes('.');
+        if (!query) {
+            e.preventDefault();
+            showToast('Please enter a URL or search query.', 'warning');
+            urlInput.focus();
+            return;
+        }
         
         // If it looks like a URL, let standard submission happen
         if (query.startsWith('http')) {
@@ -395,7 +413,7 @@
             })
             .catch(err => {
                 console.error(err);
-                alert('Search failed. Please check your connection.');
+            showToast('Search failed. Please check your connection.', 'error');
             })
             .finally(() => {
                 // Reset Button

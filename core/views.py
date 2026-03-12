@@ -54,6 +54,925 @@ def home(request):
     """
     return render(request, 'landing_page.html')
 
+@never_cache
+def features(request):
+    """
+    Renders the features page.
+    """
+    return render(request, 'features.html')
+
+@never_cache
+def pricing(request):
+    """
+    Renders the pricing page.
+    """
+    return render(request, 'pricing.html')
+
+@never_cache
+def documentation(request):
+    """
+    Renders the documentation page with dynamic content.
+    """
+    topic_slug = request.GET.get('topic', 'introduction')
+    
+    # Documentation Data Structure
+    docs_data = {
+        'introduction': {
+            'title': 'Introduction',
+            'category': 'Foundation',
+            'content': """
+                <div class="space-y-12">
+                    <section id="what-is">
+                        <h2 class="text-2xl font-bold text-white mb-4">What is ScrapyX?</h2>
+                        <p class="text-gray-400 leading-relaxed mb-4">
+                            ScrapyX is a next-generation web scraping framework that turns unstructured web content into clean JSON or CSV with minimal setup. It blends a modern scraping engine, smart rendering, and built-in anti-bot techniques to deliver consistent results at scale.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="flex items-center gap-2 mb-2 text-white font-semibold"><i class="fa-solid fa-wand-magic-sparkles text-brand"></i> AI-Assisted</div>
+                                <p class="text-sm text-gray-400">Extract common patterns like product lists and articles without brittle selectors.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="flex items-center gap-2 mb-2 text-white font-semibold"><i class="fa-solid fa-shield-halved text-brand"></i> Evasion Built‑in</div>
+                                <p class="text-sm text-gray-400">User‑Agent, TLS and proxy rotation to reduce blocks on tough targets.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="flex items-center gap-2 mb-2 text-white font-semibold"><i class="fa-solid fa-cloud text-brand"></i> Cloud Ready</div>
+                                <p class="text-sm text-gray-400">Run locally or deploy to a serverless runner with a single command.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="features">
+                        <h2 class="text-2xl font-bold text-white mb-4">Key Features</h2>
+                        <ul class="space-y-3 text-gray-400">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-brand mt-1.5"></i>
+                                <span><strong>AI-Powered Extraction:</strong> Automatically identify and extract products, articles, tables, and pagination.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-brand mt-1.5"></i>
+                                <span><strong>Anti-Bot Evasion:</strong> Rotation of headers, TLS, and residential proxies to bypass common defences.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-brand mt-1.5"></i>
+                                <span><strong>Cloud Scalability:</strong> Queue runs, collect results through the API, export to CSV/JSON.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section id="stats">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="rounded-2xl border border-brand/20 bg-brand/10 p-4 text-center">
+                                <div class="text-3xl font-extrabold text-white">99.9%</div>
+                                <div class="text-[11px] uppercase tracking-widest text-gray-400 mt-1">Uptime</div>
+                            </div>
+                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-3xl font-extrabold text-white">+50</div>
+                                <div class="text-[11px] uppercase tracking-widest text-gray-400 mt-1">Sites Daily</div>
+                            </div>
+                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-3xl font-extrabold text-white">JS</div>
+                                <div class="text-[11px] uppercase tracking-widest text-gray-400 mt-1">Rendered</div>
+                            </div>
+                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-3xl font-extrabold text-white">1 CLI</div>
+                                <div class="text-[11px] uppercase tracking-widest text-gray-400 mt-1">Deploy</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="how-it-works">
+                        <h2 class="text-2xl font-bold text-white mb-4">How It Works</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-link text-brand"></i> Request</div>
+                                <p class="text-sm text-gray-400">Provide a URL or search phrase. ScrapyX resolves dynamic content and blocks safely.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-gears text-brand"></i> Render & Extract</div>
+                                <p class="text-sm text-gray-400">A headless engine renders pages, the extractor finds fields, and pipelines clean data.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-arrow-down-wide-short text-brand"></i> Export</div>
+                                <p class="text-sm text-gray-400">Receive structured JSON or CSV via the CLI, SDKs, or REST API.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="use-cases">
+                        <h2 class="text-2xl font-bold text-white mb-4">Popular Use Cases</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-cart-shopping text-brand"></i> E‑commerce Monitoring</div>
+                                <p class="text-sm text-gray-400">Track prices, availability, and ratings across marketplaces.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-newspaper text-brand"></i> News & Sentiment</div>
+                                <p class="text-sm text-gray-400">Aggregate headlines and articles for downstream NLP workflows.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-house-chimney text-brand"></i> Real‑Estate Feeds</div>
+                                <p class="text-sm text-gray-400">Extract listings with photos, pricing history, and agent info.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-chart-line text-brand"></i> Financial Research</div>
+                                <p class="text-sm text-gray-400">Collect company data, filings, and site metrics for analytics.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            """,
+            'toc': [
+                {'id': 'what-is', 'label': 'What is ScrapyX?'},
+                {'id': 'features', 'label': 'Key Features'},
+                {'id': 'stats', 'label': 'Fast Facts'},
+                {'id': 'how-it-works', 'label': 'How It Works'},
+                {'id': 'use-cases', 'label': 'Use Cases'}
+            ]
+        },
+        'getting-started': {
+            'title': 'Getting Started',
+            'category': 'Foundation',
+            'content': """
+                <div class="space-y-8">
+                    <section id="installation">
+                        <h2 class="text-2xl font-bold text-white mb-4">Installation</h2>
+                        <p class="text-gray-400 mb-4">ScrapyX requires Python 3.9+ and Node.js 18+. Install it via pip:</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-4 font-mono text-sm text-gray-300 relative group">
+                            <button class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                            <span class="text-brand">$</span> pip install scrapyx
+                        </div>
+                    </section>
+
+                    <section id="first-spider">
+                        <h2 class="text-2xl font-bold text-white mb-4">Your First Spider</h2>
+                        <p class="text-gray-400 mb-4">Create a new file named <code>myspider.py</code> and add the following code:</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-4 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">import</span> scrapyx
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">ProductSpider</span>(scrapyx.Spider):
+    name = <span class="text-green-400">'amazon_products'</span>
+    start_urls = [<span class="text-green-400">'https://amazon.com/s?k=laptop'</span>]
+
+    <span class="text-purple-400">def</span> <span class="text-blue-400">parse</span>(self, response):
+        <span class="text-purple-400">for</span> product <span class="text-purple-400">in</span> response.css(<span class="text-green-400">'.s-result-item'</span>):
+            <span class="text-purple-400">yield</span> {
+                <span class="text-green-400">'name'</span>: product.css(<span class="text-green-400">'h2 span::text'</span>).get(),
+                <span class="text-green-400">'price'</span>: product.css(<span class="text-green-400">'.a-price-whole::text'</span>).get(),
+            }</pre>
+                        </div>
+                    </section>
+
+                    <section id="running">
+                        <h2 class="text-2xl font-bold text-white mb-4">Running the Crawler</h2>
+                        <p class="text-gray-400 mb-4">Execute your spider using the ScrapyX CLI:</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-4 font-mono text-sm text-gray-300">
+                            <span class="text-brand">$</span> scrapyx run myspider.py -o results.json
+                        </div>
+                    </section>
+                </div>
+            """,
+            'toc': [
+                {'id': 'installation', 'label': 'Installation'},
+                {'id': 'first-spider', 'label': 'First Spider'},
+                {'id': 'running', 'label': 'Running the Crawler'}
+            ]
+        },
+        'configuration': {
+            'title': 'Configuration',
+            'category': 'Foundation',
+            'content': """
+                <div class="space-y-12">
+                    <section id="settings-file">
+                        <h2 class="text-2xl font-bold text-white mb-4">Settings File</h2>
+                        <p class="text-gray-400 mb-4">Project‑level configuration lives in <code class="bg-white/5 px-1.5 py-0.5 rounded text-xs">scrapyx.config.py</code> at your project root.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg overflow-hidden font-mono text-sm">
+                            <div class="bg-dark-bg/50 border-b border-white/10 px-4 py-2 text-xs text-gray-500">scrapyx.config.py</div>
+                            <div class="p-6 text-gray-300 overflow-x-auto">
+<pre>
+<span class="text-purple-400">settings</span> = {
+  <span class="text-green-400">'CONCURRENT_REQUESTS'</span>: <span class="text-yellow-400">8</span>,
+  <span class="text-green-400">'DOWNLOAD_DELAY'</span>: <span class="text-yellow-400">0.25</span>,
+  <span class="text-green-400">'TIMEOUT_SECONDS'</span>: <span class="text-yellow-400">30</span>,
+  <span class="text-green-400">'RETRY_TIMES'</span>: <span class="text-yellow-400">3</span>,
+  <span class="text-green-400">'MIDDLEWARES'</span>: [
+    <span class="text-green-400">'scrapyx.middlewares.RetryMiddleware'</span>,
+    <span class="text-green-400">'scrapyx.middlewares.RotatingUserAgentMiddleware'</span>
+  ],
+  <span class="text-green-400">'PIPELINES'</span>: [
+    <span class="text-green-400">'scrapyx.pipelines.CsvExportPipeline'</span>
+  ],
+}
+</pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="concurrency">
+                        <h2 class="text-2xl font-bold text-white mb-4">Concurrency & Throttling</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">CONCURRENT_REQUESTS</div>
+                                <p class="text-sm text-gray-400">Number of parallel requests. Increase for faster crawls; reduce for strict sites.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">DOWNLOAD_DELAY</div>
+                                <p class="text-sm text-gray-400">Delay between requests to the same domain. Helps prevent rate‑limits.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">TIMEOUT_SECONDS</div>
+                                <p class="text-sm text-gray-400">Abort slow requests to free resources for healthy targets.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="retries">
+                        <h2 class="text-2xl font-bold text-white mb-4">Retries & Fault Tolerance</h2>
+                        <p class="text-gray-400 mb-4">Handle transient failures gracefully with exponential backoff and selective retry codes.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'RETRY_TIMES'</span>] = <span class="text-yellow-400">3</span>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'RETRY_HTTP_CODES'</span>] = [<span class="text-yellow-400">429</span>, <span class="text-yellow-400">500</span>, <span class="text-yellow-400">502</span>, <span class="text-yellow-400">503</span>, <span class="text-yellow-400">504</span>]
+</pre>
+                        </div>
+                    </section>
+
+                    <section id="identity-proxy">
+                        <h2 class="text-2xl font-bold text-white mb-4">Identity & Proxy</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-id-card-clip text-brand"></i> User‑Agent Rotation</div>
+                                <p class="text-sm text-gray-400 mb-3">Randomized desktop & mobile fingerprints reduce pattern‑based blocks.</p>
+                                <div class="bg-[#0B1120] border border-white/10 rounded-lg p-4 font-mono text-xs text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">settings</span>[<span class="text-green-400">'ROTATE_USER_AGENTS'</span>] = <span class="text-purple-400">True</span></pre>
+                                </div>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-network-wired text-brand"></i> Proxies</div>
+                                <p class="text-sm text-gray-400 mb-3">Route traffic through residential or datacenter pools.</p>
+                                <div class="bg-[#0B1120] border border-white/10 rounded-lg p-4 font-mono text-xs text-gray-300 overflow-x-auto">
+<pre>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'PROXY_PROVIDER'</span>] = <span class="text-green-400">'residential'</span>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'PROXY_COUNTRY'</span>]  = <span class="text-green-400">'US'</span>
+</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="pipelines">
+                        <h2 class="text-2xl font-bold text-white mb-4">Pipelines & Export</h2>
+                        <p class="text-gray-400 mb-4">Enable pipelines to post‑process and store items.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'PIPELINES'</span>] = [
+  <span class="text-green-400">'scrapyx.pipelines.JsonExportPipeline'</span>,
+  <span class="text-green-400">'scrapyx.pipelines.DeduplicatePipeline'</span>,
+]
+</pre>
+                        </div>
+                    </section>
+
+                    <section id="env">
+                        <h2 class="text-2xl font-bold text-white mb-4">Environment Variables</h2>
+                        <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                            <p class="text-sm text-gray-400">Secrets like API keys and proxy credentials should be provided via environment variables and read inside <code class="bg-white/5 px-1 py-0.5 rounded text-xs">scrapyx.config.py</code>.</p>
+                            <div class="bg-[#0B1120] border border-white/10 rounded-lg p-4 font-mono text-xs text-gray-300 overflow-x-auto mt-3">
+<pre>
+<span class="text-purple-400">import</span> os
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'API_KEY'</span>] = os.getenv(<span class="text-green-400">'SCRAPYX_API_KEY'</span>, <span class="text-green-400">''</span>)
+</pre>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            """,
+            'toc': [
+                {'id': 'settings-file', 'label': 'Settings File'},
+                {'id': 'concurrency', 'label': 'Concurrency & Throttling'},
+                {'id': 'retries', 'label': 'Retries & Fault Tolerance'},
+                {'id': 'identity-proxy', 'label': 'Identity & Proxy'},
+                {'id': 'pipelines', 'label': 'Pipelines & Export'},
+                {'id': 'env', 'label': 'Environment Variables'}
+            ]
+        },
+        'selectors-xpath': {
+            'title': 'Selectors & XPath',
+            'category': 'Core Concepts',
+            'content': """
+                <div class="space-y-12">
+                    <section id="css-selectors">
+                        <h2 class="text-2xl font-bold text-white mb-4">CSS Selectors</h2>
+                        <p class="text-gray-400 mb-4">Use CSS3 selectors to target elements quickly. Combine class, attribute, and pseudo‑selectors for precision.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Examples</div>
+                                <ul class="text-sm text-gray-300 space-y-2 font-mono">
+                                    <li><span class="text-brand">.product-card h2::text</span> – product title</li>
+                                    <li><span class="text-brand">.price .amount::text</span> – price value</li>
+                                    <li><span class="text-brand">a[href*="details"]::attr(href)</span> – detail links</li>
+                                    <li><span class="text-brand">ul.list > li:nth-child(1)::text</span> – first item</li>
+                                </ul>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Code</div>
+                                <div class="bg-[#0B1120] border border-white/10 rounded-lg p-4 font-mono text-xs text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">for</span> card <span class="text-purple-400">in</span> response.css(<span class="text-green-400">'.product-card'</span>):
+    name  = card.css(<span class="text-green-400">'h2::text'</span>).get()
+    price = card.css(<span class="text-green-400">'.price .amount::text'</span>).get()
+    url   = card.css(<span class="text-green-400">'a::attr(href)'</span>).get()</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="xpath-selectors">
+                        <h2 class="text-2xl font-bold text-white mb-4">XPath Selectors</h2>
+                        <p class="text-gray-400 mb-4">XPath enables robust queries for complex DOMs and when CSS is insufficient.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Examples</div>
+                                <ul class="text-sm text-gray-300 space-y-2 font-mono">
+                                    <li><span class="text-brand">//h2[@class="title"]/text()</span></li>
+                                    <li><span class="text-brand">//a[contains(@href, "details")]/@href</span></li>
+                                    <li><span class="text-brand">//div[@id="specs"]//li[1]/text()</span></li>
+                                    <li><span class="text-brand">//table//tr[position()>1]/td[2]/text()</span></li>
+                                </ul>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Code</div>
+                                <div class="bg-[#0B1120] border border-white/10 rounded-lg p-4 font-mono text-xs text-gray-300 overflow-x-auto">
+<pre>names = response.xpath(<span class="text-green-400">'//h2[@class="title"]/text()'</span>).getall()
+links = response.xpath(<span class="text-green-400">'//a[contains(@href,"details")]/@href'</span>).getall()</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="tips">
+                        <h2 class="text-2xl font-bold text-white mb-4">Tips & Patterns</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Target Anchors</div>
+                                <p class="text-sm text-gray-400 font-mono">a[href^="/"]</p>
+                                <p class="text-xs text-gray-500 mt-1">Match site‑relative links only.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Clean Text</div>
+                                <p class="text-sm text-gray-400 font-mono">.get(default='').strip()</p>
+                                <p class="text-xs text-gray-500 mt-1">Trim whitespace to normalize fields.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Fallback</div>
+                                <p class="text-sm text-gray-400 font-mono">css(...) <span class="text-gray-500">or</span> xpath(...)</p>
+                                <p class="text-xs text-gray-500 mt-1">Mix approaches for brittle markup.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            """,
+            'toc': [
+                {'id': 'css-selectors', 'label': 'CSS Selectors'},
+                {'id': 'xpath-selectors', 'label': 'XPath Selectors'},
+                {'id': 'tips', 'label': 'Tips & Patterns'}
+            ]
+        },
+        'spider-middleware': {
+            'title': 'Spider Middleware',
+            'category': 'Core Concepts',
+            'content': """
+                <div class="space-y-12">
+                    <section id="overview">
+                        <h2 class="text-2xl font-bold text-white mb-4">Overview</h2>
+                        <p class="text-gray-400 mb-4">Middleware lets you intercept and modify requests, responses, and exceptions during a crawl. Use it to inject headers, rotate identities, retry transient failures, or transform responses before parsing.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">process_request</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">before fetch</div>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">process_response</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">after fetch</div>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">process_exception</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">on error</div>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">priority</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">execution order</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="built-in">
+                        <h2 class="text-2xl font-bold text-white mb-4">Built‑in Middleware</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-rotate text-brand"></i> RetryMiddleware</div>
+                                <p class="text-sm text-gray-400">Retries failed requests using backoff for codes like 429/503.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-id-card-clip text-brand"></i> RotatingUserAgentMiddleware</div>
+                                <p class="text-sm text-gray-400">Applies randomized fingerprints per request.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-network-wired text-brand"></i> ProxyMiddleware</div>
+                                <p class="text-sm text-gray-400">Routes traffic through configured proxy pools.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-gears text-brand"></i> RenderMiddleware</div>
+                                <p class="text-sm text-gray-400">Renders dynamic pages with JavaScript when enabled.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="enable">
+                        <h2 class="text-2xl font-bold text-white mb-4">Enable Middleware</h2>
+                        <p class="text-gray-400 mb-3">Add the middleware path to the MIDDLEWARES array in your settings file. Items earlier in the list run first.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">settings</span>[<span class="text-green-400">'MIDDLEWARES'</span>] = [
+  <span class="text-green-400">'scrapyx.middlewares.RetryMiddleware'</span>,
+  <span class="text-green-400">'scrapyx.middlewares.RotatingUserAgentMiddleware'</span>,
+  <span class="text-green-400">'scrapyx.middlewares.ProxyMiddleware'</span>,
+]</pre>
+                        </div>
+                    </section>
+
+                    <section id="custom">
+                        <h2 class="text-2xl font-bold text-white mb-4">Custom Middleware Example</h2>
+                        <p class="text-gray-400 mb-3">Inject a correlation ID and strip analytics scripts before parsing.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">CorrelationMiddleware</span>:
+    <span class="text-purple-400">def</span> <span class="text-blue-400">process_request</span>(self, request, spider):
+        request.headers[<span class="text-green-400">'X-Req-ID'</span>] = spider.settings.get(<span class="text-green-400">'RUN_ID'</span>, <span class="text-green-400">'local'</span>)
+
+    <span class="text-purple-400">def</span> <span class="text-blue-400">process_response</span>(self, request, response, spider):
+        body = response.text.replace(<span class="text-green-400">'&lt;script src=\"analytics.js\"&gt;&lt;/script&gt;'</span>, <span class="text-green-400">''</span>)
+        <span class="text-purple-400">return</span> response.replace(body=body)</pre>
+                        </div>
+                        <div class="rounded-xl border border-white/10 bg-white/5 p-4 mt-4">
+                            <div class="text-white font-semibold mb-1">Register</div>
+                            <p class="text-sm text-gray-400 font-mono">settings['MIDDLEWARES'].insert(0, 'myproject.middlewares.CorrelationMiddleware')</p>
+                        </div>
+                    </section>
+
+                    <section id="tips">
+                        <h2 class="text-2xl font-bold text-white mb-4">Tips</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Keep Fast</div>
+                                <p class="text-sm text-gray-400">Avoid heavy work inside process_request to maintain high throughput.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Use Priority</div>
+                                <p class="text-sm text-gray-400">Order middlewares from identity → network → transforms.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Log Selectively</div>
+                                <p class="text-sm text-gray-400">Emit concise logs to debug without flooding output.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            """,
+            'toc': [
+                {'id': 'overview', 'label': 'Overview'},
+                {'id': 'built-in', 'label': 'Built‑in Middleware'},
+                {'id': 'enable', 'label': 'Enable Middleware'},
+                {'id': 'custom', 'label': 'Custom Example'},
+                {'id': 'tips', 'label': 'Tips'}
+            ]
+        },
+        'item-pipelines': {
+            'title': 'Item Pipelines',
+            'category': 'Core Concepts',
+            'content': """
+                <div class="space-y-12">
+                    <section id="overview">
+                        <h2 class="text-2xl font-bold text-white mb-4">Overview</h2>
+                        <p class="text-gray-400 mb-4">Pipelines run after an item is extracted. They are ideal for validation, normalization, enrichment, deduplication, and storing items in files or databases.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">Validate</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">required fields</div>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">Normalize</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">types & formats</div>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">Enrich</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">derived fields</div>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">Store</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">db / csv / json</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="enable">
+                        <h2 class="text-2xl font-bold text-white mb-4">Enable Pipelines</h2>
+                        <p class="text-gray-400 mb-3">Register pipelines in your configuration. The order matters: items flow through the list from top to bottom.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">settings</span>[<span class="text-green-400">'PIPELINES'</span>] = [
+  <span class="text-green-400">'scrapyx.pipelines.DeduplicatePipeline'</span>,
+  <span class="text-green-400">'scrapyx.pipelines.NormalizePipeline'</span>,
+  <span class="text-green-400">'scrapyx.pipelines.JsonExportPipeline'</span>,
+]</pre>
+                        </div>
+                    </section>
+
+                    <section id="common-pipelines">
+                        <h2 class="text-2xl font-bold text-white mb-4">Common Pipelines</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-circle-check text-brand"></i> Validation</div>
+                                <p class="text-sm text-gray-400">Reject items missing required fields or with invalid formats.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-wand-magic-sparkles text-brand"></i> Normalization</div>
+                                <p class="text-sm text-gray-400">Convert price strings to numbers, strip whitespace, unify date formats.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-layer-group text-brand"></i> Deduplication</div>
+                                <p class="text-sm text-gray-400">Avoid duplicates by hashing stable keys like URL + title.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="flex items-center gap-2 text-white font-semibold mb-2"><i class="fa-solid fa-database text-brand"></i> Storage</div>
+                                <p class="text-sm text-gray-400">Write to JSON/CSV or push to PostgreSQL/MongoDB/Redis.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="example">
+                        <h2 class="text-2xl font-bold text-white mb-4">Pipeline Example</h2>
+                        <p class="text-gray-400 mb-3">This example validates required fields, cleans text, and normalizes a price field.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">import</span> re
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">NormalizeProductPipeline</span>:
+    <span class="text-purple-400">def</span> <span class="text-blue-400">process_item</span>(self, item, spider):
+        name = (item.get(<span class="text-green-400">'name'</span>) <span class="text-purple-400">or</span> <span class="text-green-400">''</span>).strip()
+        url  = (item.get(<span class="text-green-400">'url'</span>) <span class="text-purple-400">or</span> <span class="text-green-400">''</span>).strip()
+        <span class="text-purple-400">if</span> <span class="text-purple-400">not</span> name <span class="text-purple-400">or</span> <span class="text-purple-400">not</span> url:
+            <span class="text-purple-400">raise</span> <span class="text-yellow-400">ValueError</span>(<span class="text-green-400">'Missing required fields: name/url'</span>)
+
+        raw_price = (item.get(<span class="text-green-400">'price'</span>) <span class="text-purple-400">or</span> <span class="text-green-400">''</span>)
+        m = re.search(<span class="text-green-400">r\"([0-9]+(?:\\.[0-9]+)?)\"</span>, raw_price.replace(<span class="text-green-400">','</span>, <span class="text-green-400">''</span>))
+        item[<span class="text-green-400">'price_value'</span>] = <span class="text-yellow-400">float</span>(m.group(1)) <span class="text-purple-400">if</span> m <span class="text-purple-400">else</span> <span class="text-purple-400">None</span>
+
+        item[<span class="text-green-400">'name'</span>] = name
+        item[<span class="text-green-400">'url'</span>] = url
+        <span class="text-purple-400">return</span> item</pre>
+                        </div>
+                    </section>
+
+                    <section id="ordering">
+                        <h2 class="text-2xl font-bold text-white mb-4">Ordering & Best Practices</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Order Matters</div>
+                                <p class="text-sm text-gray-400">Validate first, normalize next, then store/export last.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Keep Pure</div>
+                                <p class="text-sm text-gray-400">Avoid network calls in pipelines; enrich later when possible.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Fail Fast</div>
+                                <p class="text-sm text-gray-400">Drop malformed items early to reduce storage noise.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            """,
+            'toc': [
+                {'id': 'overview', 'label': 'Overview'},
+                {'id': 'enable', 'label': 'Enable Pipelines'},
+                {'id': 'common-pipelines', 'label': 'Common Pipelines'},
+                {'id': 'example', 'label': 'Pipeline Example'},
+                {'id': 'ordering', 'label': 'Ordering & Best Practices'}
+            ]
+        },
+        'proxy-management': {
+            'title': 'Proxy Management',
+            'category': 'Advanced',
+            'content': """
+                <div class="space-y-12">
+                    <section id="why-proxies">
+                        <h2 class="text-2xl font-bold text-white mb-4">Why Proxies?</h2>
+                        <p class="text-gray-400 mb-4">Many sites rate‑limit or gate content by IP. Proxies distribute traffic, protect origin IPs, and enable geo‑targeted testing.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">Rotation</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">avoid bans</div>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">Geo Targeting</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">localization</div>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                                <div class="text-white font-semibold">Session Control</div>
+                                <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">sticky IPs</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="provider">
+                        <h2 class="text-2xl font-bold text-white mb-4">Provider Settings</h2>
+                        <p class="text-gray-400 mb-3">Choose a proxy pool and optional country routing in your configuration.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">settings</span>[<span class="text-green-400">'PROXY_PROVIDER'</span>] = <span class="text-green-400">'residential'</span>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'PROXY_COUNTRY'</span>]  = <span class="text-green-400">'US'</span>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'PROXY_AUTH'</span>]     = {
+  <span class="text-green-400">'username'</span>: <span class="text-green-400">'user'</span>,
+  <span class="text-green-400">'password'</span>: <span class="text-green-400">'pass'</span>,
+}</pre>
+                        </div>
+                    </section>
+
+                    <section id="sticky-sessions">
+                        <h2 class="text-2xl font-bold text-white mb-4">Sticky Sessions</h2>
+                        <p class="text-gray-400 mb-3">Some providers support “session” parameters that pin an IP for multiple requests—useful for carts or wizards.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">def</span> <span class="text-blue-400">start_requests</span>(<span class="text-purple-400">self</span>):
+    <span class="text-purple-400">for</span> i <span class="text-purple-400">in</span> <span class="text-yellow-400">range</span>(3):
+        yield scrapyx.Request(
+            <span class="text-green-400">'https://example.com/checkout'</span>,
+            meta={<span class="text-green-400">'proxy_session'</span>: <span class="text-green-400">'session-42'</span>}
+        )</pre>
+                        </div>
+                    </section>
+
+                    <section id="per-request">
+                        <h2 class="text-2xl font-bold text-white mb-4">Per‑Request Overrides</h2>
+                        <p class="text-gray-400 mb-3">Override provider or country on a single request via <code class="bg-white/5 px-1 py-0.5 rounded text-xs">meta</code>.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre>scrapyx.Request(
+  <span class="text-green-400">'https://target.fr'</span>,
+  meta={<span class="text-green-400">'proxy_country'</span>: <span class="text-green-400">'FR'</span>, <span class="text-green-400">'proxy_provider'</span>: <span class="text-green-400">'datacenter'</span>}
+)</pre>
+                        </div>
+                    </section>
+
+                    <section id="best-practices">
+                        <h2 class="text-2xl font-bold text-white mb-4">Best Practices</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Mix With Delays</div>
+                                <p class="text-sm text-gray-400">Combine rotation with <span class="font-mono">DOWNLOAD_DELAY</span> to reduce fingerprints.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Rotate Headers</div>
+                                <p class="text-sm text-gray-400">Enable the rotating User‑Agent middleware for better realism.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                <div class="text-white font-semibold mb-1">Handle 429 Gracefully</div>
+                                <p class="text-sm text-gray-400">Use RetryMiddleware and backoff; avoid hammering target hosts.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            """,
+            'toc': [
+                {'id': 'why-proxies', 'label': 'Why Proxies?'},
+                {'id': 'provider', 'label': 'Provider Settings'},
+                {'id': 'sticky-sessions', 'label': 'Sticky Sessions'},
+                {'id': 'per-request', 'label': 'Per‑Request Overrides'},
+                {'id': 'best-practices', 'label': 'Best Practices'}
+            ]
+        },
+        'performance-tuning': {
+            'title': 'Performance Tuning',
+            'category': 'Advanced',
+            'content': """
+                <div class="space-y-12">
+                    <section id="throughput">
+                        <h2 class="text-2xl font-bold text-white mb-4">Throughput Controls</h2>
+                        <p class="text-gray-400 mb-3">Tune concurrency and pacing to maximize speed without triggering rate limits.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">settings</span>[<span class="text-green-400">'CONCURRENT_REQUESTS'</span>] = <span class="text-yellow-400">16</span>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'DOWNLOAD_DELAY'</span>]    = <span class="text-yellow-400">0.1</span>   <span class="text-gray-500"># seconds</span>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'TIMEOUT_SECONDS'</span>]   = <span class="text-yellow-400">20</span></pre>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Batch Domains</div><p class="text-sm text-gray-400">Group requests per host to respect robots and avoid bans.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Prefer Fast Targets</div><p class="text-sm text-gray-400">Queue responsive hosts earlier for better perceived speed.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Timeout Aggressively</div><p class="text-sm text-gray-400">Fail slow requests early and retry via a different route.</p></div>
+                        </div>
+                    </section>
+
+                    <section id="rendering">
+                        <h2 class="text-2xl font-bold text-white mb-4">Rendering Strategy</h2>
+                        <p class="text-gray-400 mb-3">Only render JavaScript when needed. Many pages expose JSON or HTML you can parse without a headless browser.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400"># Global default</span>
+<span class="text-purple-400">settings</span>[<span class="text-green-400">'RENDER_JS'</span>] = <span class="text-purple-400">False</span>
+
+<span class="text-purple-400"># Enable per-request if needed</span>
+req = scrapyx.Request(<span class="text-green-400">'https://app.example.com'</span>, meta={<span class="text-green-400">'render_js'</span>: <span class="text-purple-400">True</span>})</pre>
+                        </div>
+                    </section>
+
+                    <section id="network">
+                        <h2 class="text-2xl font-bold text-white mb-4">Network Optimizations</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Reuse Sessions</div><p class="text-sm text-gray-400">Sticky proxies reduce new handshakes and cookies churn.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Trim Payloads</div><p class="text-sm text-gray-400">Avoid images/videos with <span class="font-mono">Accept</span> headers or query params.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Cache Dictionaries</div><p class="text-sm text-gray-400">Memoize expensive lookups like category maps.</p></div>
+                        </div>
+                    </section>
+
+                    <section id="parsing">
+                        <h2 class="text-2xl font-bold text-white mb-4">Parsing Efficiency</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Lean Selectors</div>
+                                <p class="text-sm text-gray-400">Prefer precise CSS/XPath; avoid expensive // searches at root.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Avoid Heavy Regex</div>
+                                <p class="text-sm text-gray-400">Extract with selectors then apply lightweight cleanup.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="benchmark">
+                        <h2 class="text-2xl font-bold text-white mb-4">Benchmark Locally</h2>
+                        <p class="text-gray-400 mb-3">Measure iterations per second to validate improvements.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">import</span> time
+start = time.time()
+<span class="text-purple-400">for</span> i <span class="text-purple-400">in</span> <span class="text-yellow-400">range</span>(100):
+    <span class="text-gray-500"># run small parse routine</span>
+elapsed = time.time() - start
+print(<span class="text-green-400">f'{100/elapsed:.1f} iterations/sec'</span>)</pre>
+                        </div>
+                    </section>
+                </div>
+            """,
+            'toc': [
+                {'id': 'throughput', 'label': 'Throughput Controls'},
+                {'id': 'rendering', 'label': 'Rendering Strategy'},
+                {'id': 'network', 'label': 'Network Optimizations'},
+                {'id': 'parsing', 'label': 'Parsing Efficiency'},
+                {'id': 'benchmark', 'label': 'Benchmark Locally'}
+            ]
+        },
+        'best-practices': {
+            'title': 'Best Practices',
+            'category': 'Advanced',
+            'content': """
+                <div class="space-y-12">
+                    <section id="structure">
+                        <h2 class="text-2xl font-bold text-white mb-4">Project Structure</h2>
+                        <p class="text-gray-400 mb-4">Keep spiders, pipelines, and middlewares modular. Small, focused components are easier to test and reuse.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold">One Responsibility</div><p class="text-sm text-gray-400">Each file/class should do one thing well.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold">Naming</div><p class="text-sm text-gray-400">Use descriptive names for readability and searchability.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold">Shared Utilities</div><p class="text-sm text-gray-400">Put helpers in a utils module; avoid duplication.</p></div>
+                        </div>
+                    </section>
+
+                    <section id="selectors">
+                        <h2 class="text-2xl font-bold text-white mb-4">Selector Strategy</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Stable Anchors</div>
+                                <p class="text-sm text-gray-400">Anchor on IDs or semantic classes; avoid ephemeral build classes.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Chain, Don’t Leap</div>
+                                <p class="text-sm text-gray-400">Find a container, then query within; reduces false positives.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="politeness">
+                        <h2 class="text-2xl font-bold text-white mb-4">Politeness & Compliance</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Respect Robots</div><p class="text-sm text-gray-400">Honor robots directives and site terms.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Throttle</div><p class="text-sm text-gray-400">Use delays and retries; avoid hammering hosts.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Identify</div><p class="text-sm text-gray-400">Provide contact info in User‑Agent when appropriate.</p></div>
+                        </div>
+                    </section>
+
+                    <section id="observability">
+                        <h2 class="text-2xl font-bold text-white mb-4">Observability</h2>
+                        <p class="text-gray-400 mb-3">Capture structured logs and promote actionable metrics.</p>
+                        <div class="bg-[#0B1120] border border-white/10 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre><span class="text-purple-400">def</span> <span class="text-blue-400">parse</span>(<span class="text-purple-400">self</span>, response):
+    <span class="text-purple-400">yield</span> {
+        <span class="text-green-400">'event'</span>: <span class="text-green-400">'page_parsed'</span>,
+        <span class="text-green-400">'url'</span>: response.url,
+        <span class="text-green-400">'items'</span>: <span class="text-yellow-400">len</span>(response.css(<span class="text-green-400">'.product-card'</span>)),
+    }</pre>
+                        </div>
+                    </section>
+
+                    <section id="data-quality">
+                        <h2 class="text-2xl font-bold text-white mb-4">Data Quality</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Validate</div><p class="text-sm text-gray-400">Fail early when mandatory fields are missing.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Normalize</div><p class="text-sm text-gray-400">Unify numbers, dates, locales for downstream joins.</p></div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-4"><div class="text-white font-semibold mb-1">Deduplicate</div><p class="text-sm text-gray-400">Use stable keys (URL, SKU) to avoid duplicates.</p></div>
+                        </div>
+                    </section>
+
+                    <section id="security-ethics">
+                        <h2 class="text-2xl font-bold text-white mb-4">Security & Ethics</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Protect Secrets</div>
+                                <p class="text-sm text-gray-400">Use environment variables for API keys; never hardcode.</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                                <div class="text-white font-semibold mb-2">Legal Considerations</div>
+                                <p class="text-sm text-gray-400">Comply with laws and site policies; gather only permitted data.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            """,
+            'toc': [
+                {'id': 'structure', 'label': 'Project Structure'},
+                {'id': 'selectors', 'label': 'Selector Strategy'},
+                {'id': 'politeness', 'label': 'Politeness & Compliance'},
+                {'id': 'observability', 'label': 'Observability'},
+                {'id': 'data-quality', 'label': 'Data Quality'},
+                {'id': 'security-ethics', 'label': 'Security & Ethics'}
+            ]
+        }
+    }
+
+    current_doc = docs_data.get(topic_slug, docs_data['introduction'])
+    order = list(docs_data.keys())
+    idx = order.index(topic_slug) if topic_slug in order else 0
+    prev_slug = order[idx - 1] if idx > 0 else None
+    next_slug = order[idx + 1] if idx < len(order) - 1 else None
+
+    return render(request, 'documentation.html', {
+        'current_doc': current_doc,
+        'active_topic': topic_slug,
+        'prev_slug': prev_slug,
+        'next_slug': next_slug,
+        'prev_title': docs_data[prev_slug]['title'] if prev_slug else '',
+        'next_title': docs_data[next_slug]['title'] if next_slug else ''
+    })
+
+
+@never_cache
+def api(request):
+    """
+    Renders the API reference page.
+    """
+    return render(request, 'api.html')
+
+@never_cache
+def extension(request):
+    return render(request, 'generic_page.html', {'title': 'Browser Extension'})
+
+@never_cache
+def cloud_scraping(request):
+    return render(request, 'generic_page.html', {'title': 'Cloud Scraping'})
+
+@never_cache
+def blog(request):
+    return render(request, 'generic_page.html', {'title': 'Blog'})
+
+@never_cache
+def community(request):
+    return render(request, 'generic_page.html', {'title': 'Community'})
+
+@never_cache
+def help_center(request):
+    return render(request, 'generic_page.html', {'title': 'Help Center'})
+
+@never_cache
+def status(request):
+    return render(request, 'generic_page.html', {'title': 'System Status'})
+
+@never_cache
+def about(request):
+    return render(request, 'generic_page.html', {'title': 'About Us'})
+
+@never_cache
+def careers(request):
+    return render(request, 'generic_page.html', {'title': 'Careers'})
+
+@never_cache
+def privacy(request):
+    return render(request, 'generic_page.html', {'title': 'Privacy Policy'})
+
+@never_cache
+def terms(request):
+    return render(request, 'generic_page.html', {'title': 'Terms of Service'})
+
 @user_required
 def history(request):
     """
@@ -136,7 +1055,7 @@ def settings_page(request):
     Renders the settings page.
     """
     _normalize_username(request.user)
-    return render(request, 'dashboard/settings.html')
+    return render(request, 'dashboard/settings.html', {'active_section': 'plan'})
 
 @user_required
 def settings_section(request, section):
@@ -368,8 +1287,7 @@ Professional Plan (Monthly)  $49.00
 --------------------------------------------------
 Total                        $49.00
 
-Thank you for your business!
-OneClick DataScrape
+Thank you for your business!\nScrapyX
     """
     
     response = HttpResponse(content, content_type='text/plain')
@@ -411,6 +1329,86 @@ def dashboard(request):
     }
     return render(request, 'dashboard/index.html', context)
 
+@login_required
+@ensure_csrf_cookie
+def messages_page(request):
+    selected_id = request.GET.get('thread', 'admin')
+    user_logs = ActivityLog.objects.filter(user=request.user).order_by('timestamp')
+    convo_messages = []
+    for log in user_logs:
+        action = (log.action or '').lower()
+        detail = (log.metadata or {}).get('detail') or ''
+        if action in ['admin_message', 'user_message']:
+            role = 'admin' if action == 'admin_message' else 'user'
+            convo_messages.append({
+                'author': role,
+                'message': detail,
+                'timestamp': log.timestamp,
+            })
+    last_detail = convo_messages[-1]['message'] if convo_messages else ''
+    threads = [{
+        'id': 'admin',
+        'name': 'Admin',
+        'preview': last_detail,
+        'timestamp': convo_messages[-1]['timestamp'] if convo_messages else timezone.now(),
+        'online': True,
+    }]
+    return render(request, 'dashboard/messages.html', {
+        'threads': threads,
+        'selected_thread': selected_id,
+        'thread_messages': convo_messages,
+        'page_title': 'Messages',
+    })
+
+@login_required
+def user_message_reply(request):
+    if request.method == 'POST':
+        msg = request.POST.get('message', '').strip()
+        thread_id = request.POST.get('thread_id') or 'admin'
+        if msg:
+            _log_activity(request, 'user_message', user=request.user, metadata={'detail': msg})
+        else:
+            messages.error(request, 'Message cannot be empty.')
+    return redirect(f"{reverse('messages')}?thread={thread_id}")
+
+@login_required
+def notifications_feed(request):
+    def status_for(action):
+        a = (action or '').lower()
+        if any(k in a for k in ['completed', 'success']):
+            return 'success'
+        if any(k in a for k in ['failed', 'error', 'timeout']):
+            return 'error'
+        if any(k in a for k in ['credit', 'quota', 'limit']):
+            return 'warning'
+        return 'info'
+    now = timezone.now()
+    today_items = []
+    yesterday_items = []
+    last_week_items = []
+    logs = ActivityLog.objects.filter(user=request.user).order_by('-timestamp')[:100]
+    for log in logs:
+        act_lower = (log.action or '').lower()
+        if any(k in act_lower for k in ['login', 'logout', 'job_created']):
+            continue
+        item = {
+            'status': status_for(log.action),
+            'title': log.action.replace('_', ' ').title(),
+            'description': (log.metadata or {}).get('detail') or '',
+            'timestamp': log.timestamp,
+        }
+        if log.timestamp.date() == now.date():
+            today_items.append(item)
+        elif log.timestamp.date() == (now - timedelta(days=1)).date():
+            yesterday_items.append(item)
+        elif (now - timedelta(days=7)).date() <= log.timestamp.date() < now.date():
+            last_week_items.append(item)
+    return render(request, 'dashboard/notifications_feed.html', {
+        'today_items': today_items,
+        'yesterday_items': yesterday_items,
+        'last_week_items': last_week_items,
+        'page_title': 'Notifications',
+    })
 @user_required
 def new_scrape(request):
     """
@@ -569,7 +1567,10 @@ def run_scrape_api(request):
             
             # Execute scrape
             scraper = ScraperService()
-            result = scraper.execute_scrape(url)
+            limits_cache = cache.get('admin_limits') or {}
+            retry_limit = limits_cache.get('retry_limit', request.session.get('retry_limit', 3))
+            timeout_seconds = limits_cache.get('timeout_seconds', request.session.get('timeout_seconds', 30))
+            result = scraper.execute_scrape(url, {'retry_limit': retry_limit, 'timeout': timeout_seconds})
             
             # If the URL was changed (e.g. via search), update the job record
             if result.get('url') and result['url'] != url:
@@ -861,25 +1862,16 @@ def login_page(request):
             
     return render(request, 'auth/login.html')
 
+@ensure_csrf_cookie
 def admin_login(request):
     if request.method == 'POST':
         if request.user.is_authenticated and getattr(request.user, 'role', None) != 'ADMIN':
-            logout(request)
+            messages.error(request, 'You are logged in as a user. Please sign in with an admin account.')
         identifier = request.POST.get('username', '').strip()
         password = request.POST.get('password')
-        security_key = request.POST.get('security_key', '').strip()
-        expected_key = 'SCRAPYX-KEY-2026'
         expected_admin_username = 'admin'
         expected_admin_email = 'admin@scrapyx.local'
         expected_admin_password = 'Admin@12345'
-        if not security_key:
-            messages.error(request, 'Security key is required.')
-            _log_activity(request, 'failed_admin_login', metadata={'identifier': identifier, 'reason': 'missing_security_key'})
-            return render(request, 'admin/admin_login.html')
-        if security_key != expected_key:
-            messages.error(request, 'Invalid security key.')
-            _log_activity(request, 'failed_admin_login', metadata={'identifier': identifier, 'reason': 'invalid_security_key'})
-            return render(request, 'admin/admin_login.html')
 
         if identifier.lower() in {expected_admin_username, expected_admin_email} and password == expected_admin_password:
             User = get_user_model()
@@ -924,10 +1916,8 @@ def admin_login(request):
             _log_activity(request, 'failed_admin_login', metadata={'identifier': identifier})
             messages.error(request, 'Invalid username or password.')
 
-    if request.user.is_authenticated:
-        if getattr(request.user, 'role', None) != 'ADMIN':
-            logout(request)
-            messages.error(request, 'Admin access required.')
+    if request.user.is_authenticated and getattr(request.user, 'role', None) != 'ADMIN':
+        return redirect('dashboard')
     return render(request, 'admin/admin_login.html')
 
 @login_required
@@ -949,7 +1939,7 @@ def admin_dashboard(request, section='overview'):
         'errors': 'Error Logs',
         'settings': 'Settings',
         'system': 'System Health',
-        'activity': 'Support Tickets',
+        'activity': 'Messages',
         'profile': 'Admin Profile',
     }
     if section not in section_titles:
@@ -1513,7 +2503,7 @@ def admin_dashboard(request, section='overview'):
     if error_log_id:
         selected_error = next((row for row in error_rows if str(row['id']) == str(error_log_id)), None)
     if not selected_error and error_rows:
-        selected_error = error_rows[0]
+        selected_error = next((row for row in error_rows if row.get('severity') == 'CRITICAL'), None) or error_rows[0]
 
     error_spiders = list(
         ScrapeLog.objects.select_related('job')
@@ -1711,7 +2701,12 @@ def admin_dashboard(request, section='overview'):
         'page_title': section_titles[section],
     }
     context.update(admin_profile_context)
-    return render(request, 'admin/admin_dashboard.html', context)
+    section_templates = {
+        'jobs': 'admin/scraper_infra.html',
+        'activity': 'admin/messages.html',
+    }
+    template_name = section_templates.get(section, f"admin/{section}.html")
+    return render(request, template_name, context)
 
 
 @never_cache
@@ -1728,6 +2723,77 @@ def admin_system_toggle_autoscale(request):
         _log_activity(request, 'admin_autoscale_toggle', user=request.user, metadata={'enabled': request.session['autoscale_enabled']})
     return redirect('admin_dashboard_section', section='system')
 
+@admin_required
+def admin_system_metrics(request):
+    health = get_system_health(settings.DATABASES['default']['NAME'])
+    uptime_seconds = int(health.get('uptime_seconds') or 0)
+    data = {
+        'cpu': health.get('cpu_usage'),
+        'memory': health.get('memory_usage'),
+        'disk': health.get('disk_usage'),
+        'uptime': {
+            'days': uptime_seconds // 86400,
+            'hours': (uptime_seconds % 86400) // 3600,
+            'mins': (uptime_seconds % 3600) // 60,
+        }
+    }
+    return JsonResponse({'status': 'ok', 'data': data})
+
+@admin_required
+def admin_system_snapshot(request):
+    health = get_system_health(settings.DATABASES['default']['NAME'])
+    system_health = health
+    # Basic derived metrics
+    uptime_seconds = int(system_health.get('uptime_seconds') or 0)
+    disk_usage = system_health.get('disk_usage') or 0
+    storage_total_tb = 4.0
+    storage_used_tb = round(storage_total_tb * (disk_usage / 100), 2)
+    database_rows = ScrapedData.objects.count() + TrafficLog.objects.count()
+    # Proxies and intensity (same heuristics as dashboard)
+    status_counts = ScraperJob.objects.values('status').annotate(count=Count('id'))
+    status_map = {item['status']: item['count'] for item in status_counts}
+    failed_jobs = status_map.get('FAILED', 0)
+    running_jobs = status_map.get('PROCESSING', 0)
+    active_proxies = max(120, running_jobs * 20)
+    total_proxies = max(1200, active_proxies + 180)
+    # Traffic sample
+    traffic_total = TrafficLog.objects.count()
+    # Intensity grid (24 cells)
+    intensity_counts = [
+        (traffic_total // 24) + (i % 5) * 3 for i in range(24)
+    ]
+    max_intensity = max(intensity_counts) if intensity_counts else 0
+    scraping_intensity = [
+        {'level': min(4, round((count / max_intensity) * 4)) if max_intensity else 0, 'count': count}
+        for count in intensity_counts
+    ]
+    # Nodes snapshot
+    cpu_efficiency = system_health.get('cpu_usage') or 0
+    system_status = 'DEGRADED' if (cpu_efficiency >= 85 or failed_jobs > 0 or disk_usage >= 90) else 'STABLE'
+    node_base_latency = max(12, round((cpu_efficiency or 0) * 1.6))
+    live_nodes = [
+        {'node_id': 'NX-ALPHA-01', 'status': 'ONLINE' if system_status == 'STABLE' else 'WARN', 'region': 'US-EAST-1', 'latency': node_base_latency, 'throughput': round((traffic_total or 1200) / 500, 2)},
+        {'node_id': 'NX-GAMMA-09', 'status': 'ONLINE', 'region': 'EU-WEST-2', 'latency': node_base_latency + 36, 'throughput': round((traffic_total or 1200) / 650, 2)},
+        {'node_id': 'NX-DELTA-04', 'status': 'WARN' if failed_jobs else 'ONLINE', 'region': 'AP-SOUTH-1', 'latency': node_base_latency + 140, 'throughput': round((traffic_total or 1200) / 900, 2)},
+    ]
+    events = [
+        {'action': log.action, 'timestamp': log.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+        for log in ActivityLog.objects.order_by('-timestamp')[:5]
+    ]
+    return JsonResponse({
+        'status': 'ok',
+        'data': {
+            'storage_used_tb': storage_used_tb,
+            'storage_total_tb': storage_total_tb,
+            'disk_usage': disk_usage,
+            'database_rows_display': _format_compact(database_rows),
+            'active_proxies': active_proxies,
+            'total_proxies': total_proxies,
+            'scraping_intensity': scraping_intensity,
+            'live_nodes': live_nodes,
+            'events': events,
+        }
+    })
 @admin_required
 def admin_support_assign(request, ticket_id):
     if request.method == 'POST':
@@ -1770,7 +2836,36 @@ def admin_support_reply(request, ticket_id):
             })
             support_replies[str(ticket_id)] = replies
             request.session['support_replies'] = support_replies
+            # Deliver message to user via ActivityLog so it appears in their notifications
+            target_user = None
+            if str(ticket_id).startswith('user-'):
+                try:
+                    target_id = int(str(ticket_id).split('-', 1)[1])
+                    target_user = get_user_model().objects.filter(id=target_id).first()
+                except Exception:
+                    target_user = None
+            else:
+                src_log = ActivityLog.objects.filter(id=str(ticket_id)).first()
+                target_user = src_log.user if src_log and src_log.user else target_user
+            if target_user:
+                _log_activity(request, 'admin_message', user=target_user, metadata={
+                    'detail': message,
+                    'ticket_id': str(ticket_id),
+                    'from': request.user.username,
+                })
             _log_activity(request, 'admin_support_reply', user=request.user, metadata={'ticket_id': ticket_id})
+        # AJAX support: return JSON so UI can update without full reload
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.META.get('HTTP_ACCEPT', '').startswith('application/json'):
+            return JsonResponse({
+                'status': 'ok',
+                'ticket_id': str(ticket_id),
+                'message': {
+                    'author': request.user.username,
+                    'role': 'agent',
+                    'message': message,
+                    'timestamp': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
+                }
+            })
     return redirect(f"{reverse('admin_dashboard_section', kwargs={'section': 'activity'})}?ticket={ticket_id}")
 
 @admin_required
@@ -1871,6 +2966,11 @@ def admin_settings_save_limits(request):
         request.session['retry_limit'] = _to_int(request.POST.get('retry_limit'), 3)
         request.session['timeout_seconds'] = _to_int(request.POST.get('timeout_seconds'), 30)
         request.session['concurrency_limit'] = _to_int(request.POST.get('concurrency_limit'), 5)
+        cache.set('admin_limits', {
+            'retry_limit': request.session['retry_limit'],
+            'timeout_seconds': request.session['timeout_seconds'],
+            'concurrency_limit': request.session['concurrency_limit'],
+        }, 3600)
         _log_activity(request, 'admin_settings_save_limits', user=request.user, metadata={
             'retry_limit': request.session['retry_limit'],
             'timeout_seconds': request.session['timeout_seconds'],
@@ -2117,7 +3217,7 @@ def admin_user_toggle_active(request, user_id):
             user.is_active = not user.is_active
             user.save(update_fields=['is_active'])
             _log_activity(request, 'admin_user_toggle_active', user=request.user, metadata={'target_user_id': user_id, 'is_active': user.is_active})
-    return redirect('admin_dashboard')
+    return redirect('admin_dashboard_section', section='users')
 
 @admin_required
 def admin_user_toggle_ban(request, user_id):
@@ -2125,12 +3225,14 @@ def admin_user_toggle_ban(request, user_id):
         User = get_user_model()
         user = User.objects.filter(id=user_id).first()
         if user:
+            if user.id == request.user.id or user.role == User.ROLE_ADMIN:
+                return redirect('admin_dashboard_section', section='users')
             user.is_banned = not user.is_banned
             if user.is_banned:
                 user.is_active = False
             user.save(update_fields=['is_banned', 'is_active'])
             _log_activity(request, 'admin_user_toggle_ban', user=request.user, metadata={'target_user_id': user_id, 'is_banned': user.is_banned})
-    return redirect('admin_dashboard')
+    return redirect('admin_dashboard_section', section='users')
 
 @admin_required
 def admin_user_change_role(request, user_id):
@@ -2154,12 +3256,31 @@ def admin_user_delete(request, user_id):
         user = User.objects.filter(id=user_id).first()
         if user:
             is_self = user.id == request.user.id
+            if is_self:
+                return redirect('admin_dashboard_section', section='users')
+            # Prevent deleting other admins
+            if getattr(user, 'role', None) == User.ROLE_ADMIN:
+                messages.error(request, 'Cannot delete another admin account.')
+                return redirect('admin_dashboard_section', section='users')
+            # Remove avatar file if present
+            try:
+                if getattr(user, 'avatar', None):
+                    user.avatar.delete(save=False)
+            except Exception:
+                pass
+            # Purge related data explicitly (CASCADE handles most, but clear logs/sessions too)
+            from apps.scraper.models import ScraperJob
+            from core.models import ActivityLog, TrafficLog
+            ScraperJob.objects.filter(user=user).delete()
+            ActivityLog.objects.filter(user=user).delete()
+            TrafficLog.objects.filter(user=user).delete()
+            # Kill active sessions for the user
+            for session in Session.objects.filter(expire_date__gte=timezone.now()):
+                data = session.get_decoded()
+                if str(data.get('_auth_user_id')) == str(user.id):
+                    session.delete()
             _log_activity(request, 'admin_user_delete', user=request.user, metadata={'target_user_id': user_id})
             user.delete()
-            if is_self:
-                logout(request)
-                messages.success(request, 'Admin account deleted.')
-                return redirect('admin_login')
     return redirect('admin_dashboard_section', section='users')
 
 @admin_required
@@ -2182,7 +3303,7 @@ def admin_job_retry(request, job_id):
             ScrapeLog.objects.create(job=job, level='INFO', message='Job retried by admin', metadata={'retried_by': request.user.id})
             run_scraper_task.delay(job.id)
             _log_activity(request, 'admin_job_retry', user=request.user, metadata={'job_id': job_id})
-    return redirect('admin_dashboard')
+    return redirect('admin_dashboard_section', section='jobs')
 
 @admin_required
 def admin_job_logs(request, job_id):

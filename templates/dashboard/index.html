@@ -16,10 +16,10 @@
     <!-- Right Actions -->
     <div class="flex items-center gap-6">
         <!-- Notifications -->
-        <button class="relative text-gray-400 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+        <a href="{% url 'notifications' %}" class="relative text-gray-400 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5" title="Notifications">
             <i class="fa-solid fa-bell text-lg"></i>
             <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-dark-bg animate-pulse"></span>
-        </button>
+        </a>
 
         <!-- Divider -->
         <div class="h-8 w-px bg-white/10"></div>

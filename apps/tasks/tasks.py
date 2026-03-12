@@ -16,8 +16,10 @@ def run_scraper_task(job_id):
         job.status = 'PROCESSING'
         job.save()
         
+        from django.core.cache import cache
+        limits = cache.get('admin_limits') or {}
         service = ScraperService()
-        result = service.execute_scrape(job.url, {})
+        result = service.execute_scrape(job.url, {'retry_limit': limits.get('retry_limit', 3), 'timeout': limits.get('timeout_seconds', 30)})
         
         # Save result
         from apps.scraper.models import ScrapedData

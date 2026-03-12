@@ -1,15 +1,29 @@
 """
-URL configuration for oneclick_datascrape project.
+URL configuration for ScrapyX project.
 """
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import home, dashboard, signup, login_page, admin_login, logout_view, new_scrape, scrape_progress, scraped_results, history, settings_page, settings_section, run_scrape_api, export_results, delete_scrape, delete_bulk_scrapes, update_profile, update_password, download_invoice, search_proxy, admin_dashboard, admin_dashboard_section, admin_user_toggle_active, admin_user_toggle_ban, admin_user_change_role, admin_user_delete, admin_job_delete, admin_job_retry, admin_job_logs, admin_profile_update, admin_rotate_token, admin_toggle_2fa, admin_audit_report, admin_logout_all, admin_export_users, admin_create_user, admin_system_toggle_autoscale, admin_billing_run, admin_billing_export, admin_billing_request_payout, admin_settings_toggle_maintenance, admin_settings_toggle_email_alerts, admin_settings_toggle_auto_retry, admin_settings_toggle_theme, admin_settings_rotate_webhook, admin_settings_save_limits, admin_settings_save_alerts, admin_settings_reset, admin_error_logs_export, admin_error_logs_rerun_failed, admin_support_assign, admin_support_escalate, admin_support_resolve, admin_support_reply
+from core.views import home, features, pricing, documentation, api, extension, cloud_scraping, blog, community, help_center, status, about, careers, privacy, terms, dashboard, signup, login_page, admin_login, logout_view, new_scrape, scrape_progress, scraped_results, history, settings_page, settings_section, notifications_feed, messages_page, user_message_reply, run_scrape_api, export_results, delete_scrape, delete_bulk_scrapes, update_profile, update_password, download_invoice, search_proxy, admin_dashboard, admin_dashboard_section, admin_user_toggle_active, admin_user_toggle_ban, admin_user_change_role, admin_user_delete, admin_export_users, admin_create_user, admin_job_delete, admin_job_retry, admin_job_logs, admin_profile_update, admin_rotate_token, admin_toggle_2fa, admin_audit_report, admin_logout_all, admin_system_toggle_autoscale, admin_system_metrics, admin_system_snapshot, admin_billing_run, admin_billing_export, admin_billing_request_payout, admin_settings_toggle_maintenance, admin_settings_toggle_email_alerts, admin_settings_toggle_auto_retry, admin_settings_toggle_theme, admin_settings_rotate_webhook, admin_settings_save_limits, admin_settings_save_alerts, admin_settings_reset, admin_error_logs_export, admin_error_logs_rerun_failed, admin_support_assign, admin_support_escalate, admin_support_resolve, admin_support_reply
 
 urlpatterns = [
     path('', home, name='home'),
+    path('features/', features, name='features'),
+    path('pricing/', pricing, name='pricing'),
+    path('documentation/', documentation, name='documentation'),
+    path('api/', api, name='api'),
+    path('extension/', extension, name='extension'),
+    path('cloud-scraping/', cloud_scraping, name='cloud_scraping'),
+    path('blog/', blog, name='blog'),
+    path('community/', community, name='community'),
+    path('help/', help_center, name='help_center'),
+    path('status/', status, name='status'),
+    path('about/', about, name='about'),
+    path('careers/', careers, name='careers'),
+    path('privacy/', privacy, name='privacy'),
+    path('terms/', terms, name='terms'),
     path("admin/", admin.site.urls),
     path('signup/', signup, name='signup'),
     path('login/', login_page, name='login'), # Using custom view for login page
@@ -38,6 +52,9 @@ urlpatterns = [
     path('dashboard/settings/password/update/', update_password, name='update_password'),
     path('dashboard/settings/download-invoice/<str:invoice_id>/', download_invoice, name='download_invoice'),
     path('dashboard/settings/<str:section>/', settings_section, name='settings_section'),
+    path('dashboard/notifications/', notifications_feed, name='notifications'),
+    path('dashboard/messages/', messages_page, name='messages'),
+    path('dashboard/messages/reply/', user_message_reply, name='user_message_reply'),
     path('dashboard/new/', new_scrape, name='new_scrape'),
     path('api/search-proxy/', search_proxy, name='search_proxy'),
 
@@ -62,6 +79,8 @@ urlpatterns = [
     path('admin-dashboard/profile/audit-report/', admin_audit_report, name='admin_audit_report'),
     path('admin-dashboard/profile/logout-all/', admin_logout_all, name='admin_logout_all'),
     path('admin-dashboard/system/toggle-autoscale/', admin_system_toggle_autoscale, name='admin_system_toggle_autoscale'),
+    path('admin-dashboard/system/metrics/', admin_system_metrics, name='admin_system_metrics'),
+    path('admin-dashboard/system/snapshot/', admin_system_snapshot, name='admin_system_snapshot'),
     path('admin-dashboard/billing/run/', admin_billing_run, name='admin_billing_run'),
     path('admin-dashboard/billing/export/', admin_billing_export, name='admin_billing_export'),
     path('admin-dashboard/billing/request-payout/', admin_billing_request_payout, name='admin_billing_request_payout'),

@@ -10,8 +10,7 @@ def admin_required(view_func):
         if not request.user.is_authenticated:
             return redirect('admin_login')
         if getattr(request.user, 'role', None) != 'ADMIN':
-            messages.error(request, 'Admin access required.')
-            return HttpResponseForbidden('Admin access required.')
+            return redirect('admin_login')
         return view_func(request, *args, **kwargs)
     return _wrapped
 
@@ -22,7 +21,6 @@ def user_required(view_func):
         if not request.user.is_authenticated:
             return redirect('login')
         if getattr(request.user, 'role', None) != 'USER':
-            messages.error(request, 'User access required.')
             return HttpResponseForbidden('User access required.')
         return view_func(request, *args, **kwargs)
     return _wrapped

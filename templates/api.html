@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block title %}API Reference - ScrapyX{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen pt-20 relative">
+    <!-- Background Particles -->
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <canvas class="particle-network-canvas w-full h-full opacity-30 mix-blend-screen" data-speed="0.2" data-count="80"></canvas>
+    </div>
+
+    <!-- Left Sidebar (Navigation) -->
+    <aside class="w-64 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto border-r border-dark-border bg-dark-bg/95 backdrop-blur hidden lg:block custom-scrollbar z-20 shrink-0">
+        <div class="p-6 space-y-8">
+            <!-- Section -->
+            <div>
+                <h5 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Introduction</h5>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-white bg-white/5 rounded-lg border border-white/10">
+                            <i class="fa-regular fa-circle-play text-brand"></i> Getting Started
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                            <i class="fa-solid fa-key text-gray-600"></i> Authentication
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section -->
+            <div>
+                <h5 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Endpoints</h5>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-brand bg-brand/10 rounded-lg border border-brand/20">
+                            <span>Fetch Web Data</span>
+                            <span class="text-[10px] font-bold bg-brand text-dark-bg px-1.5 py-0.5 rounded">GET</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                            <span>Execute Script</span>
+                            <span class="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">POST</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                            <span>Capture Page</span>
+                            <span class="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">POST</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                            <span>Proxy Status</span>
+                            <span class="text-[10px] font-bold bg-brand text-dark-bg px-1.5 py-0.5 rounded">GET</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Version Badge -->
+            <div class="pt-8 mt-auto">
+                <div class="px-4 py-3 bg-dark-card border border-dark-border rounded-lg">
+                    <div class="text-xs text-gray-500 mb-1">API Version</div>
+                    <div class="text-sm font-bold text-white flex items-center gap-2">
+                        v2.4.0 (Latest)
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area (Split View) -->
+    <main class="flex-1 w-full flex flex-col xl:flex-row min-w-0">
+        
+        <!-- Center Column (Docs) -->
+        <div class="flex-1 px-8 py-12 min-w-0 border-r border-dark-border">
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-sm text-gray-500 mb-8 font-mono">
+                <span>Endpoints</span>
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+                <span class="text-brand">Fetch Web Data</span>
+            </div>
+
+            <!-- Header -->
+            <h1 class="text-4xl font-bold text-white mb-6">Fetch Web Data</h1>
+            
+            <div class="flex items-center gap-4 mb-8">
+                <span class="px-3 py-1 bg-brand text-dark-bg font-bold text-sm rounded">GET</span>
+                <code class="text-gray-300 font-mono text-lg">/v2/fetch</code>
+                <button class="text-gray-500 hover:text-white"><i class="fa-regular fa-copy"></i></button>
+            </div>
+
+            <p class="text-gray-400 leading-relaxed mb-12">
+                The fetch endpoint allows you to retrieve the full rendered HTML content of any webpage. 
+                It handles JavaScript execution, CSS rendering, and complex cookies automatically. 
+                Use this for single-page applications (SPAs) or sites requiring heavy browser interaction.
+            </p>
+
+            <!-- Request Parameters -->
+            <div class="mb-12">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-brand"></i> Request Parameters
+                </h3>
+                
+                <div class="space-y-6">
+                    <!-- Param 1 -->
+                    <div class="bg-dark-card border border-dark-border rounded-lg p-5">
+                        <div class="flex items-baseline gap-3 mb-2">
+                            <span class="font-mono text-brand font-bold">url</span>
+                            <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">string</span>
+                            <span class="text-xs text-red-400 font-bold uppercase tracking-wider">Required</span>
+                        </div>
+                        <p class="text-sm text-gray-400">The absolute URL of the page you want to scrape. Must include protocol (http/https).</p>
+                    </div>
+
+                    <!-- Param 2 -->
+                    <div class="bg-dark-card border border-dark-border rounded-lg p-5">
+                        <div class="flex items-baseline gap-3 mb-2">
+                            <span class="font-mono text-brand font-bold">render_js</span>
+                            <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">boolean</span>
+                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider">Default: true</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Wait for the page to finish executing JavaScript before returning the content.</p>
+                    </div>
+
+                    <!-- Param 3 -->
+                    <div class="bg-dark-card border border-dark-border rounded-lg p-5">
+                        <div class="flex items-baseline gap-3 mb-2">
+                            <span class="font-mono text-brand font-bold">proxy_country</span>
+                            <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">string</span>
+                        </div>
+                        <p class="text-sm text-gray-400">ISO 3166-1 alpha-2 country code for the egress IP address (e.g., 'US', 'GB', 'DE').</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Object -->
+            <div>
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-code text-brand"></i> Response Object
+                </h3>
+                
+                <div class="overflow-hidden border border-dark-border rounded-lg">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-dark-card text-gray-400 font-medium border-b border-dark-border">
+                            <tr>
+                                <th class="px-6 py-4">Property</th>
+                                <th class="px-6 py-4">Type</th>
+                                <th class="px-6 py-4">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-dark-border">
+                            <tr>
+                                <td class="px-6 py-4 font-mono text-brand">content</td>
+                                <td class="px-6 py-4 text-gray-400">string</td>
+                                <td class="px-6 py-4 text-gray-400">The raw HTML content of the page.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-mono text-brand">status</td>
+                                <td class="px-6 py-4 text-gray-400">integer</td>
+                                <td class="px-6 py-4 text-gray-400">HTTP status code returned by target.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-mono text-brand">metadata</td>
+                                <td class="px-6 py-4 text-gray-400">object</td>
+                                <td class="px-6 py-4 text-gray-400">Includes response time and proxy info.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column (Code) -->
+        <div class="xl:w-[500px] bg-[#0B101A] flex flex-col h-[calc(100vh-6rem)] sticky top-24 overflow-y-auto custom-scrollbar">
+            
+            <!-- Language Tabs -->
+            <div class="flex items-center px-6 border-b border-dark-border sticky top-0 bg-[#0B101A] z-10 pt-4 pb-0">
+                <button class="px-4 py-3 text-sm font-medium text-brand border-b-2 border-brand">Python</button>
+                <button class="px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">Node.js</button>
+                <button class="px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">cURL</button>
+                <div class="ml-auto">
+                    <button class="text-xs text-gray-500 hover:text-white flex items-center gap-1"><i class="fa-regular fa-copy"></i> Copy</button>
+                </div>
+            </div>
+
+            <!-- Code Block -->
+            <div class="p-6">
+<pre class="font-mono text-sm leading-relaxed">
+<span class="text-purple-400">import</span> <span class="text-white">requests</span>
+
+<span class="text-gray-500"># API Configuration</span>
+url = <span class="text-green-400">"https://api.scrapyx.io/v2/fetch"</span>
+headers = {
+    <span class="text-green-400">"X-API-KEY"</span>: <span class="text-yellow-400">"YOUR_API_KEY"</span>
+}
+params = {
+    <span class="text-green-400">"url"</span>: <span class="text-green-400">"https://example.com"</span>,
+    <span class="text-green-400">"render_js"</span>: <span class="text-purple-400">True</span>,
+    <span class="text-green-400">"proxy_country"</span>: <span class="text-green-400">"US"</span>
+}
+
+<span class="text-gray-500"># Execute Request</span>
+response = requests.get(url, headers=headers, params=params)
+
+<span class="text-gray-500"># Output results</span>
+<span class="text-yellow-400">print</span>(response.json()[<span class="text-green-400">'content'</span>])
+</pre>
+            </div>
+
+            <!-- Expected Response -->
+            <div class="px-6 pb-6">
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 mt-4">Expected Response</div>
+                
+                <div class="bg-[#0d121f] rounded-lg border border-dark-border p-4 relative">
+                    <div class="absolute top-4 right-4 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                        <span class="text-xs font-mono text-green-500">200 OK</span>
+                    </div>
+<pre class="font-mono text-xs text-gray-300 leading-relaxed">
+{
+  <span class="text-green-400">"status"</span>: <span class="text-blue-400">200</span>,
+  <span class="text-green-400">"content"</span>: <span class="text-yellow-400">"&lt;!DOCTYPE html&gt;&lt;html&gt;..."</span>,
+  <span class="text-green-400">"metadata"</span>: {
+    <span class="text-green-400">"response_time"</span>: <span class="text-blue-400">1.45</span>,
+    <span class="text-green-400">"proxy"</span>: <span class="text-yellow-400">"64.120.10.5"</span>,
+    <span class="text-green-400">"country"</span>: <span class="text-yellow-400">"US"</span>
+  }
+}
+</pre>
+                </div>
+            </div>
+
+            <!-- Error States -->
+            <div class="px-6 pb-12 mt-auto">
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Error States</div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between p-3 bg-red-500/10 border border-red-500/20 rounded text-xs">
+                        <span class="font-bold text-red-400">401 Unauthorized</span>
+                        <span class="text-gray-400">Invalid API Key</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-orange-500/10 border border-orange-500/20 rounded text-xs">
+                        <span class="font-bold text-orange-400">429 Rate Limit</span>
+                        <span class="text-gray-400">Too many requests</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Try It Button -->
+            <div class="sticky bottom-0 p-6 bg-[#0B101A] border-t border-dark-border">
+                <button class="w-full bg-brand text-dark-bg font-bold py-3 px-4 rounded-lg hover:bg-brand-hover transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Try It In Sandbox
+                </button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #1f2937;
+        border-radius: 20px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: #374151;
+    }
+</style>
+{% endblock %}

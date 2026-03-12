@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% block title %}Features - ScrapyX{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 overflow-hidden">
+    <!-- Background Effects -->
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand/10 rounded-full blur-[100px] -z-10"></div>
+    <!-- Canvas Particles -->
+    <canvas class="particle-network-canvas absolute inset-0 w-full h-full opacity-40 mix-blend-screen pointer-events-none" data-speed="0.3" data-count="100"></canvas>
+
+    <div class="container mx-auto px-6 text-center relative z-10">
+        <!-- Tag -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 mb-8 animate-fade-in-up">
+            <span class="text-xs font-bold text-brand uppercase tracking-wider">Redefined for Performance</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight animate-fade-in-up animation-delay-100">
+            Unleash the Power of <br>
+            <span class="text-brand">Elite Data Extraction</span>
+        </h1>
+        
+        <!-- Subheadline -->
+        <p class="text-lg text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up animation-delay-200">
+            Process millions of data points with surgical precision. Our next-gen scraping engine bypasses restrictions while delivering clean, structured intelligence.
+        </p>
+        
+
+
+        <!-- Feature Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left animate-fade-in-up animation-delay-400">
+            <!-- Card 1 -->
+            <div class="bg-dark-card border border-dark-border p-8 rounded-2xl hover:border-brand/30 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fa-solid fa-bolt text-6xl text-brand"></i>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 border border-brand/20">
+                    <i class="fa-solid fa-mouse-pointer"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">ScrapyX</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                    No code, no hassle. Point at any element on the web and extract entire data structures instantly with our proprietary browser engine.
+                </p>
+                <!-- Visual Element -->
+                <div class="h-16 w-full bg-dark-bg/50 rounded-lg border border-dark-border/50 flex flex-col justify-center px-4 gap-2">
+                    <div class="h-1.5 w-3/4 bg-brand/20 rounded-full"></div>
+                    <div class="h-1.5 w-1/2 bg-brand/10 rounded-full"></div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-dark-card border border-dark-border p-8 rounded-2xl hover:border-brand/30 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fa-solid fa-brain text-6xl text-brand"></i>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 border border-brand/20">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">AI Auto Detection</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                    Our neural network identifies tables, lists, and pagination automatically. It adapts to site changes in real-time so your scrapers never break.
+                </p>
+                <!-- Visual Element -->
+                <div class="h-16 w-full bg-dark-bg/50 rounded-lg border border-dark-border/50 flex items-center justify-center">
+                    <div class="text-xs font-mono text-brand/70">DETECTING STRUCTURE...</div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-dark-card border border-dark-border p-8 rounded-2xl hover:border-brand/30 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fa-solid fa-file-export text-6xl text-brand"></i>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand mb-6 border border-brand/20">
+                    <i class="fa-solid fa-upload"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Universal Export</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                    Sync your data directly to Google Sheets, AWS S3, or download in JSON, CSV, and Excel formats. Native integrations with 100+ tools.
+                </p>
+                <!-- Visual Element -->
+                <div class="h-16 w-full bg-dark-bg/50 rounded-lg border border-dark-border/50 flex items-end justify-between px-4 pb-2 pt-4 gap-2">
+                    <div class="w-full bg-brand/10 rounded-t h-1/3"></div>
+                    <div class="w-full bg-brand/20 rounded-t h-2/3"></div>
+                    <div class="w-full bg-brand/10 rounded-t h-1/2"></div>
+                    <div class="w-full bg-brand rounded-t h-full shadow-[0_0_10px_rgba(0,212,197,0.3)]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modern Web Section -->
+<section class="py-24 bg-dark-bg/50">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-col lg:flex-row items-center gap-16">
+            <!-- Text Content -->
+            <div class="lg:w-1/2">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-2">Built for the</h2>
+                <h2 class="text-3xl md:text-5xl font-bold text-brand mb-10">Modern Web</h2>
+                
+                <div class="space-y-8">
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-brand/10 flex-shrink-0 flex items-center justify-center text-brand mt-1">
+                            <i class="fa-brands fa-js"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">JavaScript Rendering</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Full support for React, Vue, and Angular sites using headless Chrome instances. We handle infinite scrolling, dropdowns, and dynamic content effortlessly.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-brand/10 flex-shrink-0 flex items-center justify-center text-brand mt-1">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">Anti-Bot Bypass</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Sophisticated proxy rotation and fingerprint spoofing to mimic human behavior. Solve CAPTCHAs and bypass IP blocks automatically.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-brand/10 flex-shrink-0 flex items-center justify-center text-brand mt-1">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">Scheduled Jobs</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Automate your workflows to run daily, hourly, or at any custom interval. Get notified via webhook or email when data is ready.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Visualization -->
+            <div class="lg:w-1/2 w-full">
+                <div class="bg-dark-card border border-dark-border rounded-xl shadow-2xl overflow-hidden transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                    <!-- Window Controls -->
+                    <div class="bg-dark-bg/50 px-4 py-3 border-b border-dark-border flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                        <div class="ml-4 text-xs font-mono text-gray-500">scrapyx-config.json</div>
+                    </div>
+                    <!-- Code -->
+                    <div class="p-6 font-mono text-sm overflow-x-auto bg-[#0d1117]">
+                        <div class="text-gray-400">
+                            <span class="text-purple-400">GET</span> <span class="text-green-400">https://api.scrapyx.io/v1/task/init</span>
+                        </div>
+                        <div class="mt-4 text-gray-500">// Initializing Elite Engine...</div>
+                        <div class="text-brand mt-2">SUCCESS: Payload validation complete.</div>
+                        <div class="mt-4 text-white">
+                            <span class="text-yellow-400">"selectors"</span>: {<br>
+                            &nbsp;&nbsp;<span class="text-green-400">"product_name"</span>: <span class="text-blue-400">".title-main"</span>,<br>
+                            &nbsp;&nbsp;<span class="text-green-400">"pricing"</span>: <span class="text-blue-400">".price-tag"</span>,<br>
+                            &nbsp;&nbsp;<span class="text-green-400">"inventory"</span>: <span class="text-blue-400">".stock-level"</span><br>
+                            }
+                        </div>
+                        <div class="mt-4 text-brand animate-pulse">RUNNING...</div>
+                        <div class="text-gray-500">// 2,492 records found in 0.4s</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-24">
+    <div class="container mx-auto px-6">
+        <div class="bg-dark-card border border-dark-border rounded-3xl p-12 text-center relative overflow-hidden">
+            <!-- Background Glow -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div class="relative z-10">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Ready to scale your data operations?</h2>
+                <p class="text-gray-400 text-lg mb-10 max-w-2xl mx-auto">
+                    Join 10,000+ developers and businesses who trust ScrapyX for their mission-critical data needs.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="{% url 'signup' %}" class="w-full sm:w-auto bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3 px-8 rounded-lg transition-all shadow-[0_0_20px_rgba(0,212,197,0.3)]">
+                        Get Started Now
+                    </a>
+                    <a href="#" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-8 rounded-lg border border-white/10 hover:border-white/20 transition-all">
+                        Book a Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    @keyframes fadeInUp {
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animation-delay-100 { animation-delay: 0.1s; }
+    .animation-delay-200 { animation-delay: 0.2s; }
+    .animation-delay-300 { animation-delay: 0.3s; }
+    .animation-delay-400 { animation-delay: 0.4s; }
+</style>
+{% endblock %}

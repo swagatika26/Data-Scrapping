@@ -216,6 +216,12 @@
             justify-content: flex-start;
             gap: 18px;
             margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #0f141d;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 0;
         }
         .topbar h6 {
             margin: 0;
@@ -245,6 +251,74 @@
             color: #e6edf6;
             border-color: rgba(46, 211, 201, 0.6);
             box-shadow: 0 0 0 0.2rem rgba(46, 211, 201, 0.18);
+        }
+        /* Improve visibility of right-side indicators on dark inputs/selects */
+        .form-select.bg-dark {
+            background-color: #111722;
+            color: #e6edf6;
+            border-color: rgba(255, 255, 255, 0.2);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e5e7eb'%3E%3Cpath d='M3.2 5.2l4.8 4.8 4.8-4.8'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right .75rem center;
+            background-size: 12px 12px;
+            padding-right: 2rem;
+        }
+        .form-control.bg-dark[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) brightness(1.2);
+            opacity: 1;
+        }
+        .form-control.bg-dark[type="date"] {
+            background-color: #111722;
+            color: #e6edf6;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .analytics-toolbar input[type="date"] {
+            background-color: #111722;
+            color: #e6edf6;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .analytics-toolbar input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) brightness(1.2);
+            opacity: 1;
+        }
+        .profile-menu {
+            position: fixed;
+            width: 240px;
+            background: #0f141d;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            box-shadow: 0 12px 28px rgba(0,0,0,.35);
+            z-index: 1100;
+        }
+        .notif-menu {
+            position: fixed;
+            width: 320px;
+            max-height: 60vh;
+            overflow-y: auto;
+            background: #0f141d;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            box-shadow: 0 12px 28px rgba(0,0,0,.35);
+            z-index: 1100;
+        }
+        .notif-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .notif-item:last-child { border-bottom: 0; }
+        /* Thicker control bar inside profile menu to prevent bleed-through */
+        .profile-menu .btn-ghost {
+            background: #121826;
+            border-width: 2px;
+            border-color: rgba(255, 255, 255, 0.18);
+            color: #cbd5e1;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .profile-menu .btn-ghost:hover {
+            border-color: rgba(46, 211, 201, 0.4);
+            background: #172033;
+            color: #e6edf6;
         }
         .topbar .admin-actions {
             display: inline-flex;
@@ -468,31 +542,38 @@
             font-size: 0.7rem;
         }
         .map-card {
-            height: 280px;
-            background: radial-gradient(circle at 20% 30%, rgba(46, 211, 201, 0.15), transparent 45%), #0f141d;
+            height: 320px;
+            background: #0f141d;
+            background-image: url('/static/img/world-map-dark.svg');
+            background-size: cover;
+            background-position: center;
             border-radius: 16px;
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
         }
         .map-card::after {
             content: '';
             position: absolute;
             inset: 0;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
             background-size: 18px 18px;
-            opacity: 0.35;
+            opacity: 0.18;
+            pointer-events: none;
         }
         .map-overlay {
             position: absolute;
             right: 18px;
             bottom: 18px;
-            background: rgba(15, 23, 32, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 32, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 12px;
             padding: 12px;
             z-index: 2;
-            width: 170px;
+            width: 190px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
         }
         .map-overlay-item {
             display: flex;
@@ -506,16 +587,17 @@
         }
         .map-dot {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: #8b5cf6;
-            box-shadow: 0 0 12px rgba(139, 92, 246, 0.7);
+            background: #2ed3c9;
+            box-shadow: 0 0 20px rgba(46, 211, 201, 0.75), 0 0 4px rgba(46, 211, 201, 0.9) inset;
             z-index: 2;
         }
-        .map-dot.dot-1 { top: 42%; left: 26%; background: #2ed3c9; }
-        .map-dot.dot-2 { top: 58%; left: 48%; }
-        .map-dot.dot-3 { top: 35%; left: 72%; background: #4ade80; }
+        /* Approximate coordinates for regions */
+        .map-dot.dot-1 { top: 32%; left: 28%; } /* US-EAST-1 */
+        .map-dot.dot-2 { top: 38%; left: 54%; background: #8b5cf6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.75); } /* EU-WEST-2 */
+        .map-dot.dot-3 { top: 52%; left: 76%; background: #34d399; box-shadow: 0 0 20px rgba(52, 211, 153, 0.75); } /* AP-SOUTH-1 */
         .overview-table .table-dark tbody tr td {
             font-size: 0.82rem;
         }
@@ -591,6 +673,10 @@
             background: #0f141d;
             color: #e6edf6;
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .user-toolbar .form-control::placeholder {
+            color: #8ea1b5;
+            opacity: 1;
         }
         .user-table .status-pill {
             font-size: 0.6rem;
@@ -866,9 +952,9 @@
         }
         .support-layout {
             display: grid;
-            grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(220px, 260px);
+            grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
             gap: 16px;
-            min-height: calc(100vh - 180px);
+            min-height: calc(100vh - 96px);
         }
         .support-panel {
             background: #101723;
@@ -1022,7 +1108,8 @@
             align-items: center;
         }
         .support-compose-input {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr auto;
             gap: 10px;
             align-items: center;
         }
@@ -1030,6 +1117,12 @@
             height: 44px;
             resize: none;
             margin: 0;
+            width: 100%;
+        }
+        .support-compose .btn-info {
+            white-space: nowrap;
+            padding: 10px 14px;
+            height: 44px;
         }
         .support-stat {
             display: flex;
@@ -1143,6 +1236,18 @@
             padding: 6px 0;
             font-size: 0.8rem;
         }
+        .billing-donut-wrap { position: relative; }
+        .billing-donut-center {
+            position: absolute; inset: 0;
+            display: grid; place-items: center;
+            pointer-events: none;
+        }
+        .billing-donut-center .percent {
+            font-size: 1.6rem; font-weight: 800; color: #22d3ee;
+        }
+        .billing-donut-center .label {
+            font-size: 0.75rem; letter-spacing: 0.6px; color: #8ea1b5; text-transform: uppercase;
+        }
         .billing-status {
             font-size: 0.65rem;
             padding: 4px 10px;
@@ -1183,6 +1288,67 @@
         .billing-payout:last-child {
             border-bottom: none;
         }
+        .billing-searchbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .billing-search {
+            position: relative;
+            width: 280px;
+        }
+        .billing-search-input {
+            background: #1a2333;
+            border: 1px solid #2b364a;
+            color: #e6edf6;
+            padding-left: 32px;
+            border-radius: 16px;
+            height: 36px;
+        }
+        .billing-search-input::placeholder {
+            color: #8ea1b5;
+        }
+        .billing-search-input:focus {
+            border-color: #2ed3c9;
+            box-shadow: 0 0 0 0.18rem rgba(46, 211, 201, 0.18);
+        }
+        .billing-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8ea1b5;
+            font-size: 0.9rem;
+        }
+        .billing-filter {
+            width: 34px;
+            height: 34px;
+            border-radius: 14px;
+            background: #1a2333;
+            border: 1px solid #2b364a;
+            color: #8ea1b5;
+            display: grid;
+            place-items: center;
+        }
+        .billing-filter:hover {
+            border-color: #2ed3c9;
+            color: #e6edf6;
+        }
+        .support-searchbar { display: flex; align-items: center; gap: 10px; }
+        .support-search { position: relative; width: 280px; }
+        .support-search-input {
+            background: #1a2333;
+            border: 1px solid #2b364a;
+            color: #e6edf6;
+            padding-left: 32px;
+            border-radius: 16px;
+            height: 36px;
+        }
+        .support-search-input::placeholder { color: #8ea1b5; }
+        .support-search-input:focus { border-color: #2ed3c9; box-shadow: 0 0 0 0.18rem rgba(46, 211, 201, 0.18); }
+        .support-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #8ea1b5; font-size: 0.9rem; }
+        .support-filter { width: 34px; height: 34px; border-radius: 14px; background: #1a2333; border: 1px solid #2b364a; color: #8ea1b5; display: grid; place-items: center; }
+        .support-filter:hover { border-color: #2ed3c9; color: #e6edf6; }
         .error-header {
             display: flex;
             justify-content: space-between;
@@ -1287,6 +1453,28 @@
             color: #e6edf6;
             white-space: pre-wrap;
         }
+        .error-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+        .error-heading {
+            font-weight: 800;
+            color: #fca5a5;
+        }
+        .error-code {
+            background: #0b1017;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 12px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+        .error-meta {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
         .settings-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1381,8 +1569,9 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 12px;
-            border-radius: 999px;
+            padding: 6px 18px;
+            min-width: 140px;
+            border-radius: 12px;
             text-decoration: none;
             background: linear-gradient(120deg, rgba(15, 23, 32, 0.95), rgba(10, 14, 20, 0.95));
             border: 1px solid rgba(46, 211, 201, 0.3);
@@ -1395,22 +1584,23 @@
             box-shadow: 0 0 0 3px rgba(46, 211, 201, 0.12), 0 14px 30px rgba(0, 0, 0, 0.4);
         }
         .admin-panel-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
             background: radial-gradient(circle at 30% 30%, rgba(46, 211, 201, 0.45), rgba(15, 23, 32, 0.9));
             border: 1px solid rgba(46, 211, 201, 0.5);
             display: grid;
             place-items: center;
-            font-size: 0.75rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #e6edf6;
+            overflow: hidden;
         }
         .admin-panel-text {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.8rem;
+            font-size: 1rem;
             font-weight: 600;
             letter-spacing: 0.3px;
         }
@@ -1618,14 +1808,13 @@
             </div>
             <nav>
                 <a href="{% url 'admin_dashboard' %}" class="nav-pill{% if active_section == 'overview' %} active{% endif %}">Global Overview</a>
-                <a href="{% url 'admin_dashboard_section' 'profile' %}" class="nav-pill{% if active_section == 'profile' %} active{% endif %}">Admin Profile</a>
                 <a href="{% url 'admin_dashboard_section' 'users' %}" class="nav-pill{% if active_section == 'users' %} active{% endif %}">User Management</a>
                 <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="nav-pill{% if active_section == 'jobs' %} active{% endif %}">Scraper Infrastructure</a>
                 <a href="{% url 'admin_dashboard_section' 'analytics' %}" class="nav-pill{% if active_section == 'analytics' %} active{% endif %}">Analytics</a>
                 <a href="{% url 'admin_dashboard_section' 'billing' %}" class="nav-pill{% if active_section == 'billing' %} active{% endif %}">Billing</a>
                 <a href="{% url 'admin_dashboard_section' 'errors' %}" class="nav-pill{% if active_section == 'errors' %} active{% endif %}">Error Logs</a>
                 <a href="{% url 'admin_dashboard_section' 'system' %}" class="nav-pill{% if active_section == 'system' %} active{% endif %}">System Health</a>
-                <a href="{% url 'admin_dashboard_section' 'activity' %}" class="nav-pill{% if active_section == 'activity' %} active{% endif %}">Support Tickets</a>
+                <a href="{% url 'admin_dashboard_section' 'activity' %}" class="nav-pill{% if active_section == 'activity' %} active{% endif %}">Messages</a>
                 <a href="{% url 'admin_dashboard_section' 'settings' %}" class="nav-pill{% if active_section == 'settings' %} active{% endif %}">Settings</a>
                 <a href="{% url 'logout' %}" class="nav-pill">Logout</a>
             </nav>
@@ -1657,14 +1846,19 @@
                         </span>
                     </div>
                     <span class="chip system-live">System Live</span>
-                    <span class="admin-bell">🔔</span>
-                    <a href="{% url 'admin_dashboard_section' 'profile' %}" class="admin-panel-link">
-                        <span class="admin-panel-avatar">{{ request.user.username|slice:":1"|upper }}</span>
+                    <button type="button" class="admin-bell" id="adminBellToggle" title="Notifications">🔔</button>
+                    <button type="button" class="admin-panel-link" id="adminProfileToggle">
+                        <span class="admin-panel-avatar">
+                            {% if request.user.avatar %}
+                            <img src="{{ request.user.avatar.url }}" alt="{{ request.user.username }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                            {% else %}
+                            {{ request.user.username|slice:":1"|upper }}
+                            {% endif %}
+                        </span>
                         <span class="admin-panel-text">
                             <span class="admin-panel-name">{{ request.user.username }}</span>
-                            <span class="admin-panel-role">Head of Ops</span>
                         </span>
-                    </a>
+                    </button>
                 </form>
             </div>
 
@@ -1945,15 +2139,15 @@
                             <div class="map-dot dot-2"></div>
                             <div class="map-dot dot-3"></div>
                             <div class="map-overlay">
-                                <div class="text-uppercase text-secondary small">Top Operators</div>
-                                {% for operator in most_active_users %}
+                                <div class="text-uppercase text-secondary small">Top Regions</div>
+                                {% for node in live_nodes|slice:":3" %}
                                 <div class="map-overlay-item">
-                                    <span>{{ operator.user__username|default:"System" }}</span>
-                                    <span>{{ operator.count }}</span>
+                                    <span>{{ node.region }}</span>
+                                    <span>{{ node.throughput }} GB/s</span>
                                 </div>
                                 {% empty %}
                                 <div class="map-overlay-item">
-                                    <span>No activity</span>
+                                    <span>No regions</span>
                                     <span>0</span>
                                 </div>
                                 {% endfor %}
@@ -1965,12 +2159,11 @@
                     <div class="card-panel trend-panel h-100">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <div class="trend-title">Scrape Volume Trends</div>
-                                <div class="text-secondary small">Throughput analysis across all active jobs</div>
+                                <div class="trend-title">Growth Trend</div>
+                                <div class="text-secondary small">Total new users over last 30 days</div>
                             </div>
                             <div class="trend-legend">
-                                <span class="legend-item"><span class="legend-dot"></span>Success</span>
-                                <span class="legend-item"><span class="legend-dot retries"></span>Retries</span>
+                                <span class="legend-item"><span class="legend-dot"></span>Users</span>
                             </div>
                         </div>
                         <canvas id="usersGrowthChart" height="220"></canvas>
@@ -2076,7 +2269,7 @@
                     <form method="get" action="{% url 'admin_dashboard_section' 'analytics' %}" class="analytics-toolbar">
                         <input type="date" name="analytics_start" class="form-control form-control-sm" value="{{ analytics_start }}">
                         <input type="date" name="analytics_end" class="form-control form-control-sm" value="{{ analytics_end }}">
-                        <button class="btn btn-sm btn-ghost" type="submit">Filters</button>
+                        <button class="btn btn-sm btn-primary" type="submit">Filters</button>
                     </form>
                 </div>
                 <div class="row g-3 mb-3">
@@ -2117,7 +2310,14 @@
                                     <div class="text-uppercase text-secondary small">Daily Traffic Trend</div>
                                     <div class="text-secondary small">October 2025 performance metrics</div>
                                 </div>
-                                <div class="text-secondary small">Visits</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="text-secondary small">Visits</div>
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Traffic Range">
+                                        <button type="button" class="btn btn-ghost active" id="trafficDailyBtn">Daily</button>
+                                        <button type="button" class="btn btn-ghost" id="trafficMonthlyBtn">Monthly</button>
+                                        <button type="button" class="btn btn-ghost" id="trafficYearlyBtn">Yearly</button>
+                                    </div>
+                                </div>
                             </div>
                             <canvas id="trafficChart" height="180"></canvas>
                         </div>
@@ -2243,7 +2443,15 @@
                                 <div class="text-secondary small">Subscription mix share</div>
                             </div>
                         </div>
-                        <canvas id="billingPlanChart" height="180"></canvas>
+                        <div class="billing-donut-wrap">
+                            <canvas id="billingPlanChart" height="180"></canvas>
+                            <div class="billing-donut-center">
+                                <div class="text-center">
+                                    <div class="percent" id="billingPlanPercent">--%</div>
+                                    <div class="label" id="billingPlanLabel">PLAN</div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="billing-plan-list">
                             {% for plan in billing_plan_breakdown %}
                             <div class="billing-plan-item">
@@ -2258,7 +2466,13 @@
                     <div class="billing-chart-panel">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div class="text-uppercase text-secondary small">Recent Transactions</div>
-                            <span class="text-secondary small">Last 6 updates</span>
+                            <div class="billing-searchbar">
+                                <div class="billing-search">
+                                    <span class="billing-search-icon">🔍</span>
+                                    <input type="text" id="billingTxSearch" class="form-control form-control-sm billing-search-input" placeholder="Search customer or ID...">
+                                </div>
+                                <button type="button" class="billing-filter">≡</button>
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-dark table-sm align-middle billing-table">
@@ -2423,7 +2637,13 @@
                 </div>
                 <div>
                     <div class="text-uppercase text-secondary small mb-2">Selected Traceback Preview</div>
-                    <div class="error-preview">{{ selected_error.traceback }}</div>
+                    <div class="error-preview">
+                        <div class="error-preview-header">
+                            <div class="error-heading">Traceback (most recent call last):</div>
+                            <div class="error-meta">log_id: err_{{ selected_error.id }}</div>
+                        </div>
+                        <pre class="error-code">{{ selected_error.traceback }}</pre>
+                    </div>
                 </div>
             </section>
 
@@ -2659,9 +2879,9 @@
                                         {% csrf_token %}
                                         <button class="btn btn-sm btn-warning" type="submit">{% if user.is_banned %}Unban{% else %}Suspend{% endif %}</button>
                                     </form>
-                                    <form method="post" action="{% url 'admin_user_delete' user.id %}">
+                                    <form method="post" action="{% url 'admin_user_delete' user.id %}" id="deleteForm-{{ user.id }}">
                                         {% csrf_token %}
-                                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                        <button class="btn btn-sm btn-danger user-delete-btn" type="button" data-user-id="{{ user.id }}" data-user-name="{{ user.get_full_name|default:user.username }}">Delete</button>
                                     </form>
                                 </td>
                             </tr>
@@ -2737,8 +2957,34 @@
             {% if active_section == 'jobs' %}
             <section id="jobs" class="card-panel mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="text-uppercase text-secondary small">Recent High-Volume Jobs</div>
-                    <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="btn btn-ghost btn-sm">View All Jobs</a>
+                    <div class="text-uppercase text-secondary small">Scraper Infrastructure</div>
+                    <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="btn btn-ghost btn-sm">Refresh</a>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <div class="system-card h-100 text-center">
+                            <div class="text-secondary small">Total Jobs</div>
+                            <div class="display-6 fw-bold">{{ total_jobs }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="system-card h-100 text-center">
+                            <div class="text-secondary small">Running</div>
+                            <div class="display-6 fw-bold text-info">{{ running_jobs }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="system-card h-100 text-center">
+                            <div class="text-secondary small">Failed</div>
+                            <div class="display-6 fw-bold text-danger">{{ failed_jobs }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="system-card h-100 text-center">
+                            <div class="text-secondary small">Success Rate</div>
+                            <div class="display-6 fw-bold">{{ success_rate }}%</div>
+                        </div>
+                    </div>
                 </div>
                 <form method="get" class="row g-2 mb-3">
                     <div class="col-md-3">
@@ -2764,30 +3010,33 @@
                     <div class="col-md-2">
                         <input type="date" name="end_date" value="{{ end_date }}" class="form-control form-control-sm bg-dark text-white border-secondary">
                     </div>
-                    <div class="col-md-2 d-grid">
-                        <button class="btn btn-sm btn-primary" type="submit">Filter</button>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button class="btn btn-sm btn-primary flex-grow-1" type="submit">Filter</button>
+                        <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="btn btn-sm btn-ghost">Clear</a>
                     </div>
                 </form>
                 <div class="table-responsive">
                     <table class="table table-dark table-sm align-middle">
                         <thead>
                             <tr>
-                                <th>Job ID</th>
+                                <th>Job</th>
                                 <th>User</th>
                                 <th>Target URL</th>
-                                <th>Data Points</th>
+                                <th>Data</th>
                                 <th>Status</th>
+                                <th>Created</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for job in jobs %}
                             <tr>
-                                <td>{{ job.id }}</td>
+                                <td>#{{ job.id }}</td>
                                 <td>{{ job.user.username }}</td>
-                                <td class="text-truncate" style="max-width: 220px;">{{ job.url }}</td>
+                                <td class="text-truncate" style="max-width: 280px;"><a href="{{ job.url }}" target="_blank" class="text-decoration-none text-info">{{ job.url }}</a></td>
                                 <td>{{ job.data_count }}</td>
-                                <td>{{ job.status }}</td>
+                                <td><span class="status-pill{% if job.status == 'COMPLETED' %} success{% elif job.status == 'FAILED' %} failed{% endif %}">{{ job.status }}</span></td>
+                                <td>{{ job.created_at|date:"Y-m-d H:i" }}</td>
                                 <td class="d-flex gap-2">
                                     <form method="post" action="{% url 'admin_job_delete' job.id %}">
                                         {% csrf_token %}
@@ -2843,17 +3092,17 @@
                     <div class="col-lg-4">
                         <div class="system-card h-100">
                             <div class="text-uppercase text-secondary small">Total System Uptime</div>
-                            <div class="system-uptime">
+                            <div class="system-uptime" id="system-uptime">
                                 <div class="system-uptime-item">
-                                    <div class="system-uptime-value">{{ uptime_days }}</div>
+                                    <div class="system-uptime-value" id="uptime-days">{{ uptime_days }}</div>
                                     <div class="system-uptime-label">Days</div>
                                 </div>
                                 <div class="system-uptime-item">
-                                    <div class="system-uptime-value">{{ uptime_hours }}</div>
+                                    <div class="system-uptime-value" id="uptime-hours">{{ uptime_hours }}</div>
                                     <div class="system-uptime-label">Hours</div>
                                 </div>
                                 <div class="system-uptime-item">
-                                    <div class="system-uptime-value">{{ uptime_mins }}</div>
+                                    <div class="system-uptime-value" id="uptime-mins">{{ uptime_mins }}</div>
                                     <div class="system-uptime-label">Mins</div>
                                 </div>
                             </div>
@@ -2861,9 +3110,9 @@
                     </div>
                     <div class="col-lg-4">
                         <div class="system-card h-100 text-center">
-                            <div class="system-ring" style="--progress: {{ cpu_efficiency }}%;">
+                            <div class="system-ring" id="cpu-ring" style="--progress: {{ cpu_efficiency }}%;">
                                 <div class="system-ring-content">
-                                    <div class="system-ring-value">{{ cpu_efficiency }}%</div>
+                                    <div class="system-ring-value" id="cpu-value">{{ cpu_efficiency }}%</div>
                                     <div class="system-ring-label">Load</div>
                                 </div>
                             </div>
@@ -2872,9 +3121,9 @@
                     </div>
                     <div class="col-lg-4">
                         <div class="system-card h-100 text-center">
-                            <div class="system-ring" style="--progress: {{ memory_cluster }}%;">
+                            <div class="system-ring" id="mem-ring" style="--progress: {{ memory_cluster }}%;">
                                 <div class="system-ring-content">
-                                    <div class="system-ring-value">{{ memory_cluster }}%</div>
+                                    <div class="system-ring-value" id="mem-value">{{ memory_cluster }}%</div>
                                     <div class="system-ring-label">Util</div>
                                 </div>
                             </div>
@@ -2921,7 +3170,7 @@
                                 <div class="text-uppercase text-secondary small">Scraping Intensity</div>
                                 <a href="{% url 'admin_dashboard_section' 'jobs' %}" class="btn btn-ghost btn-sm">More Active</a>
                             </div>
-                            <div class="intensity-grid">
+                            <div class="intensity-grid" id="intensity-grid">
                                 {% for cell in scraping_intensity %}
                                 <div class="intensity-cell level-{{ cell.level }}" title="{{ cell.count }}"></div>
                                 {% endfor %}
@@ -2949,7 +3198,7 @@
                                     <th>Throughput</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="nodes-tbody">
                                 {% for node in live_nodes %}
                                 <tr>
                                     <td>{{ node.node_id }}</td>
@@ -2967,17 +3216,19 @@
                 </div>
                 <div class="system-card">
                     <div class="text-uppercase text-secondary small mb-2">Real-time System Events</div>
-                    {% for event in system_events %}
-                    <div class="system-event">
-                        <div>
-                            <div class="fw-semibold">{{ event.action|cut:"_"|title }}</div>
-                            <div class="text-secondary small">{{ event.metadata.detail|default:"Cluster task completed." }}</div>
+                    <div id="system-events">
+                        {% for event in system_events %}
+                        <div class="system-event">
+                            <div>
+                                <div class="fw-semibold">{{ event.action|cut:"_"|title }}</div>
+                                <div class="text-secondary small">{{ event.metadata.detail|default:"Cluster task completed." }}</div>
+                            </div>
+                            <div class="text-secondary small">{{ event.timestamp|timesince }} ago</div>
                         </div>
-                        <div class="text-secondary small">{{ event.timestamp|timesince }} ago</div>
+                        {% empty %}
+                        <div class="text-secondary small">No system events captured.</div>
+                        {% endfor %}
                     </div>
-                    {% empty %}
-                    <div class="text-secondary small">No system events captured.</div>
-                    {% endfor %}
                 </div>
             </section>
 
@@ -3003,8 +3254,14 @@
                         <a href="{% url 'admin_dashboard_section' 'activity' %}?support_filter=unassigned{% if support_query %}&support_q={{ support_query|urlencode }}{% endif %}" class="support-tab{% if support_filter == 'unassigned' %} active{% endif %}">Unassigned</a>
                     </div>
                     <form method="get" action="{% url 'admin_dashboard_section' 'activity' %}" class="mt-3">
-                        <input type="text" name="support_q" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Search tickets..." value="{{ support_query }}">
-                        <input type="hidden" name="support_filter" value="{{ support_filter }}">
+                        <div class="support-searchbar">
+                            <div class="support-search">
+                                <span class="support-search-icon">🔍</span>
+                                <input type="text" name="support_q" class="form-control form-control-sm support-search-input" placeholder="Search customer or ID..." value="{{ support_query }}">
+                            </div>
+                            <button type="submit" class="support-filter">≡</button>
+                            <input type="hidden" name="support_filter" value="{{ support_filter }}">
+                        </div>
                     </form>
                     <div class="mt-3">
                         {% for ticket in support_tickets %}
@@ -3060,7 +3317,7 @@
                         </div>
                         {% endfor %}
                     </div>
-                    <form method="post" action="{% url 'admin_support_reply' selected_ticket.id %}" class="support-compose">
+                    <form method="post" action="{% url 'admin_support_reply' selected_ticket.id %}" class="support-compose" id="supportReplyForm">
                         {% csrf_token %}
                         <div class="support-compose-toolbar">
                             <div class="support-compose-actions">
@@ -3074,7 +3331,7 @@
                             </div>
                         </div>
                         <div class="support-compose-input">
-                            <textarea name="message" rows="2" class="form-control form-control-sm" placeholder="Type your reply..."></textarea>
+                            <textarea name="message" rows="2" class="form-control form-control-sm" placeholder="Type your reply..." id="supportMessageInput"></textarea>
                             <button class="btn btn-sm btn-info text-dark" type="submit">Send Reply</button>
                         </div>
                     </form>
@@ -3082,31 +3339,7 @@
                     <div class="text-secondary small">Select a ticket from the queue to view details.</div>
                     {% endif %}
                 </div>
-                <div class="d-flex flex-column gap-3">
-                    <div class="support-panel">
-                        <div class="text-uppercase text-secondary small mb-2">User Statistics</div>
-                        <div class="support-stat"><span>Success Rate</span><span class="text-info">{{ support_success_rate }}%</span></div>
-                        <div class="support-stat"><span>API Calls (24h)</span><span>{{ api_calls_label }}</span></div>
-                    </div>
-                    <div class="support-panel">
-                        <div class="text-uppercase text-secondary small mb-2">Active Projects</div>
-                        {% for project in active_projects %}
-                        <div class="support-project">
-                            <div>
-                                <div class="support-project-title">{{ project.name }}</div>
-                                <div class="support-project-meta">Node: {{ project.region }}</div>
-                            </div>
-                            <span class="ticket-status{% if project.status == 'FAILED' %} escalated{% elif project.status == 'COMPLETED' %} resolved{% endif %}">{{ project.status }}</span>
-                        </div>
-                        {% empty %}
-                        <div class="text-secondary small">No active projects.</div>
-                        {% endfor %}
-                    </div>
-                    <div class="support-panel">
-                        <div class="text-uppercase text-secondary small mb-2">Internal Notes</div>
-                        <div class="text-secondary small">Track customer sentiment and escalations here.</div>
-                    </div>
-                </div>
+                <!-- Sidebar removed per request -->
             </section>
             {% endif %}
         </main>
@@ -3162,6 +3395,62 @@
         </div>
     </div>
 
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-1">Are you sure you want to delete this account?</p>
+                    <div class="text-secondary small" id="confirmDeleteName">User</div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-ghost btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteYes">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="profileMenuDropdown" class="profile-menu d-none">
+        <div class="p-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="admin-panel-avatar" style="width:32px;height:32px;">
+                    {% if request.user.avatar %}
+                    <img src="{{ request.user.avatar.url }}" alt="{{ request.user.username }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                    {% else %}
+                    {{ request.user.username|slice:":1"|upper }}
+                    {% endif %}
+                </span>
+                <div class="fw-semibold">{{ request.user.username }}</div>
+            </div>
+            <div class="d-flex flex-column gap-2">
+                <a href="{% url 'admin_dashboard_section' 'profile' %}" class="btn btn-ghost btn-sm">Profile</a>
+                <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
+            </div>
+        </div>
+    </div>
+    <div id="notifMenuDropdown" class="notif-menu d-none">
+        <div class="p-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="fw-semibold">Notifications</div>
+                <a class="btn btn-ghost btn-sm" href="{% url 'admin_dashboard_section' 'activity' %}">View All</a>
+            </div>
+            <div>
+                {% for ev in system_events %}
+                <div class="notif-item">
+                    <div class="small fw-semibold">{{ ev.action|capfirst|default:"Event" }}</div>
+                    <div class="text-secondary small">{{ ev.timestamp|date:"Y-m-d H:i" }}</div>
+                </div>
+                {% empty %}
+                <div class="text-secondary small">No notifications.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const userGrowthLabels = JSON.parse(document.getElementById('user-growth-labels').textContent);
@@ -3179,35 +3468,20 @@
         const usersGrowthChart = document.getElementById('usersGrowthChart');
         if (usersGrowthChart) {
             const chartContext = usersGrowthChart.getContext('2d');
-            const volumeGradient = chartContext.createLinearGradient(0, 0, 0, 240);
-            volumeGradient.addColorStop(0, 'rgba(34, 211, 238, 0.4)');
-            volumeGradient.addColorStop(1, 'rgba(34, 211, 238, 0)');
-            const retriesData = jobsData.map(value => Math.max(1, Math.round(value * 0.18)));
+            const barGradient = chartContext.createLinearGradient(0, 0, 0, 240);
+            barGradient.addColorStop(0, 'rgba(34, 211, 238, 0.6)');
+            barGradient.addColorStop(1, 'rgba(34, 211, 238, 0.1)');
             new Chart(usersGrowthChart, {
-                type: 'line',
+                type: 'bar',
                 data: {
-                    labels: jobsLabels,
+                    labels: userGrowthLabels,
                     datasets: [
                         {
-                            label: 'Success',
-                            data: jobsData,
+                            label: 'Users',
+                            data: userGrowthData,
+                            backgroundColor: barGradient,
                             borderColor: '#22d3ee',
-                            backgroundColor: volumeGradient,
-                            fill: true,
-                            tension: 0.45,
-                            pointRadius: 3,
-                            pointBackgroundColor: '#2dd4bf',
-                            pointBorderWidth: 0,
-                        },
-                        {
-                            label: 'Retries',
-                            data: retriesData,
-                            borderColor: '#64748b',
-                            backgroundColor: 'transparent',
-                            tension: 0.45,
-                            pointRadius: 0,
-                            borderDash: [6, 6],
-                        },
+                        }
                     ],
                 },
                 options: {
@@ -3248,7 +3522,7 @@
             const trafficGradient = trafficContext.createLinearGradient(0, 0, 0, 200);
             trafficGradient.addColorStop(0, 'rgba(34, 211, 238, 0.35)');
             trafficGradient.addColorStop(1, 'rgba(34, 211, 238, 0)');
-            new Chart(trafficChart, {
+            const trafficChartInstance = new Chart(trafficChart, {
                 type: 'line',
                 data: {
                     labels: trafficLabels,
@@ -3279,6 +3553,54 @@
                     },
                 }
             });
+            // Traffic range toggles
+            const dailyBtn = document.getElementById('trafficDailyBtn');
+            const monthlyBtn = document.getElementById('trafficMonthlyBtn');
+            const yearlyBtn = document.getElementById('trafficYearlyBtn');
+            function groupBy(labels, values, formatter) {
+                const map = new Map();
+                for (let i = 0; i < labels.length; i++) {
+                    const key = formatter(labels[i]);
+                    map.set(key, (map.get(key) || 0) + (Number(values[i]) || 0));
+                }
+                const outLabels = Array.from(map.keys());
+                const outData = Array.from(map.values());
+                return { labels: outLabels, data: outData };
+            }
+            function toMonthKey(dateStr) {
+                const d = new Date(dateStr);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                return `${y}-${m}`;
+            }
+            function toYearKey(dateStr) {
+                const d = new Date(dateStr);
+                return String(d.getFullYear());
+            }
+            function setActive(btn) {
+                [dailyBtn, monthlyBtn, yearlyBtn].forEach(b => b && b.classList.remove('active'));
+                btn && btn.classList.add('active');
+            }
+            dailyBtn && dailyBtn.addEventListener('click', () => {
+                trafficChartInstance.data.labels = trafficLabels;
+                trafficChartInstance.data.datasets[0].data = trafficData;
+                trafficChartInstance.update();
+                setActive(dailyBtn);
+            });
+            monthlyBtn && monthlyBtn.addEventListener('click', () => {
+                const grouped = groupBy(trafficLabels, trafficData, toMonthKey);
+                trafficChartInstance.data.labels = grouped.labels;
+                trafficChartInstance.data.datasets[0].data = grouped.data;
+                trafficChartInstance.update();
+                setActive(monthlyBtn);
+            });
+            yearlyBtn && yearlyBtn.addEventListener('click', () => {
+                const grouped = groupBy(trafficLabels, trafficData, toYearKey);
+                trafficChartInstance.data.labels = grouped.labels;
+                trafficChartInstance.data.datasets[0].data = grouped.data;
+                trafficChartInstance.update();
+                setActive(yearlyBtn);
+            });
         }
         const billingRevenueChart = document.getElementById('billingRevenueChart');
         if (billingRevenueChart) {
@@ -3286,7 +3608,7 @@
             const billingGradient = billingContext.createLinearGradient(0, 0, 0, 200);
             billingGradient.addColorStop(0, 'rgba(45, 212, 191, 0.35)');
             billingGradient.addColorStop(1, 'rgba(45, 212, 191, 0)');
-            new Chart(billingRevenueChart, {
+            const revenueChart = new Chart(billingRevenueChart, {
                 type: 'line',
                 data: {
                     labels: billingLabels,
@@ -3317,10 +3639,40 @@
                     },
                 }
             });
+            // Toggle Monthly / Quarterly
+            const toggle = document.querySelector('.billing-toggle');
+            if (toggle) {
+                const monthlyBtn = toggle.children[0];
+                const quarterlyBtn = toggle.children[1];
+                const toQuarterly = () => {
+                    const qLabels = [];
+                    const qData = [];
+                    for (let i = 0; i < billingData.length; i += 3) {
+                        const slice = billingData.slice(i, i + 3);
+                        const sum = slice.reduce((a, b) => a + b, 0);
+                        qData.push(sum);
+                        qLabels.push(`Q${Math.floor(i / 3) + 1}`);
+                    }
+                    revenueChart.data.labels = qLabels;
+                    revenueChart.data.datasets[0].data = qData;
+                    revenueChart.update();
+                    monthlyBtn.classList.remove('active');
+                    quarterlyBtn.classList.add('active');
+                };
+                const toMonthly = () => {
+                    revenueChart.data.labels = billingLabels;
+                    revenueChart.data.datasets[0].data = billingData;
+                    revenueChart.update();
+                    quarterlyBtn.classList.remove('active');
+                    monthlyBtn.classList.add('active');
+                };
+                monthlyBtn.addEventListener('click', toMonthly);
+                quarterlyBtn.addEventListener('click', toQuarterly);
+            }
         }
         const billingPlanChart = document.getElementById('billingPlanChart');
         if (billingPlanChart) {
-            new Chart(billingPlanChart, {
+            const planChart = new Chart(billingPlanChart, {
                 type: 'doughnut',
                 data: {
                     labels: billingPlanLabels,
@@ -3334,6 +3686,126 @@
                     responsive: true,
                     plugins: { legend: { display: false } },
                 }
+            });
+            // Center overlay update
+            const percentEl = document.getElementById('billingPlanPercent');
+            const labelEl = document.getElementById('billingPlanLabel');
+            const total = (billingPlanData || []).reduce((a, b) => a + b, 0);
+            if (total > 0) {
+                let maxIdx = 0;
+                for (let i = 1; i < billingPlanData.length; i++) {
+                    if (billingPlanData[i] > billingPlanData[maxIdx]) maxIdx = i;
+                }
+                const pct = Math.round((billingPlanData[maxIdx] / total) * 100);
+                if (percentEl) percentEl.textContent = `${pct}%`;
+                if (labelEl) labelEl.textContent = String(billingPlanLabels[maxIdx] || '').toUpperCase();
+            }
+        }
+
+        // Live system metrics updater
+        (function initSystemMetrics() {
+            const daysEl = document.getElementById('uptime-days');
+            const hoursEl = document.getElementById('uptime-hours');
+            const minsEl = document.getElementById('uptime-mins');
+            const cpuRing = document.getElementById('cpu-ring');
+            const cpuValue = document.getElementById('cpu-value');
+            const memRing = document.getElementById('mem-ring');
+            const memValue = document.getElementById('mem-value');
+            if (!cpuRing || !memRing || !daysEl) return;
+            async function fetchMetrics() {
+                try {
+                    const res = await fetch('/admin-dashboard/system/metrics/');
+                    const json = await res.json();
+                    const d = json.data || {};
+                    if (d.uptime) {
+                        daysEl.textContent = d.uptime.days;
+                        hoursEl.textContent = d.uptime.hours;
+                        minsEl.textContent = d.uptime.mins;
+                    }
+                    if (typeof d.cpu === 'number') {
+                        cpuRing.style.setProperty('--progress', `${d.cpu}%`);
+                        cpuValue.textContent = `${Math.round(d.cpu)}%`;
+                    }
+                    if (typeof d.memory === 'number') {
+                        memRing.style.setProperty('--progress', `${d.memory}%`);
+                        memValue.textContent = `${Math.round(d.memory)}%`;
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }
+            fetchMetrics();
+            setInterval(fetchMetrics, 5000);
+        })();
+
+        // System snapshot updater (storage, proxies, intensity, nodes, events)
+        (function initSystemSnapshot() {
+            const storageLabel = document.getElementById('storage-label');
+            const diskBar = document.getElementById('disk-bar');
+            const dbRows = document.getElementById('db-rows');
+            const proxyLabel = document.getElementById('proxy-label');
+            const intensityGrid = document.getElementById('intensity-grid');
+            const nodesTbody = document.getElementById('nodes-tbody');
+            const eventsWrap = document.getElementById('system-events');
+            if (!storageLabel || !nodesTbody) return;
+            async function fetchSnapshot() {
+                try {
+                    const res = await fetch('/admin-dashboard/system/snapshot/');
+                    const json = await res.json();
+                    const d = json.data || {};
+                    if (storageLabel && typeof d.storage_used_tb === 'number' && typeof d.storage_total_tb === 'number') {
+                        storageLabel.textContent = `${d.storage_used_tb} TB / ${d.storage_total_tb} TB`;
+                    }
+                    if (diskBar && typeof d.disk_usage === 'number') {
+                        diskBar.style.width = `${d.disk_usage}%`;
+                    }
+                    if (dbRows && d.database_rows_display) {
+                        dbRows.textContent = `${d.database_rows_display} Rows`;
+                    }
+                    if (proxyLabel && typeof d.active_proxies === 'number' && typeof d.total_proxies === 'number') {
+                        proxyLabel.textContent = `${d.active_proxies} / ${d.total_proxies} Nodes`;
+                    }
+                    if (intensityGrid && Array.isArray(d.scraping_intensity)) {
+                        intensityGrid.innerHTML = d.scraping_intensity.map(c => `<div class="intensity-cell level-${c.level}" title="${c.count}"></div>`).join('');
+                    }
+                    if (nodesTbody && Array.isArray(d.live_nodes)) {
+                        nodesTbody.innerHTML = d.live_nodes.map(n => `
+                            <tr>
+                                <td>${n.node_id}</td>
+                                <td><span class="status-pill ${n.status !== 'ONLINE' ? 'failed' : 'success'}">${n.status}</span></td>
+                                <td>${n.region}</td>
+                                <td>${n.latency}ms</td>
+                                <td>${n.throughput} GB/s</td>
+                            </tr>
+                        `).join('');
+                    }
+                    if (eventsWrap && Array.isArray(d.events)) {
+                        eventsWrap.innerHTML = d.events.map(e => `
+                            <div class="system-event">
+                                <div>
+                                    <div class="fw-semibold">${String(e.action || '').replace(/_/g,' ').replace(/\b\w/g,s=>s.toUpperCase())}</div>
+                                    <div class="text-secondary small">${e.timestamp}</div>
+                                </div>
+                                <div class="text-secondary small"></div>
+                            </div>
+                        `).join('');
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }
+            fetchSnapshot();
+            setInterval(fetchSnapshot, 10000);
+        })();
+        // Transactions search filter (client-side)
+        const txSearch = document.getElementById('billingTxSearch');
+        if (txSearch) {
+            txSearch.addEventListener('input', () => {
+                const term = txSearch.value.toLowerCase();
+                document.querySelectorAll('#billing .billing-table tbody tr').forEach(row => {
+                    const text = row.innerText.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                });
             });
         }
 
@@ -3513,6 +3985,141 @@
                 });
             logsModal.show();
         }
+        // Delete confirmation
+        (function () {
+            const modalEl = document.getElementById('confirmDeleteModal');
+            const confirmName = document.getElementById('confirmDeleteName');
+            const confirmYes = document.getElementById('confirmDeleteYes');
+            const deleteModal = modalEl ? new bootstrap.Modal(modalEl) : null;
+            let currentDeleteId = null;
+            document.querySelectorAll('.user-delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentDeleteId = btn.getAttribute('data-user-id');
+                    const name = btn.getAttribute('data-user-name') || `User #${currentDeleteId}`;
+                    if (confirmName) confirmName.textContent = name;
+                    if (deleteModal) deleteModal.show();
+                });
+            });
+            if (confirmYes) {
+                confirmYes.addEventListener('click', () => {
+                    if (!currentDeleteId) return;
+                    const form = document.getElementById(`deleteForm-${currentDeleteId}`);
+                    if (form) form.submit();
+                });
+            }
+        })();
+        // Profile menu dropdown anchored to button
+        (function () {
+            const toggleBtn = document.getElementById('adminProfileToggle');
+            const menu = document.getElementById('profileMenuDropdown');
+            function hideMenuOnOutside(e) {
+                if (!menu || menu.classList.contains('d-none')) return;
+                if (e.target === toggleBtn || toggleBtn.contains(e.target) || menu.contains(e.target)) return;
+                menu.classList.add('d-none');
+            }
+            if (toggleBtn && menu) {
+                toggleBtn.addEventListener('click', () => {
+                    const rect = toggleBtn.getBoundingClientRect();
+                    if (menu.classList.contains('d-none')) {
+                        menu.classList.remove('d-none');
+                        // Measure after showing
+                        menu.style.visibility = 'hidden';
+                        const mRect = menu.getBoundingClientRect();
+                        // Compute left so menu stays within viewport
+                        let left = rect.right - mRect.width;
+                        left = Math.min(left, window.innerWidth - mRect.width - 8);
+                        left = Math.max(8, left);
+                        // Place above; if not enough space, place below
+                        let top = rect.top - mRect.height - 10;
+                        if (top < 8) top = rect.bottom + 10;
+                        menu.style.left = `${left}px`;  // fixed positioning (viewport coords)
+                        menu.style.top = `${top}px`;
+                        menu.style.visibility = 'visible';
+                    } else {
+                        menu.classList.add('d-none');
+                    }
+                });
+                document.addEventListener('click', hideMenuOnOutside);
+                window.addEventListener('scroll', () => menu.classList.add('d-none'));
+                window.addEventListener('resize', () => menu.classList.add('d-none'));
+            }
+        })();
+        // Notification menu anchored to bell
+        (function () {
+            const toggleBtn = document.getElementById('adminBellToggle');
+            const menu = document.getElementById('notifMenuDropdown');
+            function hideMenuOnOutside(e) {
+                if (!menu || menu.classList.contains('d-none')) return;
+                if (e.target === toggleBtn || toggleBtn.contains(e.target) || menu.contains(e.target)) return;
+                menu.classList.add('d-none');
+            }
+            if (toggleBtn && menu) {
+                toggleBtn.addEventListener('click', () => {
+                    const rect = toggleBtn.getBoundingClientRect();
+                    if (menu.classList.contains('d-none')) {
+                        menu.classList.remove('d-none');
+                        menu.style.visibility = 'hidden';
+                        const mRect = menu.getBoundingClientRect();
+                        let left = rect.right - mRect.width;
+                        left = Math.min(left, window.innerWidth - mRect.width - 8);
+                        left = Math.max(8, left);
+                        let top = rect.bottom + 10; // open below bell by default
+                        if (top + mRect.height > window.innerHeight - 8) {
+                            top = rect.top - mRect.height - 10; // flip above if overflow
+                        }
+                        menu.style.left = `${left}px`;
+                        menu.style.top = `${top}px`;
+                        menu.style.visibility = 'visible';
+                    } else {
+                        menu.classList.add('d-none');
+                    }
+                });
+                document.addEventListener('click', hideMenuOnOutside);
+                window.addEventListener('scroll', () => menu.classList.add('d-none'));
+                window.addEventListener('resize', () => menu.classList.add('d-none'));
+            }
+        })();
+        // AJAX submit for support reply
+        (function () {
+            const replyForm = document.getElementById('supportReplyForm');
+            const messageInput = document.getElementById('supportMessageInput');
+            const messagesContainer = document.querySelector('.support-messages');
+            if (replyForm && messageInput && messagesContainer) {
+                replyForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const message = (messageInput.value || '').trim();
+                    if (!message) return;
+                    const formData = new FormData(replyForm);
+                    const csrf = formData.get('csrfmiddlewaretoken');
+                    fetch(replyForm.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrf,
+                            'Accept': 'application/json',
+                        },
+                        body: formData,
+                    }).then(res => res.json())
+                      .then(data => {
+                          const bubble = document.createElement('div');
+                          bubble.className = 'support-message agent';
+                          bubble.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <div class="fw-semibold">${data.message.author}</div>
+                                <div class="text-secondary small">${data.message.timestamp}</div>
+                            </div>
+                            <div class="text-secondary small">${data.message.message}</div>
+                          `;
+                          messagesContainer.appendChild(bubble);
+                          messageInput.value = '';
+                          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                      })
+                      .catch(() => {
+                          replyForm.submit(); // Fallback to normal submit
+                      });
+                });
+            }
+        })();
     </script>
 </body>
 </html>

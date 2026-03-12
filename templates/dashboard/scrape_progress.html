@@ -66,12 +66,12 @@
         <!-- Top Row: Status & Time -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.1s;">
             <!-- Overall Status -->
-            <div class="lg:col-span-2 glass-panel rounded-2xl p-8 relative overflow-hidden group border border-white/10 hover:border-brand/30 transition-all duration-500">
+            <div class="lg:col-span-2 glass-panel rounded-2xl p-4 relative overflow-hidden group border border-white/10 hover:border-brand/30 transition-all duration-500 self-start h-[170px]">
                 <!-- Background Glow -->
-                <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-brand/10 transition-colors duration-700 pointer-events-none"></div>
-                <div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-[360px] h-[360px] bg-brand/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 group-hover:bg-brand/10 transition-colors duration-700 pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-[220px] h-[220px] bg-blue-600/5 rounded-full blur-[50px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
                 
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 relative z-10 gap-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 relative z-10 gap-3">
                     <div>
                         <h3 class="text-xs font-bold text-brand uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
                             <span class="relative flex h-2 w-2">
@@ -80,38 +80,38 @@
                             </span>
                             Overall Status
                         </h3>
-                        <div class="flex items-baseline gap-4">
-                            <span class="text-7xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-400 tracking-tighter drop-shadow-sm" id="progress-percent">0%</span>
+                        <div class="flex items-baseline gap-3">
+                            <span class="text-4xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-400 tracking-tighter drop-shadow-sm" id="progress-percent">0%</span>
                             <div class="flex flex-col">
-                                <p class="text-xl font-medium text-white flex items-center gap-2" id="progress-stage">
+                                <p class="text-base font-medium text-white flex items-center gap-2" id="progress-stage">
                                     Starting engine...
                                 </p>
-                                <p class="text-sm text-gray-400 flex items-center gap-2 mt-1">
+                                <p class="text-[11px] text-gray-400 flex items-center gap-2 mt-1">
                                     <i class="fa-solid fa-microchip text-brand/70 text-xs"></i>
-                                    <span id="progress-details" class="font-mono text-xs opacity-70">Connecting to target...</span>
+                                    <span id="progress-details" class="font-mono text-[11px] opacity-70">Connecting to target...</span>
                                 </p>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Enhanced Timer -->
-                    <div class="bg-[#050910]/50 px-6 py-4 rounded-xl border border-white/5 backdrop-blur-md shadow-xl group-hover:shadow-brand/5 transition-all">
+                    <div class="bg-[#050910]/50 px-3 py-2 rounded-xl border border-white/5 backdrop-blur-md shadow-xl group-hover:shadow-brand/5 transition-all">
                         <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1 text-center">Elapsed Time</span>
                         <div class="flex items-center gap-2 justify-center">
                             <i class="fa-regular fa-clock text-brand text-sm animate-pulse"></i>
-                            <p class="text-3xl font-mono text-white tracking-widest tabular-nums drop-shadow-glow" id="timer">00:00:00</p>
+                            <p class="text-xl font-mono text-white tracking-widest tabular-nums drop-shadow-glow" id="timer">00:00:00</p>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Enhanced Progress Bar -->
-                <div class="relative z-10 pt-2">
+                <div class="relative z-10 pt-1">
                     <div class="flex justify-between mb-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                         <span class="group-hover:text-brand transition-colors">Initialization</span>
                         <span class="group-hover:text-brand transition-colors delay-100">Data Extraction</span>
                         <span class="group-hover:text-brand transition-colors delay-200">Processing</span>
                     </div>
-                    <div class="w-full h-3 bg-[#050910] rounded-full overflow-hidden border border-white/5 shadow-inner">
+                    <div class="w-full h-2 bg-[#050910] rounded-full overflow-hidden border border-white/5 shadow-inner">
                         <div class="h-full bg-gradient-to-r from-brand via-cyan-400 to-blue-500 rounded-full relative transition-all duration-500 ease-out shadow-[0_0_15px_rgba(0,212,197,0.4)]" style="width: 0%" id="progress-bar">
                             <div class="absolute inset-0 bg-white/30 w-full h-full animate-[shimmer_1.5s_infinite] transform -skew-x-12"></div>
                             <div class="absolute right-0 top-0 bottom-0 w-1 bg-white/50 shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
@@ -119,52 +119,171 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Estimated Remaining -->
-            <div class="glass-panel rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden group animate-slide-up border border-white/10 hover:border-blue-500/30 transition-all duration-500" style="animation-delay: 0.2s;">
-                <div class="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div>
-                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <i class="fa-solid fa-hourglass-half text-blue-500"></i>
-                        Estimated Remaining
-                    </h3>
-                    <div class="flex items-center gap-5 relative z-10">
-                        <div class="relative">
-                            <!-- Animated Ring -->
-                            <svg class="w-16 h-16 transform -rotate-90">
-                                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="transparent" class="text-[#050910]" />
-                                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="175.9" stroke-dashoffset="40" class="text-blue-500 animate-[spin_3s_linear_infinite] opacity-80" />
-                            </svg>
-                            <div class="absolute inset-0 flex items-center justify-center text-white">
-                                <i class="fa-solid fa-infinity text-sm opacity-50"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="text-4xl font-display font-bold text-white tracking-tight" id="estimated-time">--:--</p>
-                            <p class="text-xs text-blue-400 font-medium mt-1">Calculating...</p>
+            <div>
+                <div class="grid grid-cols-2 gap-4">
+                <!-- Status Card (moved up) -->
+                <div class="glass-panel rounded-2xl p-5 hover:bg-white/5 transition-all cursor-default border border-white/10 hover:border-green-500/30 group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="absolute -right-6 -top-6 w-20 h-20 bg-green-500/10 rounded-full blur-xl group-hover:bg-green-500/20 transition-all"></div>
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        Status
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                    </p>
+                    <div class="flex items-end justify-between relative z-10">
+                        <span class="text-xl font-bold text-white group-hover:text-green-400 transition-colors drop-shadow-sm" id="stat-status">Active</span>
+                        <div class="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 border border-green-500/20 group-hover:shadow-[0_0_12px_rgba(34,197,94,0.2)] transition-all animate-pulse-slow">
+                            <i class="fa-solid fa-signal text-lg"></i>
                         </div>
                     </div>
                 </div>
-                
-                <div class="relative z-10 mt-6">
-                    <div class="flex items-center gap-3 text-gray-400 text-xs bg-[#050910]/50 p-3 rounded-xl border border-white/5 shadow-inner">
-                        <div class="w-5 h-5 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 animate-pulse">
-                            <i class="fa-solid fa-gauge-high text-[10px]"></i>
+                <!-- Live Speed Card (moved up) -->
+                <div class="glass-panel rounded-2xl p-5 hover:bg-white/5 transition-all cursor-default border border-white/10 hover:border-brand/30 group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="absolute -right-6 -top-6 w-20 h-20 bg-brand/10 rounded-full blur-xl group-hover:bg-brand/20 transition-all"></div>
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Live Speed</p>
+                    <div class="flex items-end justify-between relative z-10">
+                        <div class="flex flex-col">
+                            <span class="text-xl font-bold text-white group-hover:text-brand transition-colors drop-shadow-sm font-mono" id="live-speed">0.0</span>
+                            <span class="text-[10px] text-gray-500">req/sec</span>
                         </div>
-                        <span class="font-mono opacity-80">Optimizing request rate...</span>
+                        <div class="w-8 h-8 rounded-xl bg-brand/10 flex items-center justify-center text-brand border border-brand/20 group-hover:shadow-[0_0_12px_rgba(0,212,197,0.2)] transition-all">
+                            <i class="fa-solid fa-bolt text-lg group-hover:animate-bounce"></i>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="lg:col-span-2 mt-4">
+                <div class="glass-panel rounded-2xl overflow-hidden flex flex-col h-[420px] border border-white/10 shadow-2xl hover:border-brand/30 transition-all duration-500 group relative">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-brand/20 to-blue-600/20 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                    <div class="bg-[#050910] border-b border-white/10 p-4 flex items-center gap-6 relative z-10 backdrop-blur-md">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50 hover:bg-red-500 transition-colors shadow-[0_0_10px_rgba(239,68,68,0.4)]"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50 hover:bg-yellow-500 transition-colors shadow-[0_0_10px_rgba(234,179,8,0.4)]"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50 hover:bg-green-500 transition-colors shadow-[0_0_10px_rgba(34,197,94,0.4)]"></div>
+                        </div>
+                        <div class="flex-1 bg-[#0a0f1c] rounded-lg border border-white/5 text-xs text-gray-400 px-4 py-2.5 flex items-center gap-3 shadow-inner group-hover:border-white/10 transition-colors relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                            <i class="fa-solid fa-lock text-[10px] text-green-500"></i>
+                            <span class="truncate font-mono opacity-70 text-brand/80">{{ target_url }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/5 border border-green-500/10 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                            <span class="text-[10px] font-bold text-green-500 uppercase tracking-wider">Live View</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 bg-[#030508] relative p-4 flex flex-col overflow-hidden z-10" id="live-grid">
+                        <div class="w-full h-full bg-[#0a0f1c] rounded-lg border border-white/10 flex flex-col overflow-hidden shadow-2xl relative group">
+                            <div class="bg-[#1a202c] px-3 py-2 flex items-center gap-3 border-b border-white/5 shrink-0">
+                                 <div class="flex gap-1.5">
+                                     <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                                     <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                                     <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                                 </div>
+                                 <div class="flex-1 bg-[#030508] rounded px-3 py-1 text-[10px] text-gray-500 font-mono flex items-center justify-between border border-white/5">
+                                     <span class="truncate" id="browser-url">{{ target_url }}/product/latest</span>
+                                     <i class="fa-solid fa-rotate-right text-[10px] hover:animate-spin cursor-pointer"></i>
+                                 </div>
+                            </div>
+                            <div class="flex-1 relative bg-white overflow-hidden group/viewport" id="browser-viewport">
+                                <div class="absolute inset-0 bg-gray-100 flex flex-col transition-transform duration-700" id="page-content">
+                                     <div class="h-10 bg-gray-800 w-full shrink-0 flex items-center px-4 gap-4">
+                                         <div class="w-20 h-4 bg-gray-600 rounded"></div>
+                                         <div class="flex-1"></div>
+                                         <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
+                                     </div>
+                                     <div class="h-32 bg-blue-100 w-full shrink-0 border-b border-gray-200 p-6 flex gap-4">
+                                         <div class="w-24 h-24 bg-blue-200 rounded shadow-sm"></div>
+                                         <div class="flex-1 space-y-2">
+                                             <div class="w-3/4 h-4 bg-blue-200 rounded"></div>
+                                             <div class="w-1/2 h-3 bg-blue-200/50 rounded"></div>
+                                         </div>
+                                     </div>
+                                     <div class="grid grid-cols-3 gap-3 p-4">
+                                          <div class="aspect-square bg-white rounded shadow-sm p-2 space-y-2 transform hover:scale-105 transition-transform duration-300">
+                                              <div class="w-full h-2/3 bg-gray-200 rounded-sm"></div>
+                                              <div class="w-full h-2 bg-gray-200 rounded-sm"></div>
+                                          </div>
+                                          <div class="aspect-square bg-white rounded shadow-sm p-2 space-y-2 transform hover:scale-105 transition-transform duration-300">
+                                              <div class="w-full h-2/3 bg-gray-200 rounded-sm"></div>
+                                              <div class="w-full h-2 bg-gray-200 rounded-sm"></div>
+                                          </div>
+                                          <div class="aspect-square bg-white rounded shadow-sm p-2 space-y-2 transform hover:scale-105 transition-transform duration-300">
+                                              <div class="w-full h-2/3 bg-gray-200 rounded-sm"></div>
+                                              <div class="w-full h-2 bg-gray-200 rounded-sm"></div>
+                                          </div>
+                                     </div>
+                                </div>
+                                <div class="absolute top-0 left-0 right-0 h-1 bg-brand/50 shadow-[0_0_15px_#00d4c5] z-10 animate-[scan_3s_ease-in-out_infinite]" id="scan-laser"></div>
+                                <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-black/50 rounded-full blur-sm animate-[ping_2s_infinite] pointer-events-none"></div>
+                                <div class="absolute bottom-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded animate-pulse z-20 shadow-lg flex items-center gap-1">
+                                    <div class="w-1.5 h-1.5 bg-white rounded-full"></div> REC
+                                </div>
+                            </div>
+                            <div class="absolute inset-0 bg-[#0a0f1c] z-30 flex items-center justify-center transition-opacity duration-500" id="video-overlay">
+                                 <div class="text-center">
+                                      <div class="w-12 h-12 border-2 border-brand/30 border-t-brand rounded-full animate-spin mx-auto mb-3"></div>
+                                      <p class="text-xs text-brand font-mono animate-pulse">ESTABLISHING_FEED...</p>
+                                 </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- Right column: System Log -->
+            <div class="flex flex-col gap-2">
+                <!-- System Log under Status & Live Speed -->
+                <div class="glass-panel rounded-2xl overflow-hidden flex flex-col border border-white/10 shadow-xl hover:border-gray-500/30 transition-all group">
+                    <div class="bg-[#0a0f1c] p-3 border-b border-white/5 flex items-center justify-between relative shrink-0">
+                        <div class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex items-center gap-3 relative z-10">
+                            <div class="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 border border-white/5 shadow-inner">
+                                <i class="fa-solid fa-terminal text-[10px] text-brand animate-pulse"></i>
+                                <span class="text-[10px] font-mono text-gray-400">root@scraper:~</span>
+                            </div>
+                            <h3 class="text-xs font-bold text-gray-300 uppercase tracking-widest">System Log</h3>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="text-[10px] text-gray-500 hover:text-white transition-colors" title="Download Log">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                            <button class="text-[10px] text-gray-500 hover:text-white transition-colors" title="Clear">
+                                <i class="fa-solid fa-eraser"></i>
+                            </button>
+                            <div class="w-px h-3 bg-white/10 mx-1"></div>
+                            <div class="flex gap-1.5 opacity-50">
+                                <div class="w-2 h-2 rounded-full bg-red-500/50"></div>
+                                <div class="w-2 h-2 rounded-full bg-yellow-500/50"></div>
+                                <div class="w-2 h-2 rounded-full bg-green-500/50"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 font-mono text-[11px] leading-relaxed space-y-1.5 bg-[#030508] relative shadow-inner" id="log-container">
+                        <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-0 pointer-events-none bg-[size:100%_2px,3px_100%] opacity-50"></div>
+                        <div class="relative z-10 text-gray-500 border-l-2 border-brand/20 pl-3 py-0.5 hover:bg-white/5 hover:border-brand transition-colors group/log">
+                            <span class="opacity-40 mr-2 text-[10px] group-hover/log:opacity-100 transition-opacity" id="log-time-0"></span> 
+                            <span class="text-blue-400 font-bold tracking-wider">[SYSTEM]</span> 
+                            <span class="text-gray-300">Initializing scrape job...</span>
+                        </div>
+                        <div class="relative z-10 pl-3 mt-2 text-brand font-bold flex items-center gap-2">
+                            <span class="text-gray-600">$</span>
+                            <span class="animate-pulse">_</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Bottom Row: Live View & Logs -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.3s;">
+        <div class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.2s;">
             
             <!-- Live View -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Browser Mockup -->
-                <div class="glass-panel rounded-2xl overflow-hidden flex flex-col h-[600px] border border-white/10 shadow-2xl hover:border-brand/30 transition-all duration-500 group relative">
+                <div class="glass-panel rounded-2xl overflow-hidden flex flex-col h-[420px] border border-white/10 shadow-2xl hover:border-brand/30 transition-all duration-500 group relative">
                     <!-- Glow Effect -->
                     <div class="absolute -inset-1 bg-gradient-to-r from-brand/20 to-blue-600/20 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
                     
@@ -277,124 +396,7 @@
                 </div>
             </div>
 
-            <!-- Stats & Logs -->
-            <div class="flex flex-col gap-6">
-                
-                <!-- Small Stats -->
-                <div class="grid grid-cols-2 gap-4">
-                    <!-- Status Card -->
-                    <div class="glass-panel rounded-2xl p-5 hover:bg-white/5 transition-all cursor-default border border-white/10 hover:border-green-500/30 group relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="absolute -right-6 -top-6 w-20 h-20 bg-green-500/10 rounded-full blur-xl group-hover:bg-green-500/20 transition-all"></div>
-                        
-                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                            Status
-                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                        </p>
-                        <div class="flex items-end justify-between relative z-10">
-                            <span class="text-2xl font-bold text-white group-hover:text-green-400 transition-colors drop-shadow-sm" id="stat-status">Active</span>
-                            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 border border-green-500/20 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.2)] transition-all animate-pulse-slow">
-                                <i class="fa-solid fa-signal text-lg"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Live Speed Card -->
-                    <div class="glass-panel rounded-2xl p-5 hover:bg-white/5 transition-all cursor-default border border-white/10 hover:border-brand/30 group relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="absolute -right-6 -top-6 w-20 h-20 bg-brand/10 rounded-full blur-xl group-hover:bg-brand/20 transition-all"></div>
-                        
-                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Live Speed</p>
-                        <div class="flex items-end justify-between relative z-10">
-                            <div class="flex flex-col">
-                                <span class="text-2xl font-bold text-white group-hover:text-brand transition-colors drop-shadow-sm font-mono" id="live-speed">0.0</span>
-                                <span class="text-[10px] text-gray-500">req/sec</span>
-                            </div>
-                            <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center text-brand border border-brand/20 group-hover:shadow-[0_0_15px_rgba(0,212,197,0.2)] transition-all">
-                                <i class="fa-solid fa-bolt text-lg group-hover:animate-bounce"></i>
-                            </div>
-                        </div>
-                        <!-- Mini Graph Line -->
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-brand/20">
-                            <div class="h-full bg-brand w-1/3 animate-[shimmer_2s_infinite]"></div>
-                        </div>
-                    </div>
-
-                    <!-- Extra Stat: Pages / Data Points -->
-                    <div class="col-span-2 glass-panel rounded-2xl p-5 hover:bg-white/5 transition-all cursor-default border border-white/10 hover:border-blue-500/30 group relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4">
-                            <i class="fa-solid fa-database text-8xl text-blue-500"></i>
-                        </div>
-                        
-                        <div class="flex items-center justify-between relative z-10">
-                            <div>
-                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Data Points Collected</p>
-                                <div class="flex items-baseline gap-2">
-                                    <span class="text-3xl font-bold text-white group-hover:text-blue-400 transition-colors font-display tracking-tight" id="data-points-count">0</span>
-                                    <span class="text-xs text-green-500 font-mono"><i class="fa-solid fa-arrow-up"></i> +<span id="items-per-min">0</span>/m</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.2)] transition-all group-hover:scale-110">
-                                <i class="fa-solid fa-layer-group text-xl"></i>
-                            </div>
-                        </div>
-                        
-                        <!-- Progress bar for quota or similar -->
-                        <div class="mt-4 w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                            <div class="h-full bg-blue-500/50 w-[45%] rounded-full animate-pulse"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Real-time Log -->
-                <div class="flex-1 glass-panel rounded-2xl overflow-hidden flex flex-col border border-white/10 shadow-xl hover:border-gray-500/30 transition-all group h-[200px]">
-                    <!-- Terminal Header -->
-                    <div class="bg-[#0a0f1c] p-3 border-b border-white/5 flex items-center justify-between relative shrink-0">
-                        <div class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="flex items-center gap-3 relative z-10">
-                            <div class="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 border border-white/5 shadow-inner">
-                                <i class="fa-solid fa-terminal text-[10px] text-brand animate-pulse"></i>
-                                <span class="text-[10px] font-mono text-gray-400">root@scraper:~</span>
-                            </div>
-                            <h3 class="text-xs font-bold text-gray-300 uppercase tracking-widest">System Log</h3>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <button class="text-[10px] text-gray-500 hover:text-white transition-colors" title="Download Log">
-                                <i class="fa-solid fa-download"></i>
-                            </button>
-                            <button class="text-[10px] text-gray-500 hover:text-white transition-colors" title="Clear">
-                                <i class="fa-solid fa-eraser"></i>
-                            </button>
-                            <div class="w-px h-3 bg-white/10 mx-1"></div>
-                            <div class="flex gap-1.5 opacity-50">
-                                <div class="w-2 h-2 rounded-full bg-red-500/50"></div>
-                                <div class="w-2 h-2 rounded-full bg-yellow-500/50"></div>
-                                <div class="w-2 h-2 rounded-full bg-green-500/50"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Terminal Content -->
-                    <div class="flex-1 p-4 font-mono text-[11px] leading-relaxed space-y-1.5 overflow-y-auto log-scroll bg-[#030508] relative shadow-inner" id="log-container">
-                        <!-- CRT Scanline Effect -->
-                        <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-0 pointer-events-none bg-[size:100%_2px,3px_100%] opacity-50"></div>
-                        
-                        <div class="relative z-10 text-gray-500 border-l-2 border-brand/20 pl-3 py-0.5 hover:bg-white/5 hover:border-brand transition-colors group/log">
-                            <span class="opacity-40 mr-2 text-[10px] group-hover/log:opacity-100 transition-opacity" id="log-time-0"></span> 
-                            <span class="text-blue-400 font-bold tracking-wider">[SYSTEM]</span> 
-                            <span class="text-gray-300">Initializing scrape job...</span>
-                        </div>
-                        
-                        <!-- Typing Cursor -->
-                        <div class="relative z-10 pl-3 mt-2 text-brand font-bold flex items-center gap-2">
-                            <span class="text-gray-600">$</span>
-                            <span class="animate-pulse">_</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+            <!-- Right column placeholder -->
         </div>
     </div>
 </div>
@@ -571,9 +573,13 @@
         }, 600);
 
         // Update Counter
-        let current = parseInt(dataPointsCount.innerText.replace(/,/g, '')) || 0;
-        itemsCount = current + 1;
-        dataPointsCount.innerText = itemsCount.toLocaleString();
+        if (dataPointsCount) {
+            let current = parseInt(dataPointsCount.innerText.replace(/,/g, '')) || 0;
+            itemsCount = current + 1;
+            dataPointsCount.innerText = itemsCount.toLocaleString();
+        } else {
+            itemsCount += 1;
+        }
     }
 
     // Start Scrape via API

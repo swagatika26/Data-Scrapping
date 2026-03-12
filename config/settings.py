@@ -1,5 +1,5 @@
 """
-Django settings for oneclick_datascrape project.
+Django settings for ScrapyX project.
 """
 
 import os

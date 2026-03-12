@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block title %}Documentation - ScrapyX{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen pt-20 relative">
+    <!-- Background Particles -->
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <canvas class="particle-network-canvas w-full h-full opacity-30 mix-blend-screen" data-speed="0.2" data-count="80"></canvas>
+    </div>
+
+    <!-- Left Sidebar (Navigation) -->
+    <aside class="w-64 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto border-r border-dark-border bg-dark-bg/95 backdrop-blur hidden lg:flex flex-col custom-scrollbar z-20 shrink-0">
+        <div class="p-6 space-y-8 flex-1">
+            <!-- Section 1: Foundation -->
+            <div>
+                <h5 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Foundation</h5>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="?topic=introduction" class="flex items-center gap-3 px-3 py-2 text-sm font-medium {% if active_topic == 'introduction' %}text-brand bg-brand/10 rounded-lg border border-brand/20{% else %}text-gray-400 hover:text-white transition-colors{% endif %}">
+                            <i class="fa-regular fa-circle text-xs opacity-50"></i> Introduction
+                        </a>
+                    </li>
+                    <li>
+                        <a href="?topic=getting-started" class="flex items-center gap-3 px-3 py-2 text-sm font-medium {% if active_topic == 'getting-started' %}text-brand bg-brand/10 rounded-lg border border-brand/20{% else %}text-gray-400 hover:text-white transition-colors{% endif %}">
+                            <i class="fa-solid fa-rocket text-xs"></i> Getting Started
+                        </a>
+                    </li>
+                    <li>
+                        <a href="?topic=configuration" class="flex items-center gap-3 px-3 py-2 text-sm font-medium {% if active_topic == 'configuration' %}text-brand bg-brand/10 rounded-lg border border-brand/20{% else %}text-gray-400 hover:text-white transition-colors{% endif %}">
+                            <i class="fa-solid fa-gear text-xs opacity-50"></i> Configuration
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section 2: Core Concepts -->
+            <div>
+                <h5 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Core Concepts</h5>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="?topic=selectors-xpath" class="flex items-center gap-3 px-3 py-2 text-sm font-medium {% if active_topic == 'selectors-xpath' %}text-brand bg-brand/10 rounded-lg border border-brand/20{% else %}text-gray-400 hover:text-white transition-colors{% endif %}">
+                            <i class="fa-solid fa-crosshairs text-xs opacity-50"></i> Selectors & XPath
+                        </a>
+                    </li>
+                    <li>
+                        <a href="?topic=spider-middleware" class="flex items-center gap-3 px-3 py-2 text-sm font-medium {% if active_topic == 'spider-middleware' %}text-brand bg-brand/10 rounded-lg border border-brand/20{% else %}text-gray-400 hover:text-white transition-colors{% endif %}">
+                            <i class="fa-solid fa-spider text-xs opacity-50"></i> Spider Middleware
+                        </a>
+                    </li>
+                    <li>
+                        <a href="?topic=item-pipelines" class="flex items-center gap-3 px-3 py-2 text-sm font-medium {% if active_topic == 'item-pipelines' %}text-brand bg-brand/10 rounded-lg border border-brand/20{% else %}text-gray-400 hover:text-white transition-colors{% endif %}">
+                            <i class="fa-solid fa-box-open text-xs opacity-50"></i> Item Pipelines
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section 3: Advanced -->
+            <div>
+                <h5 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Advanced</h5>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="?topic=proxy-management" class="flex items-center gap-3 px-3 py-2 text-sm font-medium {% if active_topic == 'proxy-management' %}text-brand bg-brand/10 rounded-lg border border-brand/20{% else %}text-gray-400 hover:text-white transition-colors{% endif %}">
+                            <i class="fa-solid fa-shield-halved text-xs opacity-50"></i> Proxy Management
+                        </a>
+                    </li>
+                    <li>
+                        <a href="?topic=performance-tuning" class="flex items-center gap-3 px-3 py-2 text-sm font-medium {% if active_topic == 'performance-tuning' %}text-brand bg-brand/10 rounded-lg border border-brand/20{% else %}text-gray-400 hover:text-white transition-colors{% endif %}">
+                            <i class="fa-solid fa-bolt text-xs opacity-50"></i> Performance Tuning
+                        </a>
+                    </li>
+                    <li>
+                        <a href="?topic=best-practices" class="flex items-center gap-3 px-3 py-2 text-sm font-medium {% if active_topic == 'best-practices' %}text-brand bg-brand/10 rounded-lg border border-brand/20{% else %}text-gray-400 hover:text-white transition-colors{% endif %}">
+                            <i class="fa-regular fa-star text-xs opacity-50"></i> Best Practices
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Version Widget -->
+        <div class="p-6 mt-auto border-t border-dark-border bg-dark-bg">
+            <div class="bg-dark-card border border-dark-border rounded-lg p-3 flex items-center justify-between">
+                <div>
+                    <div class="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-1">Current Version</div>
+                    <div class="text-xs font-mono text-white font-bold">v2.8.4-stable</div>
+                </div>
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 w-full flex flex-col xl:flex-row min-w-0">
+        
+        <!-- Center Column (Content) -->
+        <div class="flex-1 px-8 py-12 min-w-0 border-r border-dark-border">
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-[10px] text-gray-500 mb-8 font-mono uppercase tracking-wider">
+                <span>Documentation</span>
+                <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                <span class="text-white font-bold">{{ current_doc.title }}</span>
+            </div>
+
+            <!-- Header -->
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                {{ current_doc.title }}
+            </h1>
+            
+            <div class="prose prose-invert max-w-none">
+                {{ current_doc.content|safe }}
+            </div>
+
+            <!-- Navigation Footer -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8 border-t border-dark-border mt-12">
+                {% if prev_slug %}
+                <a href="?topic={{ prev_slug }}" class="group block p-4 bg-dark-card border border-dark-border rounded-lg hover:border-brand/40 transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <i class="fa-solid fa-arrow-left text-brand text-sm group-hover:-translate-x-1 transition-transform"></i>
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Previous</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white truncate">{{ prev_title }}</h3>
+                </a>
+                {% endif %}
+                
+                {% if next_slug %}
+                <a href="?topic={{ next_slug }}" class="group block p-4 bg-dark-card border border-dark-border rounded-lg hover:border-brand/40 transition-all text-right">
+                    <div class="flex items-center justify-between mb-2 flex-row-reverse">
+                        <i class="fa-solid fa-arrow-right text-brand text-sm group-hover:translate-x-1 transition-transform"></i>
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Next</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white truncate">{{ next_title }}</h3>
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Simple Content Footer -->
+            <div class="mt-16 pt-8 border-t border-dark-border flex justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2024 ScrapyX Framework. All rights reserved.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-white transition-colors">GitHub</a>
+                    <a href="#" class="hover:text-white transition-colors">Discord</a>
+                    <a href="#" class="hover:text-white transition-colors">Twitter</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar (TOC) -->
+        <aside class="hidden xl:block w-64 p-8 sticky top-24 h-[calc(100vh-6rem)]">
+            <h5 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-6">On This Page</h5>
+            <ul class="space-y-4 text-sm border-l border-dark-border ml-1">
+                {% for item in current_doc.toc %}
+                <li><a href="#{{ item.id }}" class="block pl-4 text-gray-400 hover:text-white transition-colors hover:border-l hover:border-gray-500 -ml-[1px]">{{ item.label }}</a></li>
+                {% endfor %}
+            </ul>
+
+            <!-- Need Help Card -->
+            <div class="mt-12 bg-dark-card border border-dark-border rounded-xl p-5 relative overflow-hidden group text-center">
+                <!-- Glow -->
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 pointer-events-none"></div>
+                
+                <h4 class="text-white font-bold mb-2 relative z-10">Need Help?</h4>
+                <p class="text-xs text-gray-400 mb-6 relative z-10 leading-relaxed">
+                    Our community is active and ready to support you.
+                </p>
+                <a href="#" class="block w-full py-2.5 bg-white/5 border border-white/10 text-white text-xs font-bold rounded-lg hover:bg-white/10 transition-colors relative z-10 backdrop-blur-sm">
+                    Join Discord
+                </a>
+            </div>
+        </aside>
+    </main>
+</div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #1f2937;
+        border-radius: 20px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: #374151;
+    }
+</style>
+{% endblock %}

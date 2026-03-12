@@ -75,19 +75,16 @@
                     </div>
                 </a>
 
-                <!-- Nav Links (Desktop) -->
-                <nav class="hidden md:flex items-center gap-8">
-                    <a href="#features" class="text-sm font-medium hover:text-white transition-colors">Features</a>
-                    <a href="#pricing" class="text-sm font-medium hover:text-white transition-colors">Pricing</a>
-                    <a href="#" class="text-sm font-medium hover:text-white transition-colors">Documentation</a>
-                    <a href="#" class="text-sm font-medium hover:text-white transition-colors">API</a>
-                </nav>
-
-                <!-- Auth Buttons -->
-                <div class="flex items-center gap-4">
-                    <a href="{% url 'login' %}" class="bg-brand hover:bg-brand-hover text-dark-bg font-semibold py-2 px-5 rounded-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(0,212,197,0.3)]">
-                        Log in
-                    </a>
+                <!-- Right Group: Nav + Auth -->
+                <div class="ml-auto hidden md:flex items-center gap-6">
+                    <nav class="flex items-center gap-6">
+                        <a href="{% url 'home' %}" class="text-sm font-medium text-gray-300 hover:text-white transition-colors border-b-2 border-transparent pb-1 {% if request.resolver_match.url_name == 'home' %}text-brand border-brand{% endif %}">Home</a>
+                        <a href="{% url 'features' %}" class="text-sm font-medium text-gray-300 hover:text-white transition-colors border-b-2 border-transparent pb-1 {% if request.resolver_match.url_name == 'features' %}text-brand border-brand{% endif %}">Features</a>
+                        <a href="{% url 'pricing' %}" class="text-sm font-medium text-gray-300 hover:text-white transition-colors border-b-2 border-transparent pb-1 {% if request.resolver_match.url_name == 'pricing' %}text-brand border-brand{% endif %}">Pricing</a>
+                        <a href="{% url 'documentation' %}" class="text-sm font-medium text-gray-300 hover:text-white transition-colors border-b-2 border-transparent pb-1 {% if request.resolver_match.url_name == 'documentation' %}text-brand border-brand{% endif %}">Documentation</a>
+                        <a href="{% url 'api' %}" class="text-sm font-medium text-gray-300 hover:text-white transition-colors border-b-2 border-transparent pb-1 {% if request.resolver_match.url_name == 'api' %}text-brand border-brand{% endif %}">API</a>
+                    </nav>
+                    <a href="{% url 'login' %}" class="bg-brand hover:bg-brand-hover text-dark-bg font-semibold py-2 px-5 rounded-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(0,212,197,0.3)]">Log in</a>
                 </div>
             </div>
         </div>
@@ -100,80 +97,214 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-dark-border bg-dark-bg pt-16 pb-8 mt-20">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1 md:col-span-1">
-                    <a href="/" class="flex items-center gap-3 mb-4 group">
+    <footer class="border-t border-dark-border bg-[#020617] pt-20 pb-12 mt-20 relative overflow-hidden">
+        <!-- Animated Background -->
+        <canvas class="particle-network-canvas absolute inset-0 w-full h-full opacity-20 mix-blend-screen pointer-events-none" data-speed="0.3" data-count="80"></canvas>
+        
+        <!-- Glow Effect -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-brand/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20 mb-16">
+                <!-- Brand Column -->
+                <div class="lg:col-span-2">
+                    <a href="/" class="flex items-center gap-3 mb-6 group w-fit">
                         <!-- Icon -->
-                        <div class="relative w-8 h-8 rounded-full bg-[#0B1120] border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-brand/50 transition-colors shadow-[0_0_15px_rgba(0,212,197,0.2)]">
-                            <!-- X Background -->
-                            <div class="absolute inset-0 flex items-center justify-center opacity-20">
-                                <div class="w-[140%] h-[1px] bg-white rotate-45 absolute"></div>
-                                <div class="w-[140%] h-[1px] bg-white -rotate-45 absolute"></div>
-                            </div>
-                            <!-- Bars -->
-                            <div class="flex items-center gap-[3px] relative z-10">
-                                <div class="w-[3px] h-2.5 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_8px_rgba(0,212,197,0.4)]"></div>
-                                <div class="w-[3px] h-4 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_8px_rgba(0,212,197,0.4)]"></div>
-                                <div class="w-[3px] h-2.5 rounded-full bg-gradient-to-b from-brand to-purple-500 shadow-[0_0_8px_rgba(0,212,197,0.4)]"></div>
+                        <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#0B1120] to-[#020617] border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-brand/50 transition-colors shadow-lg">
+                            <div class="flex items-center gap-[3px]">
+                                <div class="w-[3px] h-3 rounded-full bg-brand shadow-[0_0_8px_rgba(0,212,197,0.6)]"></div>
+                                <div class="w-[3px] h-5 rounded-full bg-brand shadow-[0_0_8px_rgba(0,212,197,0.6)]"></div>
+                                <div class="w-[3px] h-3 rounded-full bg-brand shadow-[0_0_8px_rgba(0,212,197,0.6)]"></div>
                             </div>
                         </div>
-                        <div class="flex items-center font-display font-bold text-lg tracking-tight uppercase">
-                            <span class="text-white">Scrapy</span>
-                            <span class="text-brand">X</span>
+                        <div class="font-display font-bold text-2xl tracking-tight text-white">
+                            SCRAPY<span class="text-brand">X</span>
                         </div>
                     </a>
-                    <p class="text-sm text-gray-500 mb-6">
-                        Turn unstructured web data into clean APIs instantly. Built for developers, designed for simplicity.
+                    <p class="text-base text-gray-400 leading-relaxed mb-8 max-w-sm">
+                        The enterprise-grade web scraping framework. Extract data with AI-powered spiders, built-in proxy rotation, and cloud-native scaling.
                     </p>
-                    <div class="flex gap-4">
-                        <a href="#" class="text-gray-400 hover:text-brand transition-colors"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-brand transition-colors"><i class="fa-brands fa-github"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-brand transition-colors"><i class="fa-brands fa-discord"></i></a>
+                    <div class="flex gap-5">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors transform hover:scale-110"><i class="fa-brands fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors transform hover:scale-110"><i class="fa-brands fa-github text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors transform hover:scale-110"><i class="fa-brands fa-discord text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors transform hover:scale-110"><i class="fa-brands fa-linkedin text-xl"></i></a>
                     </div>
                 </div>
                 
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Product</h4>
-                    <ul class="space-y-2 text-sm text-gray-500">
-                        <li><a href="#" class="hover:text-brand transition-colors">Features</a></li>
-                        <li><a href="#" class="hover:text-brand transition-colors">Extension</a></li>
-                        <li><a href="#" class="hover:text-brand transition-colors">API Reference</a></li>
-                        <li><a href="#" class="hover:text-brand transition-colors">Cloud Scraping</a></li>
-                    </ul>
-                </div>
+                <!-- Links Columns -->
+                <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
+                    <div>
+                        <h4 class="text-white font-bold mb-6 text-lg">Product</h4>
+                        <ul class="space-y-4 text-sm">
+                            <li><a href="{% url 'features' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'features' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Features</a></li>
+                            <li><a href="{% url 'extension' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'extension' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Extension</a></li>
+                            <li><a href="{% url 'api' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'api' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">API Reference</a></li>
+                            <li><a href="{% url 'cloud_scraping' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'cloud_scraping' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Cloud Scraping</a></li>
+                        </ul>
+                    </div>
 
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Resources</h4>
-                    <ul class="space-y-2 text-sm text-gray-500">
-                        <li><a href="#" class="hover:text-brand transition-colors">Blog</a></li>
-                        <li><a href="#" class="hover:text-brand transition-colors">Community</a></li>
-                        <li><a href="#" class="hover:text-brand transition-colors">Help Center</a></li>
-                        <li><a href="#" class="hover:text-brand transition-colors">Status</a></li>
-                    </ul>
-                </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-6 text-lg">Resources</h4>
+                        <ul class="space-y-4 text-sm">
+                            <li><a href="{% url 'blog' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'blog' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Blog</a></li>
+                            <li><a href="{% url 'community' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'community' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Community</a></li>
+                            <li><a href="{% url 'help_center' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'help_center' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Help Center</a></li>
+                            <li><a href="{% url 'status' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'status' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Status</a></li>
+                        </ul>
+                    </div>
 
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Company</h4>
-                    <ul class="space-y-2 text-sm text-gray-500">
-                        <li><a href="#" class="hover:text-brand transition-colors">About Us</a></li>
-                        <li><a href="#" class="hover:text-brand transition-colors">Careers</a></li>
-                        <li><a href="#" class="hover:text-brand transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-brand transition-colors">Terms of Service</a></li>
-                    </ul>
+                    <div>
+                        <h4 class="text-white font-bold mb-6 text-lg">Company</h4>
+                        <ul class="space-y-4 text-sm">
+                            <li><a href="{% url 'about' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'about' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">About Us</a></li>
+                            <li><a href="{% url 'careers' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'careers' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Careers</a></li>
+                            <li><a href="{% url 'privacy' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'privacy' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Privacy Policy</a></li>
+                            <li><a href="{% url 'terms' %}" class="block w-fit transition-colors {% if request.resolver_match.url_name == 'terms' %}text-brand{% else %}text-gray-400 hover:text-brand{% endif %}">Terms of Service</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             
-            <div class="border-t border-dark-border pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
-                <p>&copy; 2026 ScrapyX. All rights reserved.</p>
-                <div class="flex items-center gap-2 mt-4 md:mt-0">
-                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
-                    <span>All Systems Operational</span>
+            <!-- Bottom Bar -->
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; {% now "Y" %} ScrapyX. All rights reserved.</p>
+                <div class="flex items-center gap-2 mt-4 md:mt-0 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span class="text-xs font-medium text-gray-300">All Systems Operational</span>
                 </div>
             </div>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Reusable Particle Network Animation
+            class ParticleNetwork {
+                constructor(canvas) {
+                    this.canvas = canvas;
+                    this.ctx = canvas.getContext('2d');
+                    this.particles = [];
+                    this.width = 0;
+                    this.height = 0;
+                    this.tick = 0;
+                    
+                    // Config from data attributes or defaults
+                    this.opts = {
+                        particleCount: parseInt(canvas.dataset.count) || 100,
+                        baseSpeed: parseFloat(canvas.dataset.speed) || 0.5,
+                        range: parseInt(canvas.dataset.range) || 100,
+                        color: canvas.dataset.color || '0, 212, 197', // Brand teal
+                    };
+                    
+                    this.init();
+                }
+
+                init() {
+                    this.resize();
+                    window.addEventListener('resize', () => this.resize());
+                    
+                    for (let i = 0; i < this.opts.particleCount; i++) {
+                        this.particles.push(new Particle(this));
+                    }
+                    
+                    this.loop();
+                }
+
+                resize() {
+                    this.width = this.canvas.width = this.canvas.offsetWidth;
+                    this.height = this.canvas.height = this.canvas.offsetHeight;
+                }
+
+                loop() {
+                    this.tick++;
+                    this.ctx.clearRect(0, 0, this.width, this.height);
+                    
+                    // Update and draw particles
+                    this.particles.forEach(p => {
+                        p.update();
+                        p.draw();
+                    });
+
+                    // Draw connections
+                    this.ctx.beginPath();
+                    this.ctx.strokeStyle = `rgba(${this.opts.color}, 0.15)`; // Subtle lines
+                    this.ctx.lineWidth = 0.5;
+
+                    for (let i = 0; i < this.particles.length; i++) {
+                        for (let j = i + 1; j < this.particles.length; j++) {
+                            const p1 = this.particles[i];
+                            const p2 = this.particles[j];
+                            if (!Number.isFinite(p1.x) || !Number.isFinite(p1.y) || !Number.isFinite(p2.x) || !Number.isFinite(p2.y)) {
+                                continue;
+                            }
+                            const dx = p1.x - p2.x;
+                            const dy = p1.y - p2.y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+
+                            if (dist < this.opts.range) {
+                                this.ctx.moveTo(p1.x, p1.y);
+                                this.ctx.lineTo(p2.x, p2.y);
+                            }
+                        }
+                    }
+                    this.ctx.stroke();
+
+                    requestAnimationFrame(() => this.loop());
+                }
+            }
+
+            class Particle {
+                constructor(network) {
+                    this.network = network;
+                    this.reset();
+                    // Initial random Y spread
+                    this.y = Math.random() * network.height; 
+                }
+
+                reset() {
+                    this.x = Math.random() * this.network.width;
+                    this.y = this.network.height + Math.random() * 50;
+                    this.vx = (Math.random() - 0.5) * this.network.opts.baseSpeed;
+                    this.vy = -(Math.random() * this.network.opts.baseSpeed + 0.2); // Upward drift
+                    this.size = Math.random() * 2 + 0.5;
+                    this.waveOffset = Math.random() * 100;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    // Sine wave motion
+                    this.x += Math.sin(this.network.tick * 0.01 + this.waveOffset) * 0.2;
+
+                    // Reset if out of bounds (top or sides)
+                    if (this.y < -50 || this.x < -50 || this.x > this.network.width + 50) {
+                        this.reset();
+                    }
+                }
+
+                draw() {
+                    const ctx = this.network.ctx;
+                    // Opacity fade near top
+                    const opacity = Math.min(1, (this.y + 50) / (this.network.height * 0.2)); 
+                    
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${this.network.opts.color}, ${opacity * 0.8})`;
+                    ctx.fill();
+                }
+            }
+
+            // Initialize all canvases with class 'particle-network-canvas'
+            document.querySelectorAll('.particle-network-canvas').forEach(canvas => {
+                new ParticleNetwork(canvas);
+            });
+        });
+    </script>
 
 </body>
 </html>

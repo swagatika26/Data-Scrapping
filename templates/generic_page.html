@@ -575,6 +575,784 @@
         </div>
     </div>
 </section>
+{% elif title == 'Help Center' %}
+<section class="relative pt-28 pb-16 overflow-hidden">
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+    <div class="absolute -top-28 left-1/2 -translate-x-1/2 w-[900px] h-[520px] bg-brand/10 rounded-full blur-[140px] -z-10"></div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand/10 border border-brand/20 mb-6">
+                <span class="text-xs font-bold text-brand uppercase tracking-wider">Help Center</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                Find Answers Fast
+            </h1>
+            <p class="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Everything you need to start scraping, troubleshoot issues, and export your data with ScrapyX.
+            </p>
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="{% url 'documentation' %}" class="w-full sm:w-auto bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3.5 px-8 rounded-xl transition-all">Read Documentation</a>
+                <a href="{% url 'community' %}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3.5 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">Ask the Community</a>
+                <a href="{% url 'status' %}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3.5 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">Check System Status</a>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Getting Started</h3>
+                </div>
+                <ol class="space-y-3 text-sm text-gray-400">
+                    <li><span class="text-white">Create an account</span> and log in.</li>
+                    <li><span class="text-white">Go to “New Scrape”</span> and enter a URL or a search query.</li>
+                    <li><span class="text-white">Run the job</span> and watch progress in the dashboard.</li>
+                    <li><span class="text-white">Open “Results”</span> to preview items and <span class="text-white">export CSV/JSON/XLSX</span>.</li>
+                </ol>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-300">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Better Extraction</h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li><span class="text-white">Structured Data First</span>: We read JSON‑LD and app JSON for products and lists.</li>
+                    <li><span class="text-white">Smart Heuristics</span>: We detect repeated cards, prices, ratings, and images.</li>
+                    <li><span class="text-white">AI Assist</span>: On tough pages, AI helps cluster and extract cleaner fields.</li>
+                </ul>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-300">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Export Results</h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li>Open your job, click <span class="text-white">Export</span>, choose <span class="text-white">CSV</span>, <span class="text-white">JSON</span>, or <span class="text-white">XLSX</span>.</li>
+                    <li>REST API is available for automation.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-[#0B1120]/70 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">Troubleshooting</h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="text-white font-semibold">“Blocked / 403 / Captcha”</div>
+                        <p class="text-sm text-gray-400">We try browser headers and JS rendering. If still blocked, try a different URL, slow down the frequency, or use a proxy service.</p>
+                    </div>
+                    <div>
+                        <div class="text-white font-semibold">“No items found”</div>
+                        <p class="text-sm text-gray-400">Make sure the page lists products or articles. Try a category page or search results instead of a protected detail page.</p>
+                    </div>
+                    <div>
+                        <div class="text-white font-semibold">“LinkedIn / login wall”</div>
+                        <p class="text-sm text-gray-400">Some sites restrict automated scraping. Use public pages or official APIs for reliable data.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">Popular FAQs</h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="text-white font-semibold">Can I start with a search phrase?</div>
+                        <p class="text-sm text-gray-400">Yes. Enter a phrase like “best headphones under 5000” and we pick a relevant page to scrape.</p>
+                    </div>
+                    <div>
+                        <div class="text-white font-semibold">Will images and ratings be captured?</div>
+                        <p class="text-sm text-gray-400">If available, we include images, ratings, and review counts alongside names, prices, and links.</p>
+                    </div>
+                    <div>
+                        <div class="text-white font-semibold">How do I rerun a failed job?</div>
+                        <p class="text-sm text-gray-400">Open the job and hit restart, or create a fresh job with updated settings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 rounded-2xl border border-white/10 bg-white/5 p-7">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Need more help?</h2>
+                    <p class="text-sm text-gray-400 max-w-2xl">
+                        Visit the documentation for detailed guides, ask the community for tips, or check system status if something looks off.
+                    </p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{% url 'documentation' %}" class="bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Documentation</a>
+                    <a href="{% url 'community' %}" class="bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Community</a>
+                    <a href="{% url 'status' %}" class="bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Status</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-10 text-center">
+            <a href="{% url 'home' %}" class="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</section>
+{% elif title == 'System Status' %}
+<section class="relative pt-28 pb-16 overflow-hidden">
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+    <div class="absolute -top-28 left-1/2 -translate-x-1/2 w-[900px] h-[520px] bg-emerald-500/10 rounded-full blur-[140px] -z-10"></div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                </span>
+                <span class="text-xs font-bold text-emerald-300 uppercase tracking-wider">Operational</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                System Status
+            </h1>
+            <p class="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Live availability of ScrapyX services. If something isn’t working, check here first.
+            </p>
+            <p class="text-sm text-gray-500 mt-3">
+                Last updated: {% now "M d, Y H:i" %} UTC
+            </p>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <div>
+                            <div class="text-white font-bold">Web App</div>
+                            <div class="text-xs text-gray-500">Landing + Dashboard UI</div>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">Operational</span>
+                </div>
+                <p class="text-sm text-gray-400">Login, dashboard pages, scrape history, and exports are working normally.</p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <div>
+                            <div class="text-white font-bold">API</div>
+                            <div class="text-xs text-gray-500">JWT + scraping endpoints</div>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">Operational</span>
+                </div>
+                <p class="text-sm text-gray-400">Token auth, job APIs, and export endpoints respond as expected.</p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                            <i class="fa-solid fa-gear"></i>
+                        </div>
+                        <div>
+                            <div class="text-white font-bold">Scraping Engine</div>
+                            <div class="text-xs text-gray-500">Requests + JS rendering</div>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">Operational</span>
+                </div>
+                <p class="text-sm text-gray-400">Supports structured data extraction and JS-heavy pages when needed.</p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <div>
+                            <div class="text-white font-bold">Background Jobs</div>
+                            <div class="text-xs text-gray-500">Queue + workers</div>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">Operational</span>
+                </div>
+                <p class="text-sm text-gray-400">Async scrapes run via workers when enabled (Redis + Celery).</p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                            <i class="fa-solid fa-file-export"></i>
+                        </div>
+                        <div>
+                            <div class="text-white font-bold">Exports</div>
+                            <div class="text-xs text-gray-500">CSV / JSON / XLSX</div>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">Operational</span>
+                </div>
+                <p class="text-sm text-gray-400">Download results in common formats from the results page.</p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <div>
+                            <div class="text-white font-bold">Search Assist</div>
+                            <div class="text-xs text-gray-500">Find a URL from a query</div>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">Operational</span>
+                </div>
+                <p class="text-sm text-gray-400">Converts a phrase into a target page when you don’t have a URL.</p>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-[#0B1120]/70 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">If you’re facing issues</h2>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li><span class="text-white">Scrape fails / blocked:</span> Try a different page, slower frequency, or a proxy service.</li>
+                    <li><span class="text-white">No results:</span> Prefer listing/search pages over protected detail pages.</li>
+                    <li><span class="text-white">Exports missing:</span> Open the job results and confirm items were extracted first.</li>
+                </ul>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">Quick actions</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <a href="{% url 'new_scrape' %}" class="rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all p-4 text-left">
+                        <div class="text-white font-semibold mb-1"><i class="fa-solid fa-plus text-brand"></i> Start a New Scrape</div>
+                        <p class="text-sm text-gray-400">Run a scrape from a URL or query.</p>
+                    </a>
+                    <a href="{% url 'documentation' %}" class="rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all p-4 text-left">
+                        <div class="text-white font-semibold mb-1"><i class="fa-solid fa-book text-brand"></i> Documentation</div>
+                        <p class="text-sm text-gray-400">Guides and usage details.</p>
+                    </a>
+                    <a href="{% url 'help_center' %}" class="rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all p-4 text-left">
+                        <div class="text-white font-semibold mb-1"><i class="fa-solid fa-life-ring text-brand"></i> Help Center</div>
+                        <p class="text-sm text-gray-400">FAQs and troubleshooting.</p>
+                    </a>
+                    <a href="{% url 'community' %}" class="rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all p-4 text-left">
+                        <div class="text-white font-semibold mb-1"><i class="fa-solid fa-users text-brand"></i> Community</div>
+                        <p class="text-sm text-gray-400">Ask questions and share solutions.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-10 text-center">
+            <a href="{% url 'home' %}" class="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</section>
+{% elif title == 'About Us' %}
+<section class="relative pt-28 pb-16 overflow-hidden">
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+    <div class="absolute -top-28 left-1/2 -translate-x-1/2 w-[900px] h-[520px] bg-brand/10 rounded-full blur-[140px] -z-10"></div>
+    <div class="absolute top-24 right-0 w-[520px] h-[520px] bg-purple-500/10 rounded-full blur-[150px] -z-10"></div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand/10 border border-brand/20 mb-6">
+                <span class="text-xs font-bold text-brand uppercase tracking-wider">About ScrapyX</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                Built to turn websites into clean data
+            </h1>
+            <p class="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                ScrapyX helps you collect structured data from the web without spending days maintaining fragile scrapers.
+                Run a scrape from a URL or a search phrase, preview results, and export in formats your team can use.
+            </p>
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="{% url 'features' %}" class="w-full sm:w-auto bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3.5 px-8 rounded-xl transition-all">Explore Features</a>
+                <a href="{% url 'pricing' %}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3.5 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">View Pricing</a>
+                <a href="{% url 'documentation' %}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3.5 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">Read Docs</a>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Our mission</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Make web data extraction simple, reliable, and repeatable for builders, analysts, and teams.
+                </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-300">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">What we extract</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Products, listings, articles, tables, and directories — including names, prices, ratings, links, images, and contact fields when available.
+                </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-300">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Reliability first</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    We prioritize structured data (JSON‑LD/app data), use smarter fallbacks, and support JS rendering on modern sites.
+                </p>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-[#0B1120]/70 p-7 overflow-hidden relative">
+                <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-brand/10 rounded-full blur-[80px]"></div>
+                <h2 class="text-2xl font-bold text-white mb-4">How ScrapyX works</h2>
+                <div class="space-y-4">
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-brand font-bold">1</div>
+                        <div>
+                            <div class="text-white font-semibold">Choose a target</div>
+                            <div class="text-sm text-gray-400">Paste a URL or type a search query to find a page.</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-brand font-bold">2</div>
+                        <div>
+                            <div class="text-white font-semibold">Extract structured items</div>
+                            <div class="text-sm text-gray-400">We detect repeating cards, lists, structured JSON, and tables to build a clean dataset.</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-brand font-bold">3</div>
+                        <div>
+                            <div class="text-white font-semibold">Review and export</div>
+                            <div class="text-sm text-gray-400">Preview results in the dashboard and export to CSV/JSON/XLSX.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">Principles we follow</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                        <div class="text-white font-semibold mb-1"><i class="fa-solid fa-handshake text-brand"></i> Responsible use</div>
+                        <p class="text-sm text-gray-400">Respect site terms, robots policies, and applicable laws.</p>
+                    </div>
+                    <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                        <div class="text-white font-semibold mb-1"><i class="fa-solid fa-lock text-brand"></i> Security minded</div>
+                        <p class="text-sm text-gray-400">Protect credentials and keep sensitive data out of logs and exports.</p>
+                    </div>
+                    <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                        <div class="text-white font-semibold mb-1"><i class="fa-solid fa-bolt text-brand"></i> Practical speed</div>
+                        <p class="text-sm text-gray-400">Prefer stable extraction paths that reduce breakages and reruns.</p>
+                    </div>
+                    <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                        <div class="text-white font-semibold mb-1"><i class="fa-solid fa-wrench text-brand"></i> Easy export</div>
+                        <p class="text-sm text-gray-400">Make it simple to get data into spreadsheets, pipelines, and APIs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 rounded-2xl border border-white/10 bg-white/5 p-7">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Questions or support?</h2>
+                    <p class="text-sm text-gray-400 max-w-2xl">
+                        Visit the Help Center for troubleshooting, or join the Community to ask and share scraping tips.
+                    </p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{% url 'help_center' %}" class="bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Help Center</a>
+                    <a href="{% url 'community' %}" class="bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Community</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-10 text-center">
+            <a href="{% url 'home' %}" class="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</section>
+{% elif title == 'Careers' %}
+<section class="relative pt-28 pb-16 overflow-hidden">
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+    <div class="absolute -top-28 left-1/2 -translate-x-1/2 w-[900px] h-[520px] bg-purple-500/10 rounded-full blur-[140px] -z-10"></div>
+    <div class="absolute top-24 left-0 w-[520px] h-[520px] bg-brand/10 rounded-full blur-[150px] -z-10"></div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
+                <span class="text-xs font-bold text-purple-300 uppercase tracking-wider">Careers</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                Build tools people rely on
+            </h1>
+            <p class="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                ScrapyX is focused on making web data extraction simple, reliable, and fast. We care about clean UX, solid engineering,
+                and practical solutions for real-world scraping.
+            </p>
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="{% url 'features' %}" class="w-full sm:w-auto bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3.5 px-8 rounded-xl transition-all">See What We Build</a>
+                <a href="{% url 'community' %}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3.5 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">Meet the Community</a>
+                <a href="{% url 'help_center' %}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3.5 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">How We Support Users</a>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
+                        <i class="fa-solid fa-people-group"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Product-first</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Work close to users. Ship improvements that reduce scraping failures and make results easier to export.
+                </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-300">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Reliability mindset</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Scraping breaks in the real world. We invest in better fallbacks, better signals, and better debugging.
+                </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-300">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Modern stack</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Django + APIs + async jobs. Practical engineering with a focus on performance and maintainability.
+                </p>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-[#0B1120]/70 p-7 overflow-hidden relative">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px]"></div>
+                <h2 class="text-2xl font-bold text-white mb-4">Open roles</h2>
+                <div class="space-y-4">
+                    <div class="rounded-xl border border-white/10 bg-white/5 p-4 flex items-start justify-between gap-4">
+                        <div>
+                            <div class="text-white font-semibold">Backend Engineer (Django)</div>
+                            <div class="text-sm text-gray-400">APIs, auth, scraping orchestration, exports.</div>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300">Remote</span>
+                    </div>
+                    <div class="rounded-xl border border-white/10 bg-white/5 p-4 flex items-start justify-between gap-4">
+                        <div>
+                            <div class="text-white font-semibold">Scraping Engineer</div>
+                            <div class="text-sm text-gray-400">Extraction quality, anti-bot handling, JS rendering.</div>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300">Remote</span>
+                    </div>
+                    <div class="rounded-xl border border-white/10 bg-white/5 p-4 flex items-start justify-between gap-4">
+                        <div>
+                            <div class="text-white font-semibold">Frontend Engineer</div>
+                            <div class="text-sm text-gray-400">Dashboard UX, results views, export flows.</div>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300">Remote</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">How to apply</h2>
+                <div class="space-y-4 text-sm text-gray-400">
+                    <div>
+                        <div class="text-white font-semibold">Share your work</div>
+                        <p>Send a short profile with links (GitHub, portfolio, or case study). Include any scraping or data projects.</p>
+                    </div>
+                    <div>
+                        <div class="text-white font-semibold">Tell us what you’d improve</div>
+                        <p>Pick one ScrapyX flow (new scrape, results, export, reliability) and suggest a concrete improvement.</p>
+                    </div>
+                    <div>
+                        <div class="text-white font-semibold">Start by joining</div>
+                        <p>Create an account to explore the dashboard and understand the product end-to-end.</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'signup' %}" class="w-full sm:w-auto bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3 px-6 rounded-xl transition-all">Create Account</a>
+                    <a href="{% url 'documentation' %}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Read Docs</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-10 text-center">
+            <a href="{% url 'home' %}" class="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</section>
+{% elif title == 'Privacy Policy' %}
+<section class="relative pt-28 pb-16 overflow-hidden">
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+    <div class="absolute -top-28 left-1/2 -translate-x-1/2 w-[900px] h-[520px] bg-brand/10 rounded-full blur-[140px] -z-10"></div>
+    <div class="absolute top-24 right-0 w-[520px] h-[520px] bg-emerald-500/10 rounded-full blur-[150px] -z-10"></div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand/10 border border-brand/20 mb-6">
+                <span class="text-xs font-bold text-brand uppercase tracking-wider">Privacy Policy</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                Your data, handled responsibly
+            </h1>
+            <p class="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                This page explains what information ScrapyX collects, how we use it, and the choices you have.
+            </p>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">What we collect</h3>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li>Account info (username, email)</li>
+                    <li>Profile details you choose to share</li>
+                    <li>Scrape jobs you create and their results</li>
+                    <li>Basic logs (IP, user agent, page paths)</li>
+                </ul>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-300">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">How we use data</h3>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li>Authenticate your account and secure access</li>
+                    <li>Run scrape jobs and show results in the dashboard</li>
+                    <li>Improve reliability and detect errors</li>
+                    <li>Provide exports you request (CSV/JSON/XLSX)</li>
+                </ul>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-300">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Storage & retention</h3>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li>Data is stored in application databases</li>
+                    <li>Scrape results are kept for your history and exports</li>
+                    <li>You can delete jobs from your history</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-[#0B1120]/70 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">Cookies & third‑party services</h2>
+                <p class="text-sm text-gray-400 mb-3">
+                    ScrapyX may use cookies for session management and security. Optional integrations like search or AI helpers
+                    only run when you use those features and may contact their providers to fulfill your request.
+                </p>
+                <h2 class="text-2xl font-bold text-white mb-4 mt-6">Security</h2>
+                <p class="text-sm text-gray-400">
+                    We apply reasonable safeguards and avoid storing sensitive secrets in plain text. Still, no online system can be guaranteed perfectly secure.
+                    Use strong passwords and keep your credentials private.
+                </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">Your choices</h2>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li><span class="text-white font-semibold">Access and update:</span> Edit your profile details at any time.</li>
+                    <li><span class="text-white font-semibold">Delete jobs:</span> Remove scrape jobs and their saved results from history.</li>
+                    <li><span class="text-white font-semibold">Exports:</span> Download data in common formats for your own storage.</li>
+                </ul>
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'settings' %}" class="w-full sm:w-auto bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3 px-6 rounded-xl transition-all">Manage Settings</a>
+                    <a href="{% url 'help_center' %}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Get Help</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 rounded-2xl border border-white/10 bg-white/5 p-7">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Contact</h2>
+                    <p class="text-sm text-gray-400 max-w-2xl">
+                        For questions about this policy or data requests, reach out through the Help Center or Community.
+                    </p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{% url 'help_center' %}" class="bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Help Center</a>
+                    <a href="{% url 'community' %}" class="bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Community</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-10 text-center">
+            <a href="{% url 'home' %}" class="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</section>
+{% elif title == 'Terms of Service' %}
+<section class="relative pt-28 pb-16 overflow-hidden">
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+    <div class="absolute -top-28 left-1/2 -translate-x-1/2 w-[900px] h-[520px] bg-brand/10 rounded-full blur-[140px] -z-10"></div>
+    <div class="absolute top-24 right-0 w-[520px] h-[520px] bg-amber-500/10 rounded-full blur-[150px] -z-10"></div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand/10 border border-brand/20 mb-6">
+                <span class="text-xs font-bold text-brand uppercase tracking-wider">Terms of Service</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                Simple rules for using ScrapyX
+            </h1>
+            <p class="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                These terms explain acceptable use, ownership, and responsibilities when you use ScrapyX.
+            </p>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-300">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Accounts</h3>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li>Keep your login details secure.</li>
+                    <li>Don’t share accounts or attempt to bypass security.</li>
+                    <li>You’re responsible for activity in your account.</li>
+                </ul>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-300">
+                        <i class="fa-solid fa-handshake"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Acceptable use</h3>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li>Use ScrapyX in line with site terms and laws.</li>
+                    <li>No scraping of private, prohibited, or sensitive data.</li>
+                    <li>Respect rate limits; don’t disrupt target sites.</li>
+                </ul>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-300">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">Content ownership</h3>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li>You own the results you export from your jobs.</li>
+                    <li>You must have rights to use any scraped content.</li>
+                    <li>ScrapyX doesn’t sell or publish your private data.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-[#0B1120]/70 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">Availability & changes</h2>
+                <p class="text-sm text-gray-400 mb-3">
+                    We aim for reliable service but may update features or temporarily pause parts of the system to improve stability.
+                    We’ll keep the Status page current and communicate notable changes.
+                </p>
+                <h2 class="text-2xl font-bold text-white mb-4 mt-6">Limitation of liability</h2>
+                <p class="text-sm text-gray-400">
+                    ScrapyX is provided on an “as‑is” basis. We aren’t liable for indirect losses, data issues from target websites,
+                    or business impacts caused by third‑party changes or blocking.
+                </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-7">
+                <h2 class="text-2xl font-bold text-white mb-4">Payments & refunds</h2>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li>Plans and pricing are shown on the Pricing page.</li>
+                    <li>Billing is handled through your account settings.</li>
+                    <li>Contact support for refund questions; we consider fair‑use and reliability factors.</li>
+                </ul>
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'pricing' %}" class="w-full sm:w-auto bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3 px-6 rounded-xl transition-all">View Pricing</a>
+                    <a href="{% url 'help_center' %}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Get Help</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-12 rounded-2xl border border-white/10 bg-white/5 p-7">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Related policies</h2>
+                    <p class="text-sm text-gray-400 max-w-2xl">
+                        Read the Privacy Policy for how we handle personal data. Check Status for live availability updates.
+                    </p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{% url 'privacy' %}" class="bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">Privacy Policy</a>
+                    <a href="{% url 'status' %}" class="bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">System Status</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-10 text-center">
+            <a href="{% url 'home' %}" class="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white font-semibold py-3 px-8 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</section>
 {% else %}
 <section class="relative pt-32 pb-20 overflow-hidden min-h-[60vh] flex items-center justify-center">
     <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>

@@ -25,7 +25,7 @@
       </div>
       <div class="flex-1 overflow-y-auto space-y-2">
         {% for t in threads %}
-        <a href="{% url 'notifications' %}?thread={{ t.id }}" class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all {% if selected_thread == t.id %}bg-white/5 border border-white/10{% else %}hover:bg-white/5 border border-transparent hover:border-white/10{% endif %}">
+        <a href="{% url 'messages' %}?thread={{ t.id }}" class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all {% if selected_thread == t.id %}bg-white/5 border border-white/10{% else %}hover:bg-white/5 border border-transparent hover:border-white/10{% endif %}">
           <div class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand shrink-0">
             <i class="fa-solid fa-user-shield"></i>
           </div>

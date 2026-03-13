@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.mail import send_mail
 from django.conf import settings
 from django.db.models.functions import TruncDate, TruncHour, TruncMonth
-from core.models import ActivityLog, TrafficLog
+from core.models import ActivityLog, TrafficLog, Conversation, Message, Notification
 from core.decorators import admin_required, user_required
 from core.system_health import get_system_health
 from django.core.cache import cache
@@ -1333,75 +1333,56 @@ def dashboard(request):
 @ensure_csrf_cookie
 def messages_page(request):
     selected_id = request.GET.get('thread', 'admin')
-    user_logs = ActivityLog.objects.filter(user=request.user).order_by('timestamp')
-    convo_messages = []
-    for log in user_logs:
-        action = (log.action or '').lower()
-        detail = (log.metadata or {}).get('detail') or ''
-        if action in ['admin_message', 'user_message']:
-            role = 'admin' if action == 'admin_message' else 'user'
-            convo_messages.append({
-                'author': role,
-                'message': detail,
-                'timestamp': log.timestamp,
-            })
-    last_detail = convo_messages[-1]['message'] if convo_messages else ''
-    threads = [{
-        'id': 'admin',
-        'name': 'Admin',
-        'preview': last_detail,
-        'timestamp': convo_messages[-1]['timestamp'] if convo_messages else timezone.now(),
-        'online': True,
-    }]
-    return render(request, 'dashboard/messages.html', {
-        'threads': threads,
-        'selected_thread': selected_id,
-        'thread_messages': convo_messages,
-        'page_title': 'Messages',
-    })
+    User = get_user_model()
+    admin_user = User.objects.filter(role=getattr(User, 'ROLE_ADMIN', 'ADMIN')).first()
+    convo = Conversation.objects.filter(user=request.user).first()
+    if not convo:
+        convo = Conversation.objects.create(user=request.user, admin=admin_user)
+    qs = Message.objects.filter(conversation=convo).order_by('created_at')
+    msgs = []
+    for m in qs:
+        author = 'user' if m.sender_id == request.user.id else 'admin'
+        msgs.append({'author': author, 'message': m.message_text, 'timestamp': m.created_at})
+    preview = msgs[-1]['message'] if msgs else ''
+    ts = msgs[-1]['timestamp'] if msgs else timezone.now()
+    threads = [{'id': 'admin', 'name': 'Admin', 'preview': preview, 'timestamp': ts, 'online': True}]
+    Message.objects.filter(conversation=convo, receiver=request.user, is_read=False).update(is_read=True)
+    Notification.objects.filter(user=request.user, message__conversation_id=convo.id, is_read=False).update(is_read=True)
+    return render(request, 'dashboard/messages.html', {'threads': threads, 'selected_thread': selected_id, 'thread_messages': msgs, 'page_title': 'Messages'})
 
 @login_required
 def user_message_reply(request):
+    thread_id = request.POST.get('thread_id') or 'admin'
     if request.method == 'POST':
         msg = request.POST.get('message', '').strip()
-        thread_id = request.POST.get('thread_id') or 'admin'
-        if msg:
-            _log_activity(request, 'user_message', user=request.user, metadata={'detail': msg})
+        User = get_user_model()
+        admin_user = User.objects.filter(role=getattr(User, 'ROLE_ADMIN', 'ADMIN')).first()
+        convo = Conversation.objects.filter(user=request.user).first()
+        if not convo:
+            convo = Conversation.objects.create(user=request.user, admin=admin_user)
+        receiver = convo.admin or admin_user
+        if msg and receiver:
+            m = Message.objects.create(conversation=convo, sender=request.user, receiver=receiver, message_text=msg, message_type='text')
+            Conversation.objects.filter(pk=convo.pk).update(last_message_time=m.created_at)
+            Notification.objects.create(user=receiver, message=m, notification_type='chat_message')
         else:
             messages.error(request, 'Message cannot be empty.')
     return redirect(f"{reverse('messages')}?thread={thread_id}")
 
 @login_required
 def notifications_feed(request):
-    def status_for(action):
-        a = (action or '').lower()
-        if any(k in a for k in ['completed', 'success']):
-            return 'success'
-        if any(k in a for k in ['failed', 'error', 'timeout']):
-            return 'error'
-        if any(k in a for k in ['credit', 'quota', 'limit']):
-            return 'warning'
-        return 'info'
     now = timezone.now()
     today_items = []
     yesterday_items = []
     last_week_items = []
-    logs = ActivityLog.objects.filter(user=request.user).order_by('-timestamp')[:100]
-    for log in logs:
-        act_lower = (log.action or '').lower()
-        if any(k in act_lower for k in ['login', 'logout', 'job_created']):
-            continue
-        item = {
-            'status': status_for(log.action),
-            'title': log.action.replace('_', ' ').title(),
-            'description': (log.metadata or {}).get('detail') or '',
-            'timestamp': log.timestamp,
-        }
-        if log.timestamp.date() == now.date():
+    notifs = Notification.objects.filter(user=request.user).select_related('message').order_by('-created_at')[:100]
+    for n in notifs:
+        item = {'status': 'info', 'title': 'New Message', 'description': n.message.message_text if n.message else '', 'timestamp': n.created_at}
+        if n.created_at.date() == now.date():
             today_items.append(item)
-        elif log.timestamp.date() == (now - timedelta(days=1)).date():
+        elif n.created_at.date() == (now - timedelta(days=1)).date():
             yesterday_items.append(item)
-        elif (now - timedelta(days=7)).date() <= log.timestamp.date() < now.date():
+        elif (now - timedelta(days=7)).date() <= n.created_at.date() < now.date():
             last_week_items.append(item)
     return render(request, 'dashboard/notifications_feed.html', {
         'today_items': today_items,
@@ -1929,6 +1910,14 @@ def logout_view(request):
 @never_cache
 @ensure_csrf_cookie
 @admin_required
+def admin_logout(request):
+    _log_activity(request, 'admin_logout', user=request.user)
+    logout(request)
+    return redirect('admin_login')
+
+@never_cache
+@ensure_csrf_cookie
+@admin_required
 def admin_dashboard(request, section='overview'):
     section_titles = {
         'overview': 'Global Overview',
@@ -2241,25 +2230,27 @@ def admin_dashboard(request, section='overview'):
     support_escalated = set(request.session.get('support_escalated', []))
     support_resolved = set(request.session.get('support_resolved', []))
 
-    support_logs = ActivityLog.objects.select_related('user').order_by('-timestamp')[:30]
     support_tickets = []
-    seen_support = set()
-    for log in support_logs:
-        user = log.user
-        key = user.id if user else log.ip_address or log.id
-        if key in seen_support:
-            continue
-        seen_support.add(key)
-        username = user.username if user else 'System'
+    conversations_qs = Conversation.objects.select_related('user', 'admin').order_by('-last_message_time', '-created_at')
+    if support_query:
+        conversations_qs = conversations_qs.filter(
+            Q(user__username__icontains=support_query)
+            | Q(user__email__icontains=support_query)
+            | Q(id__icontains=support_query)
+        )
+
+    for convo in conversations_qs[:50]:
+        ticket_id = str(convo.id)
+        assigned = ticket_id in support_assigned
+        escalated = ticket_id in support_escalated
+        resolved = ticket_id in support_resolved
+        status = 'Resolved' if resolved else 'Open'
+        if escalated and not resolved:
+            status = 'Escalated'
+
+        user = convo.user
+        username = user.username if user else 'User'
         email = user.email if user else '-'
-        title = (log.metadata or {}).get('ticket_title') or log.action.replace('_', ' ').title()
-        preview = (log.metadata or {}).get('detail') or f"{title} reported in the admin console."
-        priority = 'Normal'
-        action_lower = log.action.lower()
-        if any(token in action_lower for token in ['failed', 'error', 'timeout']):
-            priority = 'Urgent'
-        elif any(token in action_lower for token in ['scrape', 'job', 'proxy']):
-            priority = 'High'
         job_count = ScraperJob.objects.filter(user=user).count() if user else 0
         if job_count >= 20:
             plan = 'Enterprise Plan'
@@ -2267,54 +2258,34 @@ def admin_dashboard(request, section='overview'):
             plan = 'Professional Plan'
         else:
             plan = 'Starter Plan'
-        ticket_id = str(log.id)
-        assigned = ticket_id in support_assigned
-        escalated = ticket_id in support_escalated
-        resolved = ticket_id in support_resolved
-        status = 'Resolved' if resolved else 'Open'
-        if escalated and not resolved:
-            status = 'Escalated'
+
+        last_msg = Message.objects.filter(conversation=convo).order_by('-created_at').first()
+        preview = last_msg.message_text if last_msg else 'No messages yet.'
+        updated_at = last_msg.created_at if last_msg else convo.created_at
+
+        unread_for_admin = Message.objects.filter(conversation=convo, receiver=request.user, is_read=False).count()
+        if unread_for_admin >= 3:
+            priority = 'Urgent'
+        elif unread_for_admin > 0:
+            priority = 'High'
+        else:
+            priority = 'Normal'
+
         support_tickets.append({
             'id': ticket_id,
-            'title': title,
+            'title': f"Chat: {username}",
             'customer_name': username,
             'customer_email': email,
             'plan': plan,
             'priority': priority,
             'status': status,
-            'updated_at': log.timestamp,
+            'updated_at': updated_at,
             'preview': preview,
             'assigned': assigned,
             'escalated': escalated,
             'resolved': resolved,
+            'unread': unread_for_admin,
         })
-
-    if not support_tickets:
-        for user in User.objects.order_by('-date_joined')[:4]:
-            ticket_id = f"user-{user.id}"
-            support_tickets.append({
-                'id': ticket_id,
-                'title': 'Onboarding Assistance',
-                'customer_name': user.username,
-                'customer_email': user.email or '-',
-                'plan': 'Starter Plan',
-                'priority': 'Normal',
-                'status': 'Open',
-                'updated_at': user.date_joined,
-                'preview': 'Requesting setup guidance for initial scraper workflow.',
-                'assigned': ticket_id in support_assigned,
-                'escalated': ticket_id in support_escalated,
-                'resolved': ticket_id in support_resolved,
-            })
-
-    if support_query:
-        query_lower = support_query.lower()
-        support_tickets = [
-            ticket for ticket in support_tickets
-            if query_lower in ticket['title'].lower()
-            or query_lower in ticket['customer_name'].lower()
-            or query_lower in ticket['customer_email'].lower()
-        ]
 
     if support_filter == 'assigned':
         support_tickets = [ticket for ticket in support_tickets if ticket['assigned']]
@@ -2329,28 +2300,21 @@ def admin_dashboard(request, section='overview'):
     if not selected_ticket and support_tickets:
         selected_ticket = support_tickets[0]
 
-    support_replies = request.session.get('support_replies', {})
     ticket_messages = []
     if selected_ticket:
-        ticket_messages.append({
-            'author': selected_ticket['customer_name'],
-            'role': 'customer',
-            'message': selected_ticket['preview'],
-            'timestamp': selected_ticket['updated_at'],
-        })
-        for reply in support_replies.get(selected_ticket['id'], []):
-            timestamp_value = reply.get('timestamp')
-            if isinstance(timestamp_value, str):
-                try:
-                    timestamp_value = datetime.fromisoformat(timestamp_value)
-                except ValueError:
-                    timestamp_value = now
-            ticket_messages.append({
-                'author': reply.get('author', request.user.username),
-                'role': reply.get('role', 'agent'),
-                'message': reply.get('message', ''),
-                'timestamp': timestamp_value or now,
-            })
+        convo = Conversation.objects.select_related('user', 'admin').filter(id=selected_ticket['id']).first()
+        if convo:
+            Message.objects.filter(conversation=convo, receiver=request.user, is_read=False).update(is_read=True)
+            Notification.objects.filter(user=request.user, message__conversation_id=convo.id, is_read=False).update(is_read=True)
+            for m in Message.objects.filter(conversation=convo).select_related('sender').order_by('created_at'):
+                role = 'agent' if getattr(m.sender, 'role', '').upper() == 'ADMIN' else 'customer'
+                author = m.sender.username if m.sender else ('Admin' if role == 'agent' else (convo.user.username if convo.user else 'User'))
+                ticket_messages.append({
+                    'author': author,
+                    'role': role,
+                    'message': m.message_text,
+                    'timestamp': m.created_at,
+                })
 
     support_success_rate = round(90 + (success_rate / 100) * 10, 1)
     api_calls_total = max(1, traffic_total * 2)
@@ -2826,34 +2790,21 @@ def admin_support_reply(request, ticket_id):
     if request.method == 'POST':
         message = request.POST.get('message', '').strip()
         if message:
-            support_replies = request.session.get('support_replies', {})
-            replies = support_replies.get(str(ticket_id), [])
-            replies.append({
-                'author': request.user.username,
-                'role': 'agent',
-                'message': message,
-                'timestamp': timezone.now().isoformat(),
-            })
-            support_replies[str(ticket_id)] = replies
-            request.session['support_replies'] = support_replies
-            # Deliver message to user via ActivityLog so it appears in their notifications
-            target_user = None
-            if str(ticket_id).startswith('user-'):
-                try:
-                    target_id = int(str(ticket_id).split('-', 1)[1])
-                    target_user = get_user_model().objects.filter(id=target_id).first()
-                except Exception:
-                    target_user = None
-            else:
-                src_log = ActivityLog.objects.filter(id=str(ticket_id)).first()
-                target_user = src_log.user if src_log and src_log.user else target_user
-            if target_user:
-                _log_activity(request, 'admin_message', user=target_user, metadata={
-                    'detail': message,
-                    'ticket_id': str(ticket_id),
-                    'from': request.user.username,
-                })
-            _log_activity(request, 'admin_support_reply', user=request.user, metadata={'ticket_id': ticket_id})
+            convo = Conversation.objects.select_related('user', 'admin').filter(id=str(ticket_id)).first()
+            if convo and convo.user:
+                if convo.admin_id is None:
+                    Conversation.objects.filter(pk=convo.pk).update(admin=request.user)
+                    convo.admin = request.user
+                msg_obj = Message.objects.create(
+                    conversation=convo,
+                    sender=request.user,
+                    receiver=convo.user,
+                    message_text=message,
+                    message_type='text',
+                )
+                Conversation.objects.filter(pk=convo.pk).update(last_message_time=msg_obj.created_at)
+                Notification.objects.create(user=convo.user, message=msg_obj, notification_type='chat_message')
+                _log_activity(request, 'admin_support_reply', user=request.user, metadata={'ticket_id': str(ticket_id), 'conversation_id': convo.id})
         # AJAX support: return JSON so UI can update without full reload
         if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.META.get('HTTP_ACCEPT', '').startswith('application/json'):
             return JsonResponse({

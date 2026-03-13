@@ -1816,7 +1816,7 @@
                 <a href="{% url 'admin_dashboard_section' 'system' %}" class="nav-pill{% if active_section == 'system' %} active{% endif %}">System Health</a>
                 <a href="{% url 'admin_dashboard_section' 'activity' %}" class="nav-pill{% if active_section == 'activity' %} active{% endif %}">Messages</a>
                 <a href="{% url 'admin_dashboard_section' 'settings' %}" class="nav-pill{% if active_section == 'settings' %} active{% endif %}">Settings</a>
-                <a href="{% url 'logout' %}" class="nav-pill">Logout</a>
+                <a href="{% url 'admin_logout' %}" class="nav-pill">Logout</a>
             </nav>
             <div class="status-card">
                 <div class="d-flex justify-content-between align-items-center">
@@ -3428,7 +3428,7 @@
             </div>
             <div class="d-flex flex-column gap-2">
                 <a href="{% url 'admin_dashboard_section' 'profile' %}" class="btn btn-ghost btn-sm">Profile</a>
-                <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
+                <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm">Logout</a>
             </div>
         </div>
     </div>

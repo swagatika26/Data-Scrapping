@@ -10,19 +10,19 @@
     </div>
 
     <!-- Left Sidebar (Navigation) -->
-    <aside class="w-64 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto border-r border-dark-border bg-dark-bg/95 backdrop-blur hidden lg:block custom-scrollbar z-20 shrink-0">
+    <aside class="w-64 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto border-r border-dark-border bg-dark-bg/95 backdrop-blur hidden lg:block custom-scrollbar z-20 shrink-0 relative">
         <div class="p-6 space-y-8">
             <!-- Section -->
             <div>
                 <h5 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Introduction</h5>
                 <ul class="space-y-1">
                     <li>
-                        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-white bg-white/5 rounded-lg border border-white/10">
+                        <a href="#getting-started" data-highlight="brand" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded-xl border border-transparent">
                             <i class="fa-regular fa-circle-play text-brand"></i> Getting Started
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                        <a href="#authentication" data-highlight="brand" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded-xl border border-transparent">
                             <i class="fa-solid fa-key text-gray-600"></i> Authentication
                         </a>
                     </li>
@@ -34,27 +34,27 @@
                 <h5 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Endpoints</h5>
                 <ul class="space-y-1">
                     <li>
-                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-brand bg-brand/10 rounded-lg border border-brand/20">
+                        <a href="#fetch-web-data" data-highlight="brand" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded-xl border border-transparent">
                             <span>Fetch Web Data</span>
-                            <span class="text-[10px] font-bold bg-brand text-dark-bg px-1.5 py-0.5 rounded">GET</span>
+                            <span class="text-[10px] font-bold bg-brand text-dark-bg px-2 py-0.5 rounded-full">GET</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                        <a href="#execute-script" data-highlight="brand" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded-xl border border-transparent">
                             <span>Execute Script</span>
-                            <span class="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">POST</span>
+                            <span class="text-[10px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">POST</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                        <a href="#capture-page" data-highlight="brand" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded-xl border border-transparent">
                             <span>Capture Page</span>
-                            <span class="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">POST</span>
+                            <span class="text-[10px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">POST</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                        <a href="#proxy-status" data-highlight="brand" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded-xl border border-transparent">
                             <span>Proxy Status</span>
-                            <span class="text-[10px] font-bold bg-brand text-dark-bg px-1.5 py-0.5 rounded">GET</span>
+                            <span class="text-[10px] font-bold bg-brand text-dark-bg px-2 py-0.5 rounded-full">GET</span>
                         </a>
                     </li>
                 </ul>
@@ -85,13 +85,27 @@
                 <span class="text-brand">Fetch Web Data</span>
             </div>
 
+            <!-- Getting Started -->
+            <h1 id="getting-started" class="text-3xl font-bold text-white mb-4">Getting Started</h1>
+            <p class="text-gray-400 leading-relaxed mb-8">
+                Use JWT to authenticate and call endpoints. Create a token via <span class="font-mono text-gray-300">/api/v1/users/token/</span>, then include it as
+                <span class="font-mono text-gray-300">Authorization: Bearer &lt;access_token&gt;</span>.
+            </p>
+            <!-- Authentication -->
+            <h2 id="authentication" class="text-2xl font-bold text-white mb-3">Authentication</h2>
+            <div class="bg-dark-card border border-dark-border rounded-lg p-5 mb-10">
+                <div class="text-sm text-gray-300 font-mono mb-2">POST /api/v1/users/token/</div>
+                <div class="text-sm text-gray-400">Body: <span class="font-mono text-gray-300">{ "username": "your_user", "password": "your_pass" }</span></div>
+                <div class="text-sm text-gray-400 mt-2">Response includes <span class="font-mono text-gray-300">access</span> and <span class="font-mono text-gray-300">refresh</span> tokens.</div>
+            </div>
+
             <!-- Header -->
-            <h1 class="text-4xl font-bold text-white mb-6">Fetch Web Data</h1>
+            <h1 id="fetch-web-data" class="text-4xl font-bold text-white mb-6">Fetch Web Data</h1>
             
             <div class="flex items-center gap-4 mb-8">
                 <span class="px-3 py-1 bg-brand text-dark-bg font-bold text-sm rounded">GET</span>
-                <code class="text-gray-300 font-mono text-lg">/v2/fetch</code>
-                <button class="text-gray-500 hover:text-white"><i class="fa-regular fa-copy"></i></button>
+                <code id="endpointPath" class="text-gray-300 font-mono text-lg">/v2/fetch</code>
+                <button id="copyEndpointBtn" type="button" class="text-gray-500 hover:text-white"><i class="fa-regular fa-copy"></i></button>
             </div>
 
             <p class="text-gray-400 leading-relaxed mb-12">
@@ -173,6 +187,78 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Execute Script -->
+            <div class="mt-16">
+                <h1 id="execute-script" class="text-3xl font-bold text-white mb-6">Execute Script</h1>
+                <div class="flex items-center gap-4 mb-8">
+                    <span class="px-3 py-1 bg-blue-600 text-white font-bold text-sm rounded">POST</span>
+                    <code class="text-gray-300 font-mono text-lg">/v2/execute</code>
+                </div>
+                <p class="text-gray-400 leading-relaxed mb-8">
+                    Evaluate a small JavaScript snippet in the page context and return a value.
+                </p>
+                <div class="space-y-6">
+                    <div class="bg-dark-card border border-dark-border rounded-lg p-5">
+                        <div class="flex items-baseline gap-3 mb-2">
+                            <span class="font-mono text-brand font-bold">url</span>
+                            <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">string</span>
+                            <span class="text-xs text-red-400 font-bold uppercase tracking-wider">Required</span>
+                        </div>
+                        <p class="text-sm text-gray-400">The page to open before executing.</p>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border rounded-lg p-5">
+                        <div class="flex items-baseline gap-3 mb-2">
+                            <span class="font-mono text-brand font-bold">script</span>
+                            <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">string</span>
+                            <span class="text-xs text-red-400 font-bold uppercase tracking-wider">Required</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Example: <span class="font-mono text-gray-300">document.querySelector('h1').innerText</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Capture Page -->
+            <div class="mt-16">
+                <h1 id="capture-page" class="text-3xl font-bold text-white mb-6">Capture Page</h1>
+                <div class="flex items-center gap-4 mb-8">
+                    <span class="px-3 py-1 bg-blue-600 text-white font-bold text-sm rounded">POST</span>
+                    <code class="text-gray-300 font-mono text-lg">/v2/capture</code>
+                </div>
+                <p class="text-gray-400 leading-relaxed mb-8">
+                    Capture a screenshot (viewport or full-page) and return base64-encoded image data.
+                </p>
+                <div class="space-y-6">
+                    <div class="bg-dark-card border border-dark-border rounded-lg p-5">
+                        <div class="flex items-baseline gap-3 mb-2">
+                            <span class="font-mono text-brand font-bold">url</span>
+                            <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">string</span>
+                            <span class="text-xs text-red-400 font-bold uppercase tracking-wider">Required</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Target page to capture.</p>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border rounded-lg p-5">
+                        <div class="flex items-baseline gap-3 mb-2">
+                            <span class="font-mono text-brand font-bold">full_page</span>
+                            <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">boolean</span>
+                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider">Default: false</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Capture entire page including content below the fold.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proxy Status -->
+            <div class="mt-16">
+                <h1 id="proxy-status" class="text-3xl font-bold text-white mb-6">Proxy Status</h1>
+                <div class="flex items-center gap-4 mb-8">
+                    <span class="px-3 py-1 bg-brand text-dark-bg font-bold text-sm rounded">GET</span>
+                    <code class="text-gray-300 font-mono text-lg">/v2/proxy/status</code>
+                </div>
+                <p class="text-gray-400 leading-relaxed mb-8">
+                    Returns proxy pool health and country coverage for the current account.
+                </p>
+            </div>
         </div>
 
         <!-- Right Column (Code) -->
@@ -180,17 +266,17 @@
             
             <!-- Language Tabs -->
             <div class="flex items-center px-6 border-b border-dark-border sticky top-0 bg-[#0B101A] z-10 pt-4 pb-0">
-                <button class="px-4 py-3 text-sm font-medium text-brand border-b-2 border-brand">Python</button>
-                <button class="px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">Node.js</button>
-                <button class="px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">cURL</button>
+                <button id="langPython" type="button" data-lang="python" class="px-4 py-3 text-sm font-medium text-brand border-b-2 border-brand">Python</button>
+                <button id="langNode" type="button" data-lang="node" class="px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors border-b-2 border-transparent">Node.js</button>
+                <button id="langCurl" type="button" data-lang="curl" class="px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors border-b-2 border-transparent">cURL</button>
                 <div class="ml-auto">
-                    <button class="text-xs text-gray-500 hover:text-white flex items-center gap-1"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button id="copyCodeBtn" type="button" class="text-xs text-gray-500 hover:text-white flex items-center gap-1"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
             </div>
 
             <!-- Code Block -->
             <div class="p-6">
-<pre class="font-mono text-sm leading-relaxed">
+<pre id="code-python" class="font-mono text-sm leading-relaxed">
 <span class="text-purple-400">import</span> <span class="text-white">requests</span>
 
 <span class="text-gray-500"># API Configuration</span>
@@ -209,6 +295,31 @@ response = requests.get(url, headers=headers, params=params)
 
 <span class="text-gray-500"># Output results</span>
 <span class="text-yellow-400">print</span>(response.json()[<span class="text-green-400">'content'</span>])
+</pre>
+<pre id="code-node" class="font-mono text-sm leading-relaxed hidden">
+<span class="text-purple-400">import</span> <span class="text-white">fetch</span> <span class="text-purple-400">from</span> <span class="text-green-400">'node-fetch'</span>;
+
+<span class="text-purple-400">const</span> <span class="text-white">apiUrl</span> = <span class="text-green-400">'https://api.scrapyx.io/v2/fetch'</span>;
+<span class="text-purple-400">const</span> <span class="text-white">params</span> = <span class="text-purple-400">new</span> <span class="text-white">URLSearchParams</span>({
+  <span class="text-white">url</span>: <span class="text-green-400">'https://example.com'</span>,
+  <span class="text-white">render_js</span>: <span class="text-green-400">'true'</span>,
+  <span class="text-white">proxy_country</span>: <span class="text-green-400">'US'</span>,
+});
+
+<span class="text-purple-400">const</span> <span class="text-white">res</span> = <span class="text-purple-400">await</span> <span class="text-white">fetch</span>(<span class="text-green-400">`${apiUrl}?${params.toString()}`</span>, {
+  <span class="text-white">method</span>: <span class="text-green-400">'GET'</span>,
+  <span class="text-white">headers</span>: { <span class="text-green-400">'X-API-KEY'</span>: <span class="text-green-400">'YOUR_API_KEY'</span> },
+});
+
+<span class="text-purple-400">const</span> <span class="text-white">data</span> = <span class="text-purple-400">await</span> res.<span class="text-white">json</span>();
+<span class="text-white">console</span>.<span class="text-white">log</span>(data.<span class="text-white">content</span>);
+</pre>
+<pre id="code-curl" class="font-mono text-sm leading-relaxed hidden">
+curl -G "https://api.scrapyx.io/v2/fetch" ^
+  -H "X-API-KEY: YOUR_API_KEY" ^
+  --data-urlencode "url=https://example.com" ^
+  --data-urlencode "render_js=true" ^
+  --data-urlencode "proxy_country=US"
 </pre>
             </div>
 
@@ -252,9 +363,9 @@ response = requests.get(url, headers=headers, params=params)
 
             <!-- Try It Button -->
             <div class="sticky bottom-0 p-6 bg-[#0B101A] border-t border-dark-border">
-                <button class="w-full bg-brand text-dark-bg font-bold py-3 px-4 rounded-lg hover:bg-brand-hover transition-colors flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-play"></i> Try It In Sandbox
-                </button>
+                <a href="{% url 'new_scrape' %}" class="w-full bg-brand text-dark-bg font-bold py-3 px-4 rounded-lg hover:bg-brand-hover transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Try It In Dashboard
+                </a>
             </div>
         </div>
     </main>
@@ -275,4 +386,139 @@ response = requests.get(url, headers=headers, params=params)
         background-color: #374151;
     }
 </style>
+<style>
+  .sidebar-indicator{
+    position:absolute;
+    border-radius:12px;
+    pointer-events:none;
+    z-index:1;
+    transition: transform 200ms ease, width 200ms ease, height 200ms ease;
+  }
+  .sidebar-indicator.brand{
+    border:1px solid rgba(0,212,197,0.25);
+    background: rgba(0,212,197,0.08);
+  }
+  .sidebar-indicator.white{
+    border:1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+  }
+</style>
+<script>
+  const asideEl = document.querySelector('aside');
+  const sidebarLinks = Array.from(document.querySelectorAll('aside a[href^="#"]'));
+  const indicator = document.createElement('div');
+  indicator.className = 'sidebar-indicator';
+  asideEl.appendChild(indicator);
+  function placeIndicator(link) {
+    const lr = link.getBoundingClientRect();
+    const ar = asideEl.getBoundingClientRect();
+    const top = lr.top - ar.top + asideEl.scrollTop;
+    const left = lr.left - ar.left + asideEl.scrollLeft;
+    indicator.style.width = lr.width + 'px';
+    indicator.style.height = lr.height + 'px';
+    indicator.style.transform = `translate(${left}px, ${top}px)`;
+  }
+  function activate(link) {
+    document.querySelectorAll('aside a').forEach(a => a.classList.remove('bg-white/5','border','border-white/10','text-white','text-brand','bg-brand/10','border-brand/20'));
+    const hl = link.dataset.highlight;
+    if (hl === 'brand') {
+      link.classList.add('text-brand','bg-brand/10','border','border-brand/20');
+    } else {
+      link.classList.add('bg-white/5','border','border-white/10','text-white');
+    }
+    placeIndicator(link);
+    indicator.classList.remove('brand','white');
+    indicator.classList.add(hl === 'brand' ? 'brand' : 'white');
+  }
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) {
+        history.pushState(null, '', link.getAttribute('href'));
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        activate(link);
+      }
+    });
+  });
+  const initialLink = sidebarLinks.find(l => l.getAttribute('href') === window.location.hash) || sidebarLinks[0];
+  if (initialLink) activate(initialLink);
+
+  const langButtons = [
+    document.getElementById('langPython'),
+    document.getElementById('langNode'),
+    document.getElementById('langCurl'),
+  ].filter(Boolean);
+
+  const codeBlocks = {
+    python: document.getElementById('code-python'),
+    node: document.getElementById('code-node'),
+    curl: document.getElementById('code-curl'),
+  };
+
+  function setLanguage(lang) {
+    Object.entries(codeBlocks).forEach(([k, el]) => {
+      if (!el) return;
+      el.classList.toggle('hidden', k !== lang);
+    });
+
+    langButtons.forEach(btn => {
+      const active = btn.dataset.lang === lang;
+      btn.classList.toggle('text-brand', active);
+      btn.classList.toggle('border-brand', active);
+      btn.classList.toggle('text-gray-400', !active);
+      btn.classList.toggle('border-transparent', !active);
+    });
+  }
+
+  langButtons.forEach(btn => {
+    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+  });
+
+  setLanguage('python');
+
+  const copyCodeBtn = document.getElementById('copyCodeBtn');
+  if (copyCodeBtn) {
+    copyCodeBtn.addEventListener('click', async () => {
+      const activeLang = langButtons.find(b => b.classList.contains('border-brand'))?.dataset.lang || 'python';
+      const activeBlock = codeBlocks[activeLang];
+      const text = activeBlock ? activeBlock.textContent.trim() : '';
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+    });
+  }
+
+  const copyEndpointBtn = document.getElementById('copyEndpointBtn');
+  const endpointPathEl = document.getElementById('endpointPath');
+  if (copyEndpointBtn && endpointPathEl) {
+    copyEndpointBtn.addEventListener('click', async () => {
+      const text = endpointPathEl.textContent.trim();
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+    });
+  }
+</script>
 {% endblock %}

@@ -489,6 +489,8 @@
     // Scrape Configuration
     const targetUrl = "{{ target_url|escapejs }}";
     const csrfToken = "{{ csrf_token }}";
+    const aiEnabled = {{ ai_enabled|yesno:"true,false" }};
+    const contentType = "{{ content_type|escapejs }}";
     
     // UI Elements
     const progressBar = document.getElementById('progress-bar');
@@ -636,24 +638,38 @@
         }, 500);
 
         try {
-            addLog('NETWORK', 'Sending scrape request...', 'text-yellow-500');
-            
-            const response = await fetch('/api/run-scrape/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}' // Django CSRF
-                },
-                body: JSON.stringify({ url: targetUrl })
-            });
+            let attemptedJs = false;
 
-            const text = await response.text();
-            let data;
-            try {
-                data = JSON.parse(text);
-            } catch (e) {
-                console.error('Failed to parse JSON:', text);
-                throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+            const runScrapeRequest = async ({ renderJs }) => {
+                addLog('NETWORK', renderJs ? 'Retrying with JS rendering...' : 'Sending scrape request...', 'text-yellow-500');
+
+                const response = await fetch('/api/run-scrape/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}' // Django CSRF
+                    },
+                    body: JSON.stringify({ url: targetUrl, render_js: !!renderJs, ai_enabled: aiEnabled, content_type: contentType })
+                });
+
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('Failed to parse JSON:', text);
+                    throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+                }
+                return data;
+            };
+
+            let data = await runScrapeRequest({ renderJs: false });
+            if (data.status !== 'success' && data.blocked_by_security && !attemptedJs) {
+                attemptedJs = true;
+                addLog('SECURITY', 'Site returned an anti-bot security check (Cloudflare/Captcha).', 'text-red-400');
+                addLog('ENGINE', 'Switching to browser rendering to reduce blocking…', 'text-purple-400');
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                data = await runScrapeRequest({ renderJs: true });
             }
 
             // Wait if paused
@@ -662,7 +678,7 @@
             }
 
             clearInterval(progressInterval);
-            
+
             if (data.status === 'success') {
                 // Complete progress
                 progressBar.style.width = '100%';
@@ -671,15 +687,18 @@
                 progressDetails.innerText = "Redirecting to results...";
                 // actionStatus.innerText = "Success"; // Removed
                 statusText.innerText = "Scrape Completed!";
-                
+
                 addLog('SUCCESS', `Scrape finished. Found ${data.result.count} items.`, 'text-green-500');
                 addLog('SYSTEM', 'Redirecting to results page...', 'text-blue-400');
-                
+
                 // Redirect after short delay
                 setTimeout(() => {
                     window.location.href = `{% url 'scraped_results' %}?job_id=${data.job_id}`;
                 }, 1000);
             } else {
+                if (data.blocked_by_security) {
+                    addLog('HINT', 'If this site stays blocked, try a different page (often /about or /contact) or enable a proxy.', 'text-gray-400');
+                }
                 throw new Error(data.message || 'Unknown error occurred');
             }
 

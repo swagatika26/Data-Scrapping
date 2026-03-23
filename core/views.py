@@ -1390,6 +1390,23 @@ def notifications_feed(request):
         'last_week_items': last_week_items,
         'page_title': 'Notifications',
     })
+
+@login_required
+def notifications_preview(request):
+    qs = Notification.objects.filter(user=request.user).select_related('message', 'message__sender').order_by('-created_at')[:6]
+    items = []
+    for n in qs:
+        sender_name = None
+        if n.message and n.message.sender:
+            sender_name = n.message.sender.username
+        title = 'New Message' if not sender_name else f"New message from {sender_name}"
+        items.append({
+            'title': title,
+            'timestamp': n.created_at.strftime('%Y-%m-%d %H:%M'),
+            'url': reverse('messages'),
+        })
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return JsonResponse({'items': items, 'unread_count': unread_count})
 @user_required
 def new_scrape(request):
     """
@@ -1410,7 +1427,7 @@ def scrape_progress(request):
         
     url = url.strip()
 
-    content_type = request.GET.get('content_type', 'E-commerce Products')
+    content_type = request.GET.get('content_type', 'Products')
     export_format = request.GET.get('export_format', 'CSV')
     ai_toggle = request.GET.get('ai_toggle') == 'on'
 
@@ -1449,8 +1466,13 @@ def export_results(request):
         # Create DataFrame
         df = pd.DataFrame(data)
         
-        # Select and rename columns for better output
-        cols = ['rank', 'name', 'price', 'url', 'status', 'date']
+        cols = [
+            'rank', 'name', 'price', 'date', 'rating', 'reviews',
+            'phone', 'email', 'url', 'image',
+            'city', 'address', 'state', 'courses', 'affiliation',
+            'location', 'bedrooms', 'bathrooms', 'area', 'property_type',
+            'id', 'status',
+        ]
         # Filter to only existing columns
         cols = [c for c in cols if c in df.columns]
         df = df[cols]
@@ -1551,7 +1573,22 @@ def run_scrape_api(request):
             limits_cache = cache.get('admin_limits') or {}
             retry_limit = limits_cache.get('retry_limit', request.session.get('retry_limit', 3))
             timeout_seconds = limits_cache.get('timeout_seconds', request.session.get('timeout_seconds', 30))
-            result = scraper.execute_scrape(url, {'retry_limit': retry_limit, 'timeout': timeout_seconds})
+            render_js = bool(data.get('render_js', False))
+            ai_enabled = bool(data.get('ai_enabled', False))
+            content_type = (data.get('content_type') or '').strip()
+            min_delay_raw = limits_cache.get('min_delay_per_domain', request.session.get('min_delay_per_domain', 4))
+            try:
+                min_delay_per_domain = float(min_delay_raw)
+            except Exception:
+                min_delay_per_domain = 4.0
+            result = scraper.execute_scrape(url, {
+                'retry_limit': retry_limit,
+                'timeout': timeout_seconds,
+                'render_js': render_js,
+                'min_delay_per_domain': min_delay_per_domain,
+                'enable_ai': ai_enabled,
+                'content_type': content_type,
+            })
             
             # If the URL was changed (e.g. via search), update the job record
             if result.get('url') and result['url'] != url:
@@ -1565,7 +1602,9 @@ def run_scrape_api(request):
                 ScrapeLog.objects.create(job=job, level='ERROR', message='Job failed', metadata={'error': result.get('error')})
                 return JsonResponse({
                     'status': 'error', 
-                    'message': result.get('error')
+                    'message': result.get('error'),
+                    'error_code': result.get('error_code'),
+                    'blocked_by_security': bool(result.get('blocked_by_security')),
                 })
             elif result.get('count', 0) == 0:
                 # Even if no technical error, 0 items is a "logical" failure for the user
@@ -1580,6 +1619,11 @@ def run_scrape_api(request):
                 job.status = 'COMPLETED'
                 
                 # Save data
+                # Ensure content_type is persisted for results view
+                try:
+                    result['content_type'] = content_type
+                except Exception:
+                    pass
                 ScrapedData.objects.create(
                     job=job,
                     content=result
@@ -1627,6 +1671,7 @@ def scraped_results(request):
         'count': scraped_data.get('count', 0),
         'page_title': scraped_data.get('title', 'Scraped Results'),
         'job_id': job_id, # Pass job_id for export
+        'content_type': scraped_data.get('content_type', 'Products'),
     }
 
     # Pagination logic
@@ -2665,12 +2710,7 @@ def admin_dashboard(request, section='overview'):
         'page_title': section_titles[section],
     }
     context.update(admin_profile_context)
-    section_templates = {
-        'jobs': 'admin/scraper_infra.html',
-        'activity': 'admin/messages.html',
-    }
-    template_name = section_templates.get(section, f"admin/{section}.html")
-    return render(request, template_name, context)
+    return render(request, 'admin/admin_dashboard.html', context)
 
 
 @never_cache
@@ -2789,6 +2829,7 @@ def admin_support_resolve(request, ticket_id):
 def admin_support_reply(request, ticket_id):
     if request.method == 'POST':
         message = request.POST.get('message', '').strip()
+        msg_obj = None
         if message:
             convo = Conversation.objects.select_related('user', 'admin').filter(id=str(ticket_id)).first()
             if convo and convo.user:
@@ -2807,6 +2848,9 @@ def admin_support_reply(request, ticket_id):
                 _log_activity(request, 'admin_support_reply', user=request.user, metadata={'ticket_id': str(ticket_id), 'conversation_id': convo.id})
         # AJAX support: return JSON so UI can update without full reload
         if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.META.get('HTTP_ACCEPT', '').startswith('application/json'):
+            if not msg_obj:
+                return JsonResponse({'status': 'error', 'ticket_id': str(ticket_id)}, status=400)
+            ts = timezone.localtime(msg_obj.created_at).strftime('%I:%M %p').lstrip('0')
             return JsonResponse({
                 'status': 'ok',
                 'ticket_id': str(ticket_id),
@@ -2814,7 +2858,7 @@ def admin_support_reply(request, ticket_id):
                     'author': request.user.username,
                     'role': 'agent',
                     'message': message,
-                    'timestamp': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'timestamp': ts,
                 }
             })
     return redirect(f"{reverse('admin_dashboard_section', kwargs={'section': 'activity'})}?ticket={ticket_id}")

@@ -18,10 +18,10 @@
     </div>
     
     <div class="flex items-center gap-4">
-        <a href="{% url 'notifications' %}" class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-all relative" title="Notifications">
+        <button type="button" data-notifications-toggle class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-all relative" title="Notifications">
             <i class="fa-regular fa-bell"></i>
-            <span class="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full bg-red-500 border border-dark-bg"></span>
-        </a>
+            <span data-notifications-dot class="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full bg-red-500 border border-dark-bg"></span>
+        </button>
     </div>
 </header>
 

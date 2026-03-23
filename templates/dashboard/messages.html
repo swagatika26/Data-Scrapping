@@ -18,7 +18,7 @@
     <div class="glass-card rounded-2xl p-4 border border-white/10 flex flex-col overflow-hidden">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-lg font-bold text-white">Inbox</h2>
-        <a href="{% url 'notifications' %}" class="text-brand text-xs font-bold">New</a>
+        <button type="button" data-notifications-toggle class="text-brand text-xs font-bold">New <span data-notifications-dot class="inline-block w-1.5 h-1.5 rounded-full bg-red-500 align-middle ml-1"></span></button>
       </div>
       <div class="relative mb-3">
         <input type="text" class="w-full bg-dark-bg border border-white/10 rounded-xl px-4 py-2 text-sm text-gray-400" placeholder="Search conversations...">

@@ -415,6 +415,89 @@
         });
     </script>
 
+    <div id="user-notifications-panel" class="fixed top-20 right-8 z-50 w-[360px] glass-panel rounded-2xl overflow-hidden hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
+            <div class="text-white font-bold text-lg">Notifications</div>
+            <a href="{% url 'notifications' %}" class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-gray-300 hover:text-white hover:bg-white/10">View All</a>
+        </div>
+        <div id="user-notifications-list" class="max-h-[360px] overflow-y-auto">
+            <div class="px-5 py-4 text-sm text-gray-400">Loading…</div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const panel = document.getElementById('user-notifications-panel');
+            const list = document.getElementById('user-notifications-list');
+            const previewUrl = "{% url 'notifications_preview' %}";
+
+            function setUnreadDot(unreadCount) {
+                document.querySelectorAll('[data-notifications-dot]').forEach(el => {
+                    el.classList.toggle('hidden', !(unreadCount > 0));
+                });
+            }
+
+            function render(items) {
+                if (!list) return;
+                if (!items || items.length === 0) {
+                    list.innerHTML = '<div class="px-5 py-6 text-sm text-gray-400">No new notifications.</div>';
+                    return;
+                }
+                list.innerHTML = items.map((n, idx) => {
+                    const divider = idx === 0 ? '' : '<div class="border-t border-white/5 mx-5"></div>';
+                    return `${divider}<a href="${n.url}" class="block px-5 py-4 hover:bg-white/5 transition-colors">
+                        <div class="text-white font-semibold">${n.title}</div>
+                        <div class="text-gray-500 text-sm mt-1">${n.timestamp}</div>
+                    </a>`;
+                }).join('');
+            }
+
+            async function load() {
+                if (!list) return;
+                list.innerHTML = '<div class="px-5 py-4 text-sm text-gray-400">Loading…</div>';
+                try {
+                    const res = await fetch(previewUrl, { credentials: 'same-origin' });
+                    const data = await res.json();
+                    render(data.items);
+                    setUnreadDot(data.unread_count || 0);
+                } catch (e) {
+                    list.innerHTML = '<div class="px-5 py-4 text-sm text-gray-400">Unable to load notifications.</div>';
+                }
+            }
+
+            function closePanel() {
+                if (panel) panel.classList.add('hidden');
+            }
+
+            function togglePanel() {
+                if (!panel) return;
+                const willOpen = panel.classList.contains('hidden');
+                if (willOpen) {
+                    panel.classList.remove('hidden');
+                    load();
+                } else {
+                    panel.classList.add('hidden');
+                }
+            }
+
+            document.addEventListener('click', (e) => {
+                const toggle = e.target.closest('[data-notifications-toggle]');
+                if (toggle) {
+                    e.preventDefault();
+                    togglePanel();
+                    return;
+                }
+                if (panel && !panel.classList.contains('hidden')) {
+                    if (!panel.contains(e.target)) {
+                        closePanel();
+                    }
+                }
+            });
+
+            load();
+        })();
+    </script>
+
     {% block scripts %}{% endblock %}
 </body>
 </html>

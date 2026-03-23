@@ -26,8 +26,8 @@ class AIService:
             logger.error(f"Failed to configure Google Generative AI: {e}")
             return False
 
-    @classmethod
-    def extract_structured_data(cls, html_content, schema_hint=None):
+     @classmethod
+    def extract_structured_data(cls, html_content, schema_hint=None, prompt_override=None):
         """
         Extracts structured data from HTML content using Gemini.
         
@@ -41,15 +41,17 @@ class AIService:
         try:
             model = genai.GenerativeModel('gemini-1.5-flash')
             
-            prompt = """
-            You are an expert web scraper. Extract the main data from this HTML snippet into a JSON list of objects.
-            Identify the repeating items (like products, articles, jobs, etc.).
-            Clean the data (remove currency symbols, extra whitespace).
-            Return ONLY the valid JSON list, no markdown formatting.
-            """
-            
-            if schema_hint:
-                prompt += f"\nFocus on extracting: {schema_hint}"
+            if prompt_override:
+                prompt = prompt_override
+            else:
+                prompt = """
+                You are an expert web scraper. Extract the main data from this HTML snippet into a JSON list of objects.
+                Identify the repeating items (like products, articles, jobs, etc.).
+                Clean the data (remove currency symbols, extra whitespace).
+                Return ONLY the valid JSON list, no markdown formatting.
+                """
+                if schema_hint:
+                    prompt += f"\nFocus on extracting: {schema_hint}"
                 
             # Truncate HTML to avoid token limits (rough estimate)
             # Gemini 1.5 Flash has a large context window, but let's be safe and efficient
@@ -72,4 +74,48 @@ class AIService:
             
         except Exception as e:
             logger.error(f"AI Extraction failed: {e}")
+            return None
+
+    @classmethod
+    def normalize_items(cls, items, schema_hint=None, prompt_override=None):
+        if not cls.configure():
+            return None
+
+        if not items or not isinstance(items, list):
+            return None
+
+        try:
+            model = genai.GenerativeModel('gemini-1.5-flash')
+
+            if prompt_override:
+                prompt = prompt_override
+            else:
+                prompt = """
+                You are a data cleaning and normalization engine.
+                Normalize the provided JSON list of scraped items into a clean JSON list.
+                Requirements:
+                - Output ONLY valid JSON (no markdown).
+                - Each item must be an object.
+                - Remove extra whitespace.
+                - Keep URLs as-is.
+                - If a field is missing, use an empty string.
+                """
+                if schema_hint:
+                    prompt += f"\nFocus on: {schema_hint}"
+
+            import json
+            import re
+
+            payload = json.dumps(items[:50], ensure_ascii=False)
+            response = model.generate_content([prompt, payload])
+
+            text = response.text.strip()
+            text = re.sub(r'^```json\s*', '', text)
+            text = re.sub(r'^```\s*', '', text)
+            text = re.sub(r'\s*```$', '', text)
+
+            data = json.loads(text)
+            return data if isinstance(data, list) else None
+        except Exception as e:
+            logger.error(f"AI Normalize failed: {e}")
             return None

@@ -9,98 +9,225 @@ from urllib.parse import urljoin, urlparse
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Safari/605.1.15",
+]
+
 class ScraperService:
     """
     Service layer for handling scraping logic with enhanced support for JS-heavy sites via structured data.
     """
+
+    _domain_last_request_at = {}
     
-    def try_playwright(self, url, timeout_ms=90000):
+    def _throttle(self, url, min_interval_seconds):
+        try:
+            host = urlparse(url).netloc.lower()
+        except Exception:
+            host = ""
+        if not host or min_interval_seconds <= 0:
+            return
+        now = time.time()
+        last = self._domain_last_request_at.get(host)
+        if last is not None:
+            wait_s = (last + min_interval_seconds) - now
+            if wait_s > 0:
+                time.sleep(wait_s + random.uniform(0.15, 0.55))
+        self._domain_last_request_at[host] = time.time()
+
+    def _is_probably_blocked(self, html_text):
+        if not html_text:
+            return False
+        t = html_text.lower()
+        strong = [
+            "cf-chl",
+            "captcha-delivery.com",
+            "g-recaptcha",
+            "hcaptcha",
+            "datadome",
+        ]
+        if any(tok in t for tok in strong):
+            return True
+        moderate = 0
+        if "cloudflare" in t:
+            moderate += 1
+        if "just a moment" in t or "attention required" in t:
+            moderate += 1
+        if "verify you are human" in t:
+            moderate += 1
+        if "access denied" in t:
+            moderate += 1
+        if "captcha" in t:
+            moderate += 1
+        return moderate >= 2
+
+    def _schema_config(self, content_type):
+        key = (content_type or "").strip().lower()
+        if "hotel" in key:
+            return {
+                "kind": "hotel_leads",
+                "prompt": (
+                    "Extract hotel leads from the HTML into a JSON array.\n"
+                    "Return ONLY valid JSON.\n"
+                    "Each item must be an object with keys:\n"
+                    "name, price, rating, reviews, phone, email, url, city, address, date.\n"
+                    "Rules:\n"
+                    "- name: hotel/property name.\n"
+                    "- price: price range (e.g. '₹3,000–₹7,000/night') or empty.\n"
+                    "- rating: number 0–5 as string (e.g. '4.3') or empty.\n"
+                    "- reviews: integer as string (e.g. '1240') or empty.\n"
+                    "- phone/email/url: contact/website if present.\n"
+                    "- date: empty string unless a relevant date exists.\n"
+                    "- city/address: if present.\n"
+                    "- If missing, use empty string.\n"
+                ),
+                "normalize_hint": "Hotel leads; ensure price is a range; keep contact fields clean.",
+            }
+        if "college" in key or "university" in key:
+            return {
+                "kind": "college_leads",
+                "prompt": (
+                    "Extract college/university leads from the HTML into a JSON array.\n"
+                    "Return ONLY valid JSON.\n"
+                    "Each item must be an object with keys:\n"
+                    "name, phone, email, url, city, state, courses, affiliation, date.\n"
+                    "Rules:\n"
+                    "- name: college/university name.\n"
+                    "- courses: a JSON array of course names (courses list).\n"
+                    "- email: admissions/registrar/general contact if present.\n"
+                    "- url: official website page URL if present.\n"
+                    "- If missing, use empty string (courses should be an empty array).\n"
+                ),
+                "normalize_hint": "College leads; courses must be a list; keep admissions email/phone clean.",
+            }
+        if "real estate" in key or "realestate" in key or "property" in key:
+            return {
+                "kind": "real_estate",
+                "prompt": (
+                    "Extract real estate listings from the HTML into a JSON array.\n"
+                    "Return ONLY valid JSON.\n"
+                    "Each item must be an object with keys:\n"
+                    "name, price, location, bedrooms, bathrooms, area, property_type, phone, email, url, date.\n"
+                    "Rules:\n"
+                    "- name: listing title/property name.\n"
+                    "- price: price or rent (keep currency symbols).\n"
+                    "- bedrooms/bathrooms/area: strings (e.g. '3', '2', '1200 sqft') or empty.\n"
+                    "- phone/email/url: agent/contact/listing link if present.\n"
+                    "- If missing, use empty string.\n"
+                ),
+                "normalize_hint": "Real estate listings; keep numeric fields clean; keep urls absolute when possible.",
+            }
+        return {
+            "kind": "products",
+            "prompt": (
+                "Extract products/items from the HTML into a JSON array.\n"
+                "Return ONLY valid JSON.\n"
+                "Each item must be an object with keys:\n"
+                "name, price, rating, reviews, phone, email, url, image, date, status.\n"
+                "Rules:\n"
+                "- name: product/item name.\n"
+                "- price: keep currency symbol.\n"
+                "- rating: number 0–5 as string or empty.\n"
+                "- reviews: integer as string or empty.\n"
+                "- url/image: link to product and image if present.\n"
+                "- If missing, use empty string.\n"
+            ),
+            "normalize_hint": "Products; keep price/rating/reviews clean; ensure url/image are valid.",
+        }
+    
+    def try_playwright(self, url, timeout_ms=90000, user_agent=None, headless=True, proxy=None):
         """Attempt to scrape using Playwright to bypass 403/CAPTCHA."""
         try:
             # Import here to avoid hard dependency at module level
             from playwright.sync_api import sync_playwright
+            try:
+                from tzlocal import get_localzone_name
+                timezone_id = get_localzone_name()
+            except Exception:
+                timezone_id = "UTC"
             
             with sync_playwright() as p:
-                logger.info("Launching Playwright for fallback scrape...")
-                browser = p.chromium.launch(
-                    headless=True,
-                    args=[
-                        "--disable-blink-features=AutomationControlled", 
-                        "--no-sandbox",
-                        "--disable-setuid-sandbox",
-                        "--disable-infobars",
-                        "--window-position=0,0",
-                        "--ignore-certificate-errors",
-                        "--ignore-certificate-errors-spki-list",
-                        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
-                    ]
-                )
-                context = browser.new_context(
-                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-                    viewport={"width": 1920, "height": 1080},
-                    locale="en-US",
-                    timezone_id="America/New_York",
-                    geolocation={"latitude": 40.7128, "longitude": -74.0060},
-                    permissions=["geolocation"]
-                )
-                
-                # Stealth injection
-                stealth_js = """
-                Object.defineProperty(navigator, 'webdriver', {
-                    get: () => undefined
-                });
-                Object.defineProperty(navigator, 'languages', {
-                    get: () => ['en-US', 'en']
-                });
-                Object.defineProperty(navigator, 'plugins', {
-                    get: () => [1, 2, 3, 4, 5]
-                });
-                window.chrome = { runtime: {} };
-                """
-                
-                page = context.new_page()
-                page.add_init_script(stealth_js)
-                
-                try:
-                    logger.info(f"Playwright navigating to {url}")
-                    page.goto(url, timeout=timeout_ms, wait_until="domcontentloaded")
-                    page.wait_for_timeout(5000) # Wait for dynamic content/checks
-                    
-                    # Scroll down to trigger lazy loading
-                    for _ in range(5):
-                        page.mouse.wheel(0, 500)
-                        page.wait_for_timeout(500)
-                    
-                    # Wait for loading screens to disappear
-                    try:
-                        # Common loading text indicators
-                        loading_indicators = [
-                            "text=Just a moment", 
-                            "text=finding great stays", 
-                            "text=loading", 
-                            "text=please wait"
-                        ]
-                        for indicator in loading_indicators:
-                            try:
-                                # Wait up to 5s for indicator to vanish if present
-                                if page.is_visible(indicator, timeout=1000):
-                                    logger.info(f"Waiting for '{indicator}' to disappear...")
-                                    page.wait_for_selector(indicator, state='hidden', timeout=10000)
-                            except:
-                                pass # Indicator not found or didn't disappear, proceed anyway
-                    except Exception as e:
-                        logger.warning(f"Error waiting for loading screen: {e}")
+                engines = [("chromium", True), ("chromium", False), ("firefox", True)]
+                ua_list = [user_agent] if user_agent else DEFAULT_USER_AGENTS
 
-                    content = page.content()
-                    title = page.title()
-                    logger.info(f"Playwright success. Title: {title}, Content len: {len(content)}")
-                    
-                    browser.close()
-                    return content
-                except Exception as e:
-                    browser.close()
-                    logger.error(f"Playwright navigation failed: {e}")
-                    return None
+                for engine, headless_mode in engines:
+                    for ua in ua_list:
+                        try:
+                            logger.info(f"Launching Playwright {engine} headless={headless_mode} ...")
+                            launch_kwargs = {
+                                "headless": headless_mode,
+                                "args": [
+                                    "--disable-blink-features=AutomationControlled",
+                                    "--no-sandbox",
+                                    "--disable-setuid-sandbox",
+                                    "--disable-infobars",
+                                    "--window-position=0,0",
+                                    "--ignore-certificate-errors",
+                                    "--ignore-certificate-errors-spki-list",
+                                ],
+                            }
+                            if proxy:
+                                launch_kwargs["proxy"] = proxy
+                            browser = getattr(p, engine).launch(**launch_kwargs)
+                            context = browser.new_context(
+                                user_agent=ua,
+                                viewport={"width": 1366, "height": 900},
+                                locale="en-US",
+                                timezone_id=timezone_id,
+                                geolocation={"latitude": 40.7128, "longitude": -74.0060},
+                                permissions=["geolocation"]
+                            )
+                            stealth_js = """
+                            Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+                            Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+                            Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
+                            window.chrome = { runtime: {} };
+                            """
+                            page = context.new_page()
+                            page.add_init_script(stealth_js)
+                            try:
+                                page.route("**/*", lambda route: route.abort() if route.request.resource_type in ("image", "media", "font") else route.continue_())
+                            except Exception:
+                                pass
+
+                            logger.info(f"Playwright navigating to {url} with UA={ua[:20]}...")
+                            page.goto(url, timeout=timeout_ms, wait_until="domcontentloaded")
+                            try:
+                                page.wait_for_load_state("networkidle", timeout=min(timeout_ms, 45000))
+                            except Exception:
+                                pass
+                            page.wait_for_timeout(3000)
+
+                            # Scroll down to trigger dynamic content
+                            for _ in range(4):
+                                page.mouse.wheel(0, 600)
+                                page.wait_for_timeout(600)
+
+                            # If Cloudflare texts present, wait a little longer
+                            cf_tokens = ["Just a moment", "verify you are human", "checking your browser"]
+                            for t in cf_tokens:
+                                try:
+                                    if page.is_visible(f"text={t}", timeout=800):
+                                        page.wait_for_timeout(5000)
+                                        break
+                                except Exception:
+                                    pass
+
+                            content = page.content()
+                            title = page.title()
+                            browser.close()
+                            if content and len(content) > 500:
+                                logger.info(f"Playwright success ({engine}, headless={headless_mode}). Title: {title}")
+                                return content
+                        except Exception as e:
+                            try:
+                                browser.close()
+                            except Exception:
+                                pass
+                            logger.warning(f"{engine} headless={headless_mode} attempt failed: {e}")
+                return None
         except Exception as e:
             logger.error(f"Playwright setup failed: {e}")
             return None
@@ -126,48 +253,80 @@ class ScraperService:
             options = options or {}
             req_timeout = int(options.get('timeout', 30))
             retry_limit = max(1, int(options.get('retry_limit', 3)))
+            min_delay_per_domain = float(options.get('min_delay_per_domain', 4.0))
+            render_js = bool(options.get('render_js', False))
+            enable_ai = bool(options.get('enable_ai', False))
+            content_type = options.get('content_type') or options.get('schema_hint') or ""
+            schema = self._schema_config(content_type)
+            user_agents = options.get('user_agents') or DEFAULT_USER_AGENTS
+            proxy_url = options.get('proxy_url')
+            proxy_server = options.get('proxy_server')
+            proxy_username = options.get('proxy_username')
+            proxy_password = options.get('proxy_password')
+            proxy = None
+            if proxy_server:
+                proxy = {"server": proxy_server}
+                if proxy_username:
+                    proxy["username"] = proxy_username
+                if proxy_password:
+                    proxy["password"] = proxy_password
             
-            # 1. Try Requests first
-            try:
-                # Use improved headers to mimic a real browser
-                headers = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-                    'Accept-Language': 'en-US,en;q=0.9',
-                    'Accept-Encoding': 'gzip, deflate, br',
-                    'Cache-Control': 'max-age=0',
-                    'Upgrade-Insecure-Requests': '1',
-                    'Sec-Fetch-Dest': 'document',
-                    'Sec-Fetch-Mode': 'navigate',
-                    'Sec-Fetch-Site': 'none',
-                    'Sec-Fetch-User': '?1',
-                    'Connection': 'keep-alive',
-                }
-                
-                attempt = 0
-                last_exc = None
-                while attempt < retry_limit and not html_content:
-                    time.sleep(random.uniform(0.8, 1.6))
+            if not render_js:
+                try:
+                    attempt = 0
+                    last_exc = None
                     session = requests.Session()
-                    try:
-                        response = session.get(url, headers=headers, timeout=req_timeout)
-                        if response.status_code == 403 or "captcha" in response.url.lower() or (len(response.content) < 5000 and "captcha" in response.text.lower()):
-                            logger.warning(f"Requests blocked (Status: {response.status_code}), switching to Playwright...")
-                            break
-                        response.raise_for_status()
-                        html_content = response.content
-                    except Exception as e:
-                        last_exc = e
-                        attempt += 1
-                if not html_content and last_exc:
-                    logger.warning(f"Requests failed after {retry_limit} attempts: {last_exc}, switching to Playwright...")
-                    html_content = self.try_playwright(url, timeout_ms=req_timeout * 1000)
-            except Exception as e:
-                logger.warning(f"Requests failed: {e}, switching to Playwright...")
-                html_content = self.try_playwright(url, timeout_ms=req_timeout * 1000)
+                    proxies = {"http": proxy_url, "https": proxy_url} if proxy_url else None
+                    while attempt < retry_limit and not html_content:
+                        self._throttle(url, min_delay_per_domain)
+                        ua = random.choice(list(user_agents))
+                        headers = {
+                            'User-Agent': ua,
+                            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                            'Accept-Language': 'en-US,en;q=0.9',
+                            'Cache-Control': 'max-age=0',
+                            'Upgrade-Insecure-Requests': '1',
+                            'Sec-Fetch-Dest': 'document',
+                            'Sec-Fetch-Mode': 'navigate',
+                            'Sec-Fetch-Site': 'none',
+                            'Sec-Fetch-User': '?1',
+                            'Connection': 'keep-alive',
+                        }
+                        try:
+                            response = session.get(url, headers=headers, timeout=req_timeout, proxies=proxies, allow_redirects=True)
+                            if response.status_code in (401, 403, 429) or self._is_probably_blocked(response.text):
+                                logger.warning(f"Requests blocked (Status: {response.status_code}), switching to Playwright...")
+                                break
+                            response.raise_for_status()
+                            html_content = response.content
+                        except Exception as e:
+                            last_exc = e
+                            attempt += 1
+                    if not html_content and last_exc:
+                        logger.warning(f"Requests failed after {retry_limit} attempts: {last_exc}, switching to Playwright...")
+                except Exception as e:
+                    logger.warning(f"Requests failed: {e}, switching to Playwright...")
             
             if not html_content:
-                raise Exception("Failed to retrieve content via both Requests and Playwright.")
+                self._throttle(url, min_delay_per_domain)
+                html_content = self.try_playwright(
+                    url,
+                    timeout_ms=req_timeout * 1000,
+                    user_agent=random.choice(list(user_agents)),
+                    headless=bool(options.get('playwright_headless', True)),
+                    proxy=proxy,
+                )
+            
+            if not html_content:
+                return {
+                    "url": url,
+                    "title": "Content Not Loaded",
+                    "products": [],
+                    "count": 0,
+                    "blocked_by_security": True,
+                    "error_code": "NAVIGATION_FAILED",
+                    "error": "The site blocked or prevented loading (both Requests and Browser). Try enabling JS rendering, slowing request rate, or using a proxy / a less protected page."
+                }
             
             soup = BeautifulSoup(html_content, 'html.parser')
             
@@ -316,6 +475,59 @@ class ScraperService:
                 email_match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
                 if email_match:
                     return email_match.group(0)
+                return ""
+            
+            # Helper to find courses (College pages)
+            def find_courses_list(soup_obj):
+                try:
+                    titles = soup_obj.find_all(re.compile(r'^h[1-6]$'), string=re.compile(r'course|program|curriculum|department', re.I))
+                    out = []
+                    for h in titles[:3]:
+                        ul = h.find_next(lambda tag: tag.name in ['ul','ol'])
+                        if ul:
+                            for li in ul.find_all('li')[:30]:
+                                t = li.get_text(" ", strip=True)
+                                if 2 <= len(t) <= 120:
+                                    out.append(t)
+                        if out: break
+                    if not out:
+                        for a in soup_obj.find_all('a', href=True):
+                            if re.search(r'course|program', a['href'], re.I):
+                                t = a.get_text(" ", strip=True)
+                                if 2 <= len(t) <= 120:
+                                    out.append(t)
+                            if len(out) >= 20:
+                                break
+                    # Deduplicate
+                    seen = set()
+                    uniq = []
+                    for t in out:
+                        k = t.lower()
+                        if k not in seen:
+                            seen.add(k)
+                            uniq.append(t)
+                    return uniq[:20]
+                except Exception:
+                    return []
+            
+            # Helper to compute price range from page text
+            def compute_price_range(soup_obj):
+                try:
+                    numbers = re.findall(r'(?:₹|Rs\.?|INR|\$|€|£)\s*[\d,]+', soup_obj.get_text(" ", strip=True))
+                    vals = []
+                    for n in numbers[:60]:
+                        m = re.search(r'([\d,]+)', n)
+                        if m:
+                            try:
+                                vals.append(int(m.group(1).replace(',', '')))
+                            except: pass
+                    if len(vals) >= 2:
+                        lo, hi = min(vals), max(vals)
+                        # Preserve local currency if present
+                        sym = '₹' if re.search(r'[₹]|INR|Rs\.?', soup_obj.get_text() ) else '₹'
+                        return f"{sym}{lo:,}–{sym}{hi:,}"
+                except Exception:
+                    pass
                 return ""
 
             # Strategy 0: Next.js / JSON Data Blob Extraction (New)
@@ -526,47 +738,89 @@ class ScraperService:
             if len(products) < 5 or quality_score < 0.5:
                 logger.info(f"Triggering AI Clustering. Existing items: {len(products)}, Quality: {quality_score:.2f}")
                 
-                # --- NEW: Try Gemini AI First ---
+                ai_products = None
                 try:
-                    from apps.scraper.services.ai_service import AIService
-                    # Pass the raw HTML (soup object converted to string)
-                    ai_products = AIService.extract_structured_data(str(soup), schema_hint="products or items with name, price, image, link, date")
-                    
-                    if ai_products and isinstance(ai_products, list) and len(ai_products) > 0:
-                        logger.info(f"Gemini AI extracted {len(ai_products)} items.")
-                        
-                        # Add valid AI items to our products list
-                        for p in ai_products:
-                            # Normalize keys
-                            if not isinstance(p, dict): continue
-                            
-                            item = {
-                                'name': p.get('name') or p.get('title') or p.get('product_name') or 'Unknown Item',
-                                'price': p.get('price') or p.get('cost') or 'N/A',
-                                'image': p.get('image') or p.get('img') or p.get('image_url') or '',
-                                'link': p.get('link') or p.get('url') or p.get('href') or '',
-                                'date': p.get('date') or p.get('published_at') or p.get('time') or '',
-                                'rating': p.get('rating') or 'N/A',
-                                'reviews': p.get('reviews') or '0',
-                                'id': f"AI-{len(products)+1:04d}",
-                                'status': "AI Extracted"
-                            }
-                            
-                            # Ensure absolute URLs for links and images
-                            if item['link'] and not item['link'].startswith(('http', '//')):
-                                item['link'] = urljoin(url, item['link'])
-                            if item['image'] and not item['image'].startswith(('http', '//')):
-                                item['image'] = urljoin(url, item['image'])
-                                
-                            products.append(item)
-                            
-                        # If AI succeeded significantly, we can return early or skip heuristics
-                        if len(products) > 5:
-                            logger.info("AI extraction successful, skipping heuristic clustering.")
-                            return products
+                    if enable_ai:
+                        from apps.scraper.services.ai_service import AIService
+                        ai_products = AIService.extract_structured_data(str(soup), prompt_override=schema.get("prompt"))
+                        if ai_products and isinstance(ai_products, list):
+                            normalized = AIService.normalize_items(ai_products, schema_hint=schema.get("normalize_hint"))
+                            ai_products = normalized if normalized else ai_products
+
+                        if ai_products and isinstance(ai_products, list):
+                            logger.info(f"Gemini AI extracted {len(ai_products)} items.")
                 except Exception as ai_e:
                     logger.error(f"AI Service integration error: {ai_e}")
-                # -------------------------------
+
+                if enable_ai and ai_products and isinstance(ai_products, list):
+                    ai_rows = []
+                    for p in ai_products:
+                        if not isinstance(p, dict):
+                            continue
+
+                        item_url = p.get('url') or ''
+                        if item_url and not item_url.startswith(('http', '//')):
+                            item_url = urljoin(url, item_url)
+
+                        image_url = p.get('image') or ''
+                        if image_url and not image_url.startswith(('http', '//')):
+                            image_url = urljoin(url, image_url)
+
+                        courses = p.get('courses')
+                        if isinstance(courses, list):
+                            courses_str = ", ".join([str(x).strip() for x in courses if str(x).strip()])
+                        else:
+                            courses_str = str(courses).strip() if courses else ""
+
+                        row = {
+                            'rank': len(ai_rows) + 1,
+                            'name': (p.get('name') or '').strip(),
+                            'price': (p.get('price') or p.get('price_range') or '').strip(),
+                            'date': (p.get('date') or '').strip(),
+                            'rating': (p.get('rating') or '').strip(),
+                            'reviews': (p.get('reviews') or '').strip(),
+                            'phone': (p.get('phone') or '').strip(),
+                            'email': (p.get('email') or '').strip(),
+                            'id': f"AI-{len(ai_rows)+1:04d}",
+                            'status': "AI Extracted",
+                            'url': item_url or url,
+                            'image': image_url,
+                        }
+
+                        if schema.get("kind") == "hotel_leads":
+                            if not row['price']:
+                                row['price'] = compute_price_range(soup)
+                            row['city'] = (p.get('city') or '').strip()
+                            row['address'] = (p.get('address') or '').strip()
+                        elif schema.get("kind") == "college_leads":
+                            row['city'] = (p.get('city') or '').strip()
+                            row['state'] = (p.get('state') or '').strip()
+                            row['affiliation'] = (p.get('affiliation') or '').strip()
+                            # Fill courses from page if AI did not provide them
+                            row['courses'] = courses_str or ", ".join(find_courses_list(soup))
+                        elif schema.get("kind") == "real_estate":
+                            row['location'] = (p.get('location') or '').strip()
+                            row['bedrooms'] = (p.get('bedrooms') or '').strip()
+                            row['bathrooms'] = (p.get('bathrooms') or '').strip()
+                            row['area'] = (p.get('area') or '').strip()
+                            row['property_type'] = (p.get('property_type') or '').strip()
+
+                        # Basic quality filter: keep rows that have useful info
+                        useful = any([row.get('price'), row.get('rating'), row.get('reviews'), row.get('phone'), row.get('email')]) or (schema.get("kind") == "college_leads" and row.get('courses'))
+                        if not row['name'] or not useful:
+                            continue
+
+                        ai_rows.append(row)
+
+                    if ai_rows:
+                        return {
+                            "url": url,
+                            "title": soup.title.get_text(strip=True) if soup.title else "Scraped Page",
+                            "products": ai_rows,
+                            "count": len(ai_rows),
+                            "ai_used": True,
+                            "content_type": content_type,
+                        }
 
                 # 1. Identify "Repeated Structures" - The hallmark of a list/grid
                 candidates = []
@@ -907,14 +1161,16 @@ class ScraperService:
             # Strategy 6: Generic Content Extraction (Last Resort)
             if not products:
                 # Check for blocking messages first
-                page_text = soup.get_text().lower()
-                if "captcha" in page_text or "access denied" in page_text or "cloudflare" in page_text:
-                     return {
+                page_text = soup.get_text(" ", strip=True)
+                if self._is_probably_blocked(page_text) or self._is_probably_blocked(str(soup)[:200000]):
+                    return {
                         "url": url,
-                        "title": "Access Denied / Captcha",
+                        "title": "Access Denied / Security Check",
                         "products": [],
                         "count": 0,
-                        "error": "Scraping blocked by security check (Captcha/Cloudflare)"
+                        "blocked_by_security": True,
+                        "error_code": "SECURITY_BLOCK",
+                        "error": "Scraping blocked by security check (Captcha/Cloudflare). Try enabling JS rendering, slowing request rate, or using a proxy.",
                     }
 
                 # Find paragraphs/divs with significant text

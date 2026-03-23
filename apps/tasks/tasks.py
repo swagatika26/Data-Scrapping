@@ -19,16 +19,20 @@ def run_scraper_task(job_id):
         from django.core.cache import cache
         limits = cache.get('admin_limits') or {}
         service = ScraperService()
-        result = service.execute_scrape(job.url, {'retry_limit': limits.get('retry_limit', 3), 'timeout': limits.get('timeout_seconds', 30)})
+        result = service.execute_scrape(job.url, {
+            'retry_limit': limits.get('retry_limit', 3),
+            'timeout': limits.get('timeout_seconds', 30),
+            'min_delay_per_domain': limits.get('min_delay_per_domain', 4),
+        })
         
         # Save result
         from apps.scraper.models import ScrapedData
         ScrapedData.objects.create(job=job, content=result)
         
         if result.get('error'):
-             job.status = 'FAILED'
+            job.status = 'FAILED'
         else:
-             job.status = 'COMPLETED'
+            job.status = 'COMPLETED'
         job.save()
         
     except ScraperJob.DoesNotExist:

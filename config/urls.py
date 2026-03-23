@@ -6,7 +6,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import home, features, pricing, documentation, api, extension, cloud_scraping, blog, community, help_center, status, about, careers, privacy, terms, dashboard, signup, login_page, admin_login, logout_view, admin_logout, new_scrape, scrape_progress, scraped_results, history, settings_page, settings_section, notifications_feed, messages_page, user_message_reply, run_scrape_api, export_results, delete_scrape, delete_bulk_scrapes, update_profile, update_password, download_invoice, search_proxy, admin_dashboard, admin_dashboard_section, admin_user_toggle_active, admin_user_toggle_ban, admin_user_change_role, admin_user_delete, admin_export_users, admin_create_user, admin_job_delete, admin_job_retry, admin_job_logs, admin_profile_update, admin_rotate_token, admin_toggle_2fa, admin_audit_report, admin_logout_all, admin_system_toggle_autoscale, admin_system_metrics, admin_system_snapshot, admin_billing_run, admin_billing_export, admin_billing_request_payout, admin_settings_toggle_maintenance, admin_settings_toggle_email_alerts, admin_settings_toggle_auto_retry, admin_settings_toggle_theme, admin_settings_rotate_webhook, admin_settings_save_limits, admin_settings_save_alerts, admin_settings_reset, admin_error_logs_export, admin_error_logs_rerun_failed, admin_support_assign, admin_support_escalate, admin_support_resolve, admin_support_reply
+from core.views import home, features, pricing, documentation, api, extension, cloud_scraping, blog, community, help_center, status, about, careers, privacy, terms, dashboard, signup, login_page, admin_login, logout_view, admin_logout, new_scrape, scrape_progress, scraped_results, history, settings_page, settings_section, notifications_feed, notifications_preview, messages_page, user_message_reply, run_scrape_api, export_results, delete_scrape, delete_bulk_scrapes, update_profile, update_password, download_invoice, search_proxy, admin_dashboard, admin_dashboard_section, admin_user_toggle_active, admin_user_toggle_ban, admin_user_change_role, admin_user_delete, admin_export_users, admin_create_user, admin_job_delete, admin_job_retry, admin_job_logs, admin_profile_update, admin_rotate_token, admin_toggle_2fa, admin_audit_report, admin_logout_all, admin_system_toggle_autoscale, admin_system_metrics, admin_system_snapshot, admin_billing_run, admin_billing_export, admin_billing_request_payout, admin_settings_toggle_maintenance, admin_settings_toggle_email_alerts, admin_settings_toggle_auto_retry, admin_settings_toggle_theme, admin_settings_rotate_webhook, admin_settings_save_limits, admin_settings_save_alerts, admin_settings_reset, admin_error_logs_export, admin_error_logs_rerun_failed, admin_support_assign, admin_support_escalate, admin_support_resolve, admin_support_reply
 
 urlpatterns = [
     path('', home, name='home'),
@@ -54,6 +54,7 @@ urlpatterns = [
     path('dashboard/settings/download-invoice/<str:invoice_id>/', download_invoice, name='download_invoice'),
     path('dashboard/settings/<str:section>/', settings_section, name='settings_section'),
     path('dashboard/notifications/', notifications_feed, name='notifications'),
+    path('dashboard/notifications/preview/', notifications_preview, name='notifications_preview'),
     path('dashboard/messages/', messages_page, name='messages'),
     path('dashboard/messages/reply/', user_message_reply, name='user_message_reply'),
     path('dashboard/new/', new_scrape, name='new_scrape'),
@@ -101,6 +102,5 @@ urlpatterns = [
     path('admin-dashboard/support/<str:ticket_id>/reply/', admin_support_reply, name='admin_support_reply'),
     path('api/v1/users/', include('apps.users.urls')),
     path('api/v1/scraper/', include('apps.scraper.urls')),
-    path('api/v1/tasks/', include('apps.tasks.urls')), # Optional, for monitoring
     # path('api/v1/exports/', include('apps.exports.urls')), # If exports have endpoints
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

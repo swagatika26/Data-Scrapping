@@ -376,7 +376,7 @@
                     <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="togglePlanModal()"></div>
                     
                     <!-- Modal Content -->
-                    <div class="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto">
+                    <div class="absolute inset-0 flex items-start justify-center p-4 overflow-y-auto">
                         <div class="bg-dark-bg border border-white/10 rounded-3xl w-full max-w-5xl shadow-2xl transform transition-all scale-100 p-8 relative">
                             <button onclick="togglePlanModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors">
                                 <i class="fa-solid fa-xmark text-2xl"></i>
@@ -387,13 +387,13 @@
                                 <p class="text-gray-400">Select a plan to schedule for your next billing cycle starting <span class="text-brand font-bold">{{ renewal_date }}</span>.</p>
                                 
                             <!-- Billing Toggle -->
-                                <div class="flex items-center justify-center gap-4 mt-6">
+                                <div class="flex items-center justify-center gap-4 mt-6 mb-6">
                                     <span class="text-sm font-bold text-white transition-colors" id="label-monthly">Monthly</span>
                                     <div class="relative inline-block w-12 align-middle select-none">
                                         <input type="checkbox" id="billing-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:border-brand transition-all duration-300" onchange="toggleBillingCycle()"/>
                                         <label for="billing-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300 checked:bg-brand/50"></label>
                                     </div>
-                                    <span class="text-sm font-bold text-gray-400 transition-colors" id="label-yearly">Yearly <span class="text-brand text-xs ml-1">-20%</span></span>
+                                    <span class="text-sm font-bold text-gray-400 transition-colors" id="label-yearly">Yearly <span class="text-brand text-xs ml-1">-10%</span></span>
                                 </div>
                             </div>
                             
@@ -403,7 +403,7 @@
                                     <div class="mb-6">
                                         <h3 class="text-xl font-bold text-white mb-2">Starter</h3>
                                         <div class="flex items-baseline gap-1">
-                                            <span class="text-3xl font-bold text-white price-display" data-monthly="0" data-yearly="0">$0</span>
+                                            <span class="text-3xl font-bold text-white price-display" data-monthly="10" data-yearly="9">$10</span>
                                             <span class="text-gray-500 duration-text">/mo</span>
                                         </div>
                                         <p class="text-sm text-gray-400 mt-2">Perfect for hobbyists and testing.</p>
@@ -426,12 +426,12 @@
                                 </div>
                                 
                                 <!-- Professional Plan (Active) -->
-                                <div class="glass-card rounded-2xl p-6 border-2 border-brand bg-brand/5 flex flex-col relative transform md:-translate-y-6 shadow-[0_0_30px_rgba(0,212,197,0.1)]">
+                                <div class="glass-card rounded-2xl p-6 border-2 border-brand bg-brand/5 flex flex-col relative transform shadow-[0_0_30px_rgba(0,212,197,0.1)]">
                                     <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-brand text-dark-bg text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
                                     <div class="mb-6">
                                         <h3 class="text-xl font-bold text-white mb-2">Professional</h3>
                                         <div class="flex items-baseline gap-1">
-                                            <span class="text-3xl font-bold text-white price-display" data-monthly="49" data-yearly="39">$49</span>
+                                            <span class="text-3xl font-bold text-white price-display" data-monthly="20" data-yearly="18">$20</span>
                                             <span class="text-gray-500 duration-text">/mo</span>
                                         </div>
                                         <p class="text-sm text-gray-400 mt-2">For power users and small teams.</p>
@@ -458,7 +458,7 @@
                                     <div class="mb-6">
                                         <h3 class="text-xl font-bold text-white mb-2">Business</h3>
                                         <div class="flex items-baseline gap-1">
-                                            <span class="text-3xl font-bold text-white price-display" data-monthly="199" data-yearly="159">$199</span>
+                                            <span class="text-3xl font-bold text-white price-display" data-monthly="30" data-yearly="27">$30</span>
                                             <span class="text-gray-500 duration-text">/mo</span>
                                         </div>
                                         <p class="text-sm text-gray-400 mt-2">Scale your data operations.</p>
@@ -1171,6 +1171,11 @@
             modal.classList.remove('hidden');
             // Prevent body scroll
             document.body.style.overflow = 'hidden';
+            const container = modal.querySelector('.overflow-y-auto');
+            if (container) {
+                container.scrollTop = 0;
+            }
+            window.scrollTo({ top: 0, behavior: 'instant' });
         } else {
             modal.classList.add('hidden');
             // Restore body scroll

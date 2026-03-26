@@ -37,31 +37,7 @@ class ScraperService:
                 time.sleep(wait_s + random.uniform(0.15, 0.55))
         self._domain_last_request_at[host] = time.time()
 
-    def _is_probably_blocked(self, html_text):
-        if not html_text:
-            return False
-        t = html_text.lower()
-        strong = [
-            "cf-chl",
-            "captcha-delivery.com",
-            "g-recaptcha",
-            "hcaptcha",
-            "datadome",
-        ]
-        if any(tok in t for tok in strong):
-            return True
-        moderate = 0
-        if "cloudflare" in t:
-            moderate += 1
-        if "just a moment" in t or "attention required" in t:
-            moderate += 1
-        if "verify you are human" in t:
-            moderate += 1
-        if "access denied" in t:
-            moderate += 1
-        if "captcha" in t:
-            moderate += 1
-        return moderate >= 2
+
 
     def _schema_config(self, content_type):
         key = (content_type or "").strip().lower()

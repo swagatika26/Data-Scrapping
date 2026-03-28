@@ -116,3 +116,4 @@ waitress==3.0.2
 wcwidth==0.2.14
 Werkzeug==3.0.2
 zope.interface==8.2
+ollama

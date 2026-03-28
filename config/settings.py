@@ -108,6 +108,9 @@ DATABASES = {
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 SERPAPI_KEY = os.getenv('SERPAPI_KEY')
 GOOGLE_CSE_ID = os.getenv('GOOGLE_CSE_ID')
+OLLAMA_HOST = os.getenv('OLLAMA_HOST', 'http://127.0.0.1:11434')
+OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'mistral')
+DEEPSEEK_MODEL = os.getenv('DEEPSEEK_MODEL', 'deepseek-r1:7b')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

@@ -6,9 +6,13 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+<<<<<<< HEAD
 from core.views import home, features, pricing, documentation, api, extension, cloud_scraping, blog, community, help_center, status, about, careers, privacy, terms, dashboard, signup, login_page, admin_login, logout_view, admin_logout, new_scrape, scrape_progress, scraped_results, history, settings_page, settings_section, notifications_feed, notifications_preview, messages_page, user_message_reply, run_scrape_api, export_results, delete_scrape, delete_bulk_scrapes, update_profile, update_password, download_invoice, search_proxy, admin_dashboard, admin_dashboard_section, admin_user_toggle_active, admin_user_toggle_ban, admin_user_change_role, admin_user_delete, admin_export_users, admin_create_user, admin_job_delete, admin_job_retry, admin_job_logs, admin_profile_update, admin_rotate_token, admin_toggle_2fa, admin_audit_report, admin_logout_all, admin_system_toggle_autoscale, admin_system_metrics, admin_system_snapshot, admin_billing_run, admin_billing_export, admin_billing_request_payout, admin_settings_toggle_maintenance, admin_settings_toggle_email_alerts, admin_settings_toggle_auto_retry, admin_settings_toggle_theme, admin_settings_rotate_webhook, admin_settings_save_limits, admin_settings_save_alerts, admin_settings_reset, admin_error_logs_export, admin_error_logs_rerun_failed, admin_support_assign, admin_support_escalate, admin_support_resolve, admin_support_reply
 from apps.scraper.views_ollama import ollama_chat, ollama_stream
 from apps.scraper.views_deepseek import deepseek_chat, deepseek_stream
+=======
+from core.views import home, features, pricing, documentation, api, extension, cloud_scraping, blog, community, help_center, status, about, careers, privacy, terms, dashboard, signup, login_page, admin_login, logout_view, admin_logout, new_scrape, scrape_progress, scraped_results, history, settings_page, settings_section, notifications_feed, notifications_preview, messages_page, user_message_reply, run_scrape_api, export_results, delete_scrape, delete_bulk_scrapes, update_profile, update_password, download_invoice, search_proxy, admin_dashboard, admin_dashboard_section, admin_user_toggle_active, admin_user_toggle_ban, admin_user_change_role, admin_user_delete, admin_export_users, admin_create_user, admin_job_delete, admin_job_retry, admin_job_logs, admin_profile_update, admin_rotate_token, admin_toggle_2fa, admin_audit_report, admin_logout_all, admin_system_toggle_autoscale, admin_system_metrics, admin_system_snapshot, admin_billing_run, admin_billing_export, admin_billing_request_payout, admin_settings_toggle_maintenance, admin_settings_toggle_email_alerts, admin_settings_toggle_auto_retry, admin_settings_toggle_theme, admin_settings_rotate_webhook, admin_settings_save_limits, admin_settings_save_alerts, admin_settings_reset, admin_error_logs_export, admin_error_logs_rerun_failed, admin_support_assign, admin_support_escalate, admin_support_resolve, admin_support_reply, password_reset_otp
+>>>>>>> a726da144c83677a7e4deb15f11f489df1e97241
 
 urlpatterns = [
     path('', home, name='home'),
@@ -46,6 +50,7 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
         template_name='registration/password_reset_complete.html'
     ), name='password_reset_complete'),
+    path('password-reset/otp/', password_reset_otp, name='password_reset_otp'),
     path('dashboard/', dashboard, name='dashboard'),
     path('dashboard/history/', history, name='history'),
     path('dashboard/history/delete/<int:job_id>/', delete_scrape, name='delete_scrape'),

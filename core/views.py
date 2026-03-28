@@ -17,6 +17,7 @@ from datetime import timedelta, datetime
 from core.utils import search_web
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.mail import send_mail
+import logging
 from django.conf import settings
 from django.db.models.functions import TruncDate, TruncHour, TruncMonth
 from core.models import ActivityLog, TrafficLog, Conversation, Message, Notification
@@ -1237,6 +1238,95 @@ def update_profile(request):
     
     return redirect('settings_section', section='profile')
 
+def password_reset_otp(request):
+    User = get_user_model()
+    step = 'request'
+    email_prefill = ''
+    if request.method == 'POST':
+        if 'email' in request.POST and 'resend' not in request.POST:
+            email = request.POST.get('email', '').strip().lower()
+            email_prefill = email
+            user = User.objects.filter(email__iexact=email).first()
+            if user:
+                code = f"{secrets.randbelow(1000000):06d}"
+                user.otp_code = code
+                user.otp_created_at = timezone.now()
+                user.save(update_fields=['otp_code', 'otp_created_at'])
+                request.session['reset_user_id'] = user.id
+                try:
+                    send_mail(
+                        'ScrapyX password reset code',
+                        f'Your OTP is {code}. It expires in 10 minutes.',
+                        getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local'),
+                        [email],
+                        fail_silently=False,
+                    )
+                except Exception as e:
+                    logging.exception('Password reset OTP email send failed')
+                    if getattr(settings, 'DEBUG', False):
+                        messages.warning(request, 'Email backend not configured. Using development fallback.')
+                        messages.info(request, f'OTP: {code}')
+                    else:
+                        messages.error(request, 'Could not send OTP email. Please try again later.')
+            step = 'verify'
+        elif 'resend' in request.POST:
+            uid = request.session.get('reset_user_id')
+            user = User.objects.filter(id=uid).first()
+            if user and user.email:
+                code = f"{secrets.randbelow(1000000):06d}"
+                user.otp_code = code
+                user.otp_created_at = timezone.now()
+                user.save(update_fields=['otp_code', 'otp_created_at'])
+                try:
+                    send_mail(
+                        'ScrapyX password reset code',
+                        f'Your OTP is {code}. It expires in 10 minutes.',
+                        getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local'),
+                        [user.email],
+                        fail_silently=False,
+                    )
+                    messages.success(request, 'A new OTP has been sent.')
+                except Exception:
+                    logging.exception('Resend OTP email failed')
+                    if getattr(settings, 'DEBUG', False):
+                        messages.warning(request, 'Email backend not configured. Using development fallback.')
+                        messages.info(request, f'OTP: {code}')
+                    else:
+                        messages.error(request, 'Could not send OTP email. Please try again later.')
+            step = 'verify'
+        elif 'otp' in request.POST:
+            otp = request.POST.get('otp', '').strip()
+            uid = request.session.get('reset_user_id')
+            user = User.objects.filter(id=uid).first()
+            if user and user.otp_code and user.otp_created_at and timezone.now() - user.otp_created_at <= timedelta(minutes=10) and otp == user.otp_code:
+                request.session['reset_verified'] = True
+                step = 'set'
+            else:
+                step = 'verify'
+                messages.error(request, 'Invalid or expired code.')
+        elif 'new_password1' in request.POST:
+            uid = request.session.get('reset_user_id')
+            user = User.objects.filter(id=uid).first()
+            if user and request.session.get('reset_verified'):
+                p1 = request.POST.get('new_password1')
+                p2 = request.POST.get('new_password2')
+                if p1 and p1 == p2:
+                    user.set_password(p1)
+                    user.otp_code = None
+                    user.otp_created_at = None
+                    user.save(update_fields=['password', 'otp_code', 'otp_created_at'])
+                    request.session.pop('reset_user_id', None)
+                    request.session.pop('reset_verified', None)
+                    messages.success(request, 'Password reset successfully. You can log in now.')
+                    return redirect('login')
+                else:
+                    step = 'set'
+                    messages.error(request, 'Passwords do not match.')
+    else:
+        request.session.pop('reset_user_id', None)
+        request.session.pop('reset_verified', None)
+    return render(request, 'registration/password_reset_otp.html', {'step': step, 'email_prefill': email_prefill})
+
 @user_required
 def update_password(request):
     """
@@ -1849,13 +1939,21 @@ def signup(request):
         request.session['pending_user_id'] = user.id
         otp_required = True
 
-        send_mail(
-            'Your ScrapyX verification code',
-            f'Your OTP is {user.otp_code}. It expires in 10 minutes.',
-            getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local'),
-            [email],
-            fail_silently=True,
-        )
+        try:
+            send_mail(
+                'Your ScrapyX verification code',
+                f'Your OTP is {user.otp_code}. It expires in 10 minutes.',
+                getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local'),
+                [email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            logging.exception('OTP email send failed')
+            if getattr(settings, 'DEBUG', False):
+                messages.warning(request, 'Email backend not configured. Using development fallback.')
+                messages.info(request, f'OTP: {user.otp_code}')
+            else:
+                messages.error(request, 'Could not send verification email. Please try again later.')
 
         messages.success(request, 'OTP sent. Please check your email.')
 

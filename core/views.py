@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.contrib.sessions.models import Session
 from apps.scraper.services.scraper_service import ScraperService
+from apps.scraper.services.ollama_service import OllamaService
 from apps.scraper.models import ScraperJob, ScrapedData, ScrapeLog
 from apps.tasks.tasks import run_scraper_task
 from django.db.models import Count, Q, Sum
@@ -1622,6 +1623,27 @@ def run_scrape_api(request):
                 # Ensure content_type is persisted for results view
                 try:
                     result['content_type'] = content_type
+                except Exception:
+                    pass
+                try:
+                    ai_postprocess = bool(data.get('ai_postprocess', False))
+                    ai_model = data.get('ai_postprocess_model')
+                    ai_options = data.get('ai_postprocess_options') or {}
+                    products_payload = result.get('products') or []
+                    if ai_postprocess and products_payload:
+                        items_json = json.dumps(products_payload[:200], ensure_ascii=False)
+                        prompt = "Return ONLY valid JSON. Normalize items, deduplicate, extract top categories, and produce a short summary. Input: " + items_json + " Output schema: {\"summary\":\"...\",\"categories\":[{\"label\":\"...\",\"count\":0}],\"cleaned\":[{\"name\":\"...\"}]}"
+                        try:
+                            from django.conf import settings as djsettings
+                            default_model = getattr(djsettings, 'DEEPSEEK_MODEL', None) or getattr(djsettings, 'OLLAMA_MODEL', None)
+                        except Exception:
+                            default_model = None
+                        svc = OllamaService(model=ai_model or default_model or None)
+                        res_ai = svc.chat(messages=[{'role': 'user', 'content': prompt}], options=ai_options)
+                        text_ai = (res_ai.get('message', {}) or {}).get('content') or res_ai.get('response') or ''
+                        parsed_ai = json.loads(text_ai)
+                        if isinstance(parsed_ai, dict):
+                            result['ai_postprocess'] = parsed_ai
                 except Exception:
                     pass
                 ScrapedData.objects.create(

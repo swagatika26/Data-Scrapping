@@ -28,6 +28,9 @@ import secrets
 import json
 import pandas as pd
 import csv
+import os
+import hashlib
+import redis
 
 def _log_activity(request, action, user=None, metadata=None):
     ip_address = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip() or request.META.get('REMOTE_ADDR')
@@ -1242,90 +1245,196 @@ def password_reset_otp(request):
     User = get_user_model()
     step = 'request'
     email_prefill = ''
+    cooldown_seconds = 60
+    otp_ttl_seconds = 300
+    max_attempts = 5
+    attempts_left = max_attempts
+    def _ip(req):
+        return req.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip() or req.META.get('REMOTE_ADDR')
+    def _r():
+        url = os.getenv('REDIS_URL') or getattr(settings, 'CELERY_BROKER_URL', 'redis://127.0.0.1:6379/0')
+        return redis.from_url(url, decode_responses=True)
+    def _digest(uid, otp):
+        sk = getattr(settings, 'SECRET_KEY', '')
+        return hashlib.sha256(f"{uid}:{otp}:{sk}".encode()).hexdigest()
+    def _keys(uid):
+        return {
+            'otp': f"otp:{uid}",
+            'attempts': f"otp_attempts:{uid}",
+            'verified': f"otp_verified:{uid}",
+            'lock': f"otp_lock:{uid}",
+        }
+    def _rate_limit(bucket, limit, ttl):
+        r = _r()
+        try:
+            n = r.incr(bucket)
+            if n == 1:
+                r.expire(bucket, ttl)
+            return n <= limit
+        except Exception:
+            return True
     if request.method == 'POST':
         if 'email' in request.POST and 'resend' not in request.POST:
             email = request.POST.get('email', '').strip().lower()
             email_prefill = email
             user = User.objects.filter(email__iexact=email).first()
-            if user:
-                code = f"{secrets.randbelow(1000000):06d}"
-                user.otp_code = code
-                user.otp_created_at = timezone.now()
-                user.save(update_fields=['otp_code', 'otp_created_at'])
-                request.session['reset_user_id'] = user.id
-                try:
-                    send_mail(
-                        'ScrapyX password reset code',
-                        f'Your OTP is {code}. It expires in 10 minutes.',
-                        getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local'),
-                        [email],
-                        fail_silently=False,
-                    )
-                except Exception as e:
-                    logging.exception('Password reset OTP email send failed')
-                    if getattr(settings, 'DEBUG', False):
-                        messages.warning(request, 'Email backend not configured. Using development fallback.')
-                        messages.info(request, f'OTP: {code}')
-                    else:
-                        messages.error(request, 'Could not send OTP email. Please try again later.')
+            if not _rate_limit(f"rl:otp_req:{_ip(request)}", 10, 60):
+                messages.error(request, 'Too many requests. Please try again later.')
+                step = 'request'
+            else:
+                if user:
+                    uid = user.id
+                    r = _r()
+                    k = _keys(uid)
+                    try:
+                        if r.exists(k['lock']):
+                            pass
+                        else:
+                            ttl = r.ttl(k['otp'])
+                            if ttl is None or ttl < 0 or (otp_ttl_seconds - max(ttl, 0)) >= cooldown_seconds:
+                                code = f"{secrets.randbelow(1000000):06d}"
+                                dg = _digest(uid, code)
+                                r.setex(k['otp'], otp_ttl_seconds, dg)
+                                r.delete(k['attempts'])
+                                r.delete(k['verified'])
+                                try:
+                                    send_mail(
+                                        'ScrapyX password reset code',
+                                        f'Your OTP is {code}. It expires in 5 minutes.',
+                                        getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local'),
+                                        [email],
+                                        fail_silently=False,
+                                    )
+                                except Exception as e:
+                                    logging.exception('Password reset OTP email send failed')
+                                    if getattr(settings, 'DEBUG', False):
+                                        messages.warning(request, 'Email backend not configured. Using development fallback.')
+                                        messages.info(request, f'OTP: ' + code)
+                    except Exception:
+                        pass
+                    request.session['reset_user_id'] = uid
             step = 'verify'
         elif 'resend' in request.POST:
             uid = request.session.get('reset_user_id')
             user = User.objects.filter(id=uid).first()
             if user and user.email:
-                code = f"{secrets.randbelow(1000000):06d}"
-                user.otp_code = code
-                user.otp_created_at = timezone.now()
-                user.save(update_fields=['otp_code', 'otp_created_at'])
+                r = _r()
+                k = _keys(user.id)
                 try:
-                    send_mail(
-                        'ScrapyX password reset code',
-                        f'Your OTP is {code}. It expires in 10 minutes.',
-                        getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local'),
-                        [user.email],
-                        fail_silently=False,
-                    )
-                    messages.success(request, 'A new OTP has been sent.')
-                except Exception:
-                    logging.exception('Resend OTP email failed')
-                    if getattr(settings, 'DEBUG', False):
-                        messages.warning(request, 'Email backend not configured. Using development fallback.')
-                        messages.info(request, f'OTP: {code}')
+                    ttl = r.ttl(k['otp'])
+                    if ttl is not None and ttl > otp_ttl_seconds - cooldown_seconds and ttl > 0:
+                        messages.error(request, 'Please wait before requesting another code.')
                     else:
-                        messages.error(request, 'Could not send OTP email. Please try again later.')
+                        code = f"{secrets.randbelow(1000000):06d}"
+                        dg = _digest(user.id, code)
+                        r.setex(k['otp'], otp_ttl_seconds, dg)
+                        r.delete(k['attempts'])
+                        r.delete(k['verified'])
+                        try:
+                            send_mail(
+                                'ScrapyX password reset code',
+                                f'Your OTP is {code}. It expires in 5 minutes.',
+                                getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local'),
+                                [user.email],
+                                fail_silently=False,
+                            )
+                            messages.success(request, 'If your account exists, a new code has been sent.')
+                        except Exception:
+                            logging.exception('Resend OTP email failed')
+                            if getattr(settings, 'DEBUG', False):
+                                messages.warning(request, 'Email backend not configured. Using development fallback.')
+                                messages.info(request, f'OTP: ' + code)
+                            else:
+                                messages.error(request, 'Could not send OTP email. Please try again later.')
+                except Exception:
+                    pass
             step = 'verify'
         elif 'otp' in request.POST:
             otp = request.POST.get('otp', '').strip()
             uid = request.session.get('reset_user_id')
             user = User.objects.filter(id=uid).first()
-            if user and user.otp_code and user.otp_created_at and timezone.now() - user.otp_created_at <= timedelta(minutes=10) and otp == user.otp_code:
-                request.session['reset_verified'] = True
-                step = 'set'
-            else:
+            if not _rate_limit(f"rl:otp_verify:{_ip(request)}", 25, 60):
+                messages.error(request, 'Too many attempts. Please try again later.')
                 step = 'verify'
-                messages.error(request, 'Invalid or expired code.')
+            else:
+                if user:
+                    r = _r()
+                    k = _keys(user.id)
+                    try:
+                        if r.exists(k['lock']):
+                            step = 'verify'
+                            messages.error(request, 'Too many attempts. Try again later.')
+                        else:
+                            dg = r.get(k['otp'])
+                            if not dg:
+                                step = 'verify'
+                                messages.error(request, 'OTP expired.')
+                            else:
+                                if _digest(user.id, otp) == dg:
+                                    r.setex(k['verified'], otp_ttl_seconds, '1')
+                                    request.session['reset_verified'] = True
+                                    step = 'set'
+                                else:
+                                    a = r.incr(k['attempts'])
+                                    r.expire(k['attempts'], otp_ttl_seconds)
+                                    if a >= max_attempts:
+                                        r.setex(k['lock'], otp_ttl_seconds, '1')
+                                        messages.error(request, 'Too many attempts. Try again later.')
+                                    else:
+                                        left = max_attempts - a
+                                        attempts_left = left if left >= 0 else 0
+                                        messages.error(request, f'Invalid code. {attempts_left} attempts left.')
+                                    step = 'verify'
+                    except Exception:
+                        step = 'verify'
+                        messages.error(request, 'Verification failed. Please try again.')
+                else:
+                    step = 'verify'
+                    messages.error(request, 'Invalid or expired code.')
         elif 'new_password1' in request.POST:
             uid = request.session.get('reset_user_id')
             user = User.objects.filter(id=uid).first()
             if user and request.session.get('reset_verified'):
-                p1 = request.POST.get('new_password1')
-                p2 = request.POST.get('new_password2')
-                if p1 and p1 == p2:
-                    user.set_password(p1)
-                    user.otp_code = None
-                    user.otp_created_at = None
-                    user.save(update_fields=['password', 'otp_code', 'otp_created_at'])
-                    request.session.pop('reset_user_id', None)
-                    request.session.pop('reset_verified', None)
-                    messages.success(request, 'Password reset successfully. You can log in now.')
-                    return redirect('login')
+                r = _r()
+                k = _keys(user.id)
+                v = None
+                try:
+                    v = r.get(k['verified'])
+                except Exception:
+                    v = None
+                if v:
+                    p1 = request.POST.get('new_password1')
+                    p2 = request.POST.get('new_password2')
+                    if p1 and p1 == p2:
+                        user.set_password(p1)
+                        user.save(update_fields=['password'])
+                        try:
+                            r.delete(k['otp'])
+                            r.delete(k['attempts'])
+                            r.delete(k['verified'])
+                            r.delete(k['lock'])
+                        except Exception:
+                            pass
+                        request.session.pop('reset_user_id', None)
+                        request.session.pop('reset_verified', None)
+                        messages.success(request, 'Password reset successfully. You can log in now.')
+                        return redirect('login')
+                    else:
+                        step = 'set'
+                        messages.error(request, 'Passwords do not match.')
                 else:
-                    step = 'set'
-                    messages.error(request, 'Passwords do not match.')
+                    step = 'request'
+                    messages.error(request, 'OTP session invalid or expired. Please request a new code.')
     else:
         request.session.pop('reset_user_id', None)
         request.session.pop('reset_verified', None)
-    return render(request, 'registration/password_reset_otp.html', {'step': step, 'email_prefill': email_prefill})
+    return render(request, 'registration/password_reset_otp.html', {
+        'step': step,
+        'email_prefill': email_prefill,
+        'countdown_seconds': otp_ttl_seconds,
+        'attempts_left': attempts_left,
+        'max_attempts': max_attempts,
+    })
 
 @user_required
 def update_password(request):

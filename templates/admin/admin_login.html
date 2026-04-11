@@ -141,7 +141,7 @@
                     <label for="password" class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Access Password</label>
                     <div class="relative">
                         <input type="password" name="password" id="password" class="form-input w-full px-4 py-3 rounded-lg" placeholder="••••••••••">
-                        <button type="button" class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-gray-300">
+                        <button type="button" id="toggle-password" data-target="password" aria-label="Toggle password visibility" aria-pressed="false" class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-gray-300">
                             <i class="fa-regular fa-eye"></i>
                         </button>
                     </div>
@@ -154,5 +154,30 @@
             </form>
         </div>
     </div>
+    <script>
+        (function () {
+            const btn = document.getElementById('toggle-password');
+            if (!btn) return;
+            const targetId = btn.getAttribute('data-target') || 'password';
+            const input = document.getElementById(targetId);
+            if (!input) return;
+            const icon = btn.querySelector('i');
+            function setState(show) {
+                input.type = show ? 'text' : 'password';
+                btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+                if (icon) {
+                    icon.classList.toggle('fa-eye', !show);
+                    icon.classList.toggle('fa-eye-slash', show);
+                    icon.classList.toggle('fa-regular', !show);
+                    icon.classList.toggle('fa-solid', show);
+                }
+            }
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const show = input.type !== 'text';
+                setState(show);
+            });
+        })();
+    </script>
 </body>
 </html>

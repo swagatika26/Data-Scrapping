@@ -1,42 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - OneClick DataScrape</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            DEFAULT: '#00d4c5',
-                            hover: '#00b8aa',
-                        },
-                        dark: {
-                            bg: '#0a0f1c', // Left side bg
-                            form: '#0f172a', // Right side bg (slightly lighter/bluer)
-                            input: '#1e293b',
-                            border: '#334155',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
-</head>
-<body class="h-screen w-full flex overflow-hidden bg-dark-bg text-gray-300">
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
 
+{% block title %}Sign Up - ScrapyX{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-6rem)] w-full flex items-stretch bg-dark-bg text-gray-300">
     <!-- Left Side (Brand & Info) -->
     <div class="hidden lg:flex w-1/2 flex-col justify-between p-12 relative overflow-hidden">
         <!-- Background Glow -->
@@ -70,83 +39,109 @@
         </div>
 
         <!-- Main Content -->
-        <div class="relative z-10 max-w-lg">
-            <h1 class="text-5xl font-bold text-white mb-6 leading-tight">
-                Extract web data <br>
-                with <span class="text-brand">AI precision.</span>
+        <div class="relative z-10 max-w-xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 mb-6 animate-fade-in-up">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
+                </span>
+                <span class="text-xs font-bold text-brand tracking-wider uppercase">v2.0 Now Live</span>
+            </div>
+
+            <h1 class="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight tracking-tight">
+                Start Extracting <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-blue-400 to-purple-500 animate-gradient-x">Data Today.</span>
             </h1>
-            <p class="text-gray-400 text-lg mb-10 leading-relaxed">
-                Join the next generation of data-driven teams using automated neural scraping to transform the web into your own structured API.
+            
+            <p class="text-gray-400 text-lg mb-10 leading-relaxed font-light max-w-md">
+                Join thousands of developers and businesses using our <strong>AI-powered scraping platform</strong> to get clean, structured data from any website.
             </p>
 
-            <!-- Feature Cards -->
-            <div class="space-y-4">
-                <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4 hover:bg-white/10 transition-colors cursor-default">
-                    <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand shrink-0">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <!-- Creative Feature Stack -->
+            <div class="space-y-4 relative">
+                <!-- Connecting Line -->
+                <div class="absolute left-6 top-4 bottom-4 w-0.5 bg-gradient-to-b from-brand/50 to-transparent"></div>
+
+                <!-- Feature 1 -->
+                <div class="group relative bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-4 pl-20 hover:bg-white/5 transition-all duration-300 hover:translate-x-2 hover:border-brand/30">
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-dark-bg border border-brand text-brand flex items-center justify-center z-10 shadow-[0_0_15px_rgba(0,212,197,0.3)]">
+                        <i class="fa-solid fa-rocket text-xs"></i>
                     </div>
-                    <div>
-                        <h3 class="text-white font-semibold mb-1">Self-Healing Selectors</h3>
-                        <p class="text-sm text-gray-400">AI monitors site changes and automatically updates scrape logic.</p>
-                    </div>
+                    <h3 class="text-white font-bold text-base mb-1 group-hover:text-brand transition-colors">Get Started Fast</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Sign up in 30 seconds and start scraping immediately with our intuitive interface.</p>
                 </div>
 
-                <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4 hover:bg-white/10 transition-colors cursor-default">
-                    <div class="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center text-brand shrink-0">
-                        <i class="fa-solid fa-database"></i>
+                <!-- Feature 2 -->
+                <div class="group relative bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-4 pl-20 hover:bg-white/5 transition-all duration-300 hover:translate-x-2 hover:border-blue-500/30 delay-75">
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-dark-bg border border-blue-500 text-blue-500 flex items-center justify-center z-10 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                        <i class="fa-solid fa-shield-halved text-xs"></i>
                     </div>
-                    <div>
-                        <h3 class="text-white font-semibold mb-1">Instant Structuring</h3>
-                        <p class="text-sm text-gray-400">Convert raw HTML into clean JSON, CSV, or direct SQL exports.</p>
+                    <h3 class="text-white font-bold text-base mb-1 group-hover:text-blue-400 transition-colors">Secure & Private</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Enterprise-grade security with encrypted data storage and privacy-first approach.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="group relative bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-4 pl-20 hover:bg-white/5 transition-all duration-300 hover:translate-x-2 hover:border-purple-500/30 delay-150">
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-dark-bg border border-purple-500 text-purple-500 flex items-center justify-center z-10 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                        <i class="fa-solid fa-chart-line text-xs"></i>
                     </div>
+                    <h3 class="text-white font-bold text-base mb-1 group-hover:text-purple-400 transition-colors">Scale Instantly</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">From hobby projects to enterprise needs, our platform scales with your requirements.</p>
                 </div>
             </div>
-        </div>
-
-        <!-- Testimonial -->
-        <div class="relative z-10 bg-black/20 backdrop-blur-sm rounded-2xl p-6 border border-white/5 mt-8">
-            <p class="text-gray-300 italic mb-4">"The AI-powered field detection is magical. It saved our engineering team months of manual configuration."</p>
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gray-700 overflow-hidden">
-                    <img src="https://ui-avatars.com/api/?name=Alex+Rivera&background=random" alt="Alex Rivera">
+            
+            <!-- Stats Row -->
+            <div class="mt-8 flex items-center gap-6 text-xs font-mono text-gray-500 border-t border-white/5 pt-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span>Free to Start</span>
                 </div>
-                <div>
-                    <div class="text-white font-semibold text-sm">Alex Rivera</div>
-                    <div class="text-brand text-xs font-medium uppercase tracking-wider">Growth Lead @ TechFlow</div>
-                </div>
+                <div>•</div>
+                <div>10K+ Users</div>
+                <div>•</div>
+                <div>24/7 Support</div>
             </div>
         </div>
     </div>
 
     <!-- Right Side (Form) -->
-    <div class="w-full lg:w-1/2 bg-dark-form flex flex-col justify-center items-center p-8 overflow-y-auto">
+    <div class="w-full lg:w-1/2 bg-dark-form flex flex-col justify-start items-center p-12 pt-6 md:pt-10">
         <div class="w-full max-w-md">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-white mb-2">Get Started Free</h2>
-                <p class="text-gray-400 text-sm">Scale your data extraction without writing a single line of code.</p>
+            <div class="text-center mb-6">
+                <h2 class="text-3xl font-bold text-white mb-2">Sign Up</h2>
+                <p class="text-gray-400 text-sm">Create your account and start scraping.</p>
             </div>
 
-            {% if messages %}
-            <div class="mb-6">
-                {% for message in messages %}
-                {% if message.tags == 'error' %}
-                <div class="p-4 rounded-lg bg-red-500/10 text-red-500 border border-red-500/20 text-sm font-medium">
-                    {{ message }}
-                </div>
-                {% else %}
-                <div class="p-4 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm font-medium">
-                    {{ message }}
-                </div>
-                {% endif %}
-                {% endfor %}
+            {% if otp_required %}
+            <div class="mb-8 p-5 rounded-2xl border border-white/10 bg-white/[0.03]">
+                <div class="text-white font-bold text-lg mb-2">Verify OTP</div>
+                <div class="text-sm text-gray-400 mb-4">Enter the 6-digit code sent to <span class="text-gray-200 font-medium">{{ email_prefill }}</span>.</div>
+                <form method="POST" action="{% url 'signup' %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label for="otp" class="block text-xs font-semibold text-gray-500 uppercase mb-2">OTP</label>
+                        <input type="text" id="otp" name="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456"
+                            class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-400" required>
+                    </div>
+                    <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3 px-4 rounded-lg transition-all shadow-[0_0_20px_rgba(0,212,197,0.2)]">
+                        Verify & Continue
+                    </button>
+                    <div class="flex items-center justify-between text-sm">
+                        <button type="submit" name="resend" value="1" class="text-gray-400 hover:text-white transition-colors">
+                            Resend OTP
+                        </button>
+                        <a href="{% url 'signup' %}?reset=1" class="text-gray-400 hover:text-white transition-colors">
+                            Change email
+                        </a>
+                    </div>
+                </form>
             </div>
-            {% endif %}
-
+            {% else %}
             <!-- Google Auth -->
-            <button class="w-full flex items-center justify-center gap-3 bg-transparent border border-dark-border hover:border-gray-500 hover:bg-white/5 text-white font-medium py-3 px-4 rounded-lg transition-all mb-8 group">
-                <i class="fa-brands fa-google text-lg group-hover:scale-110 transition-transform"></i>
+            <a href="{% provider_login_url 'google' %}" class="w-full flex items-center justify-center gap-3 border border-white/10 bg-white/[0.03] backdrop-blur-sm text-white font-medium py-3 px-5 rounded-xl transition-all mb-8 group hover:border-brand/40 hover:bg-white/[0.06] hover:shadow-[0_0_24px_rgba(0,212,197,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 active:scale-[0.99]">
+                <img src="{% static 'images/google-logo.svg' %}" alt="Google" class="h-5 w-5 group-hover:scale-110 transition-transform drop-shadow">
                 Sign up with Google
-            </button>
+            </a>
 
             <!-- Divider -->
             <div class="flex items-center gap-4 mb-8">
@@ -155,84 +150,118 @@
                 <div class="h-px bg-dark-border flex-1"></div>
             </div>
 
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                {% if message.tags == 'error' %}
+                <div class="p-4 rounded-lg bg-red-500/10 text-red-500 border border-red-500/20 text-sm font-medium">
+                    {{ message }}
+                </div>
+                {% elif message.tags == 'success' %}
+                <div class="p-4 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-sm font-medium">
+                    {{ message }}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <!-- Form -->
             <form class="space-y-5" method="POST" action="{% url 'signup' %}">
                 {% csrf_token %}
-                {% if not otp_required %}
-                <div>
-                    <label for="fullname" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Full Name</label>
-                    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" 
-                        class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
-                </div>
-
+                
                 <div>
                     <label for="username" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Username</label>
                     <input type="text" id="username" name="username" placeholder="Choose a username" 
-                        class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
+                        class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-400" required>
                 </div>
 
                 <div>
-                    <label for="email" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Email Address</label>
-                    <input type="email" id="email" name="email" placeholder="work@company.com" 
-                        class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
+                    <label for="email" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" 
+                        class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-400" required>
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Password</label>
+                    <label for="password1" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Password</label>
                     <div class="relative">
-                        <input type="password" id="password" name="password" placeholder="••••••••" 
-                            class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
-                        <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
-                            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                        <input type="password" id="password1" name="password1" placeholder="Create a strong password" 
+                            class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-400" required>
+                        <button type="button" id="togglePassword1" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                            <i class="fa-regular fa-eye" id="eyeIcon1"></i>
                         </button>
                     </div>
                 </div>
-                {% else %}
+
                 <div>
-                    <label for="otp" class="block text-xs font-semibold text-gray-500 uppercase mb-2">OTP</label>
-                    <input type="text" id="otp" name="otp" maxlength="6" placeholder="Enter 6-digit OTP"
-                        class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
+                    <label for="password2" class="block text-xs font-semibold text-gray-500 uppercase mb-2">Confirm Password</label>
+                    <div class="relative">
+                        <input type="password" id="password2" name="password2" placeholder="Confirm your password" 
+                            class="w-full bg-dark-input border border-dark-border text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-400" required>
+                        <button type="button" id="togglePassword2" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                            <i class="fa-regular fa-eye" id="eyeIcon2"></i>
+                        </button>
+                    </div>
                 </div>
-                {% endif %}
+                
+                <div class="flex items-center text-sm">
+                    <label class="flex items-center text-gray-400 hover:text-white cursor-pointer">
+                        <input type="checkbox" class="form-checkbox h-4 w-4 text-brand bg-dark-input border-dark-border rounded focus:ring-brand focus:ring-offset-dark-form transition duration-150 ease-in-out" required>
+                        <span class="ml-2">I agree to the <a href="{% url 'terms' %}" class="text-brand hover:underline">Terms of Service</a> and <a href="{% url 'privacy' %}" class="text-brand hover:underline">Privacy Policy</a></span>
+                    </label>
+                </div>
 
                 <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-dark-bg font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-[1.02] shadow-[0_0_20px_rgba(0,212,197,0.2)] mt-2">
-                    {% if otp_required %}Verify OTP{% else %}Create Account{% endif %}
+                    Sign Up
                 </button>
             </form>
 
             <p class="text-center text-sm text-gray-500 mt-8">
                 Already have an account? <a href="{% url 'login' %}" class="text-brand hover:underline font-medium">Log in</a>
             </p>
-
-            <div class="mt-12 text-center">
-                <p class="text-xs text-gray-600">
-                    By creating an account, you agree to our 
-                    <a href="#" class="underline hover:text-gray-400">Terms of Service</a> and 
-                    <a href="#" class="underline hover:text-gray-400">Privacy Policy</a>.
-                </p>
-            </div>
+            {% endif %}
         </div>
     </div>
+</div>
 
-    <script>
-        const togglePassword = document.querySelector('#togglePassword');
-        const password = document.querySelector('#password');
-        const eyeIcon = document.querySelector('#eyeIcon');
+<script>
+const togglePassword1 = document.querySelector('#togglePassword1');
+const password1 = document.querySelector('#password1');
+const eyeIcon1 = document.querySelector('#eyeIcon1');
 
-        togglePassword.addEventListener('click', function (e) {
-            // toggle the type attribute
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            
-            // toggle the eye slash icon
-            if (type === 'password') {
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
-            } else {
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-            }
-        });
-    </script>
-</body>
-</html>
+if (togglePassword1 && password1 && eyeIcon1) {
+    togglePassword1.addEventListener('click', function (e) {
+        const type = password1.getAttribute('type') === 'password' ? 'text' : 'password';
+        password1.setAttribute('type', type);
+        
+        if (type === 'password') {
+            eyeIcon1.classList.remove('fa-eye-slash');
+            eyeIcon1.classList.add('fa-eye');
+        } else {
+            eyeIcon1.classList.remove('fa-eye');
+            eyeIcon1.classList.add('fa-eye-slash');
+        }
+    });
+}
+
+const togglePassword2 = document.querySelector('#togglePassword2');
+const password2 = document.querySelector('#password2');
+const eyeIcon2 = document.querySelector('#eyeIcon2');
+
+if (togglePassword2 && password2 && eyeIcon2) {
+    togglePassword2.addEventListener('click', function (e) {
+        const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+        password2.setAttribute('type', type);
+        
+        if (type === 'password') {
+            eyeIcon2.classList.remove('fa-eye-slash');
+            eyeIcon2.classList.add('fa-eye');
+        } else {
+            eyeIcon2.classList.remove('fa-eye');
+            eyeIcon2.classList.add('fa-eye-slash');
+        }
+    });
+}
+</script>
+{% endblock %}

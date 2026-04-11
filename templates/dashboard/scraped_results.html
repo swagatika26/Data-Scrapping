@@ -81,15 +81,15 @@
                     <i class="fa-solid fa-download"></i> Export Data
                 </button>
                 <!-- Dropdown -->
-                    <div class="absolute right-0 mt-2 w-56 glass-card rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right scale-95 group-hover:scale-100 z-50 overflow-hidden border border-white/10">
+                    <div class="absolute right-0 mt-2 w-56 bg-dark-bg rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right scale-95 group-hover:scale-100 z-50 overflow-hidden border border-white/10">
                     <div class="p-1">
-                        <a href="{% url 'export_results' %}?job_id={{ job_id }}&format=csv" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-colors">
+                        <a href="{% url 'export_results' %}?job_id={{ job_id }}&format=csv" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/10 hover:text-brand active:text-brand focus-visible:text-brand active:bg-brand/10 rounded-lg transition-colors focus:outline-none">
                             <i class="fa-solid fa-file-csv w-5 text-green-400"></i> Download CSV
                         </a>
-                        <a href="{% url 'export_results' %}?job_id={{ job_id }}&format=json" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-colors">
+                        <a href="{% url 'export_results' %}?job_id={{ job_id }}&format=json" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/10 hover:text-brand active:text-brand focus-visible:text-brand active:bg-brand/10 rounded-lg transition-colors focus:outline-none">
                             <i class="fa-solid fa-file-code w-5 text-yellow-400"></i> Download JSON
                         </a>
-                        <a href="{% url 'export_results' %}?job_id={{ job_id }}&format=xlsx" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-colors">
+                        <a href="{% url 'export_results' %}?job_id={{ job_id }}&format=xlsx" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/10 hover:text-brand active:text-brand focus-visible:text-brand active:bg-brand/10 rounded-lg transition-colors focus:outline-none">
                             <i class="fa-solid fa-file-excel w-5 text-blue-400"></i> Download Excel
                         </a>
                     </div>
@@ -238,11 +238,11 @@
                     <!-- Dropdown -->
                     <div class="absolute bottom-full left-0 pb-2 w-24 hidden group-hover:block z-50">
                         <div class="bg-dark-bg border border-white/10 rounded-lg shadow-xl overflow-hidden">
-                            <a href="?job_id={{ job_id }}&per_page=10" class="block px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors {% if per_page == '10' %}text-brand font-bold bg-brand/5{% endif %}">10 rows</a>
-                            <a href="?job_id={{ job_id }}&per_page=25" class="block px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors {% if per_page == '25' %}text-brand font-bold bg-brand/5{% endif %}">25 rows</a>
-                            <a href="?job_id={{ job_id }}&per_page=50" class="block px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors {% if per_page == '50' %}text-brand font-bold bg-brand/5{% endif %}">50 rows</a>
+                            <a href="?job_id={{ job_id }}&per_page=10" class="block px-3 py-2 text-xs text-gray-400 hover:text-brand hover:bg-white/5 active:text-brand focus-visible:text-brand active:bg-brand/10 transition-colors focus:outline-none {% if per_page == '10' %}text-brand font-bold bg-brand/5{% endif %}">10 rows</a>
+                            <a href="?job_id={{ job_id }}&per_page=25" class="block px-3 py-2 text-xs text-gray-400 hover:text-brand hover:bg-white/5 active:text-brand focus-visible:text-brand active:bg-brand/10 transition-colors focus:outline-none {% if per_page == '25' %}text-brand font-bold bg-brand/5{% endif %}">25 rows</a>
+                            <a href="?job_id={{ job_id }}&per_page=50" class="block px-3 py-2 text-xs text-gray-400 hover:text-brand hover:bg-white/5 active:text-brand focus-visible:text-brand active:bg-brand/10 transition-colors focus:outline-none {% if per_page == '50' %}text-brand font-bold bg-brand/5{% endif %}">50 rows</a>
                             <div class="h-px bg-white/5 my-0.5"></div>
-                            <a href="?job_id={{ job_id }}&per_page=all" class="block px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors {% if per_page == 'all' %}text-brand font-bold bg-brand/5{% endif %}">All rows</a>
+                            <a href="?job_id={{ job_id }}&per_page=all" class="block px-3 py-2 text-xs text-gray-400 hover:text-brand hover:bg-white/5 active:text-brand focus-visible:text-brand active:bg-brand/10 transition-colors focus:outline-none {% if per_page == 'all' %}text-brand font-bold bg-brand/5{% endif %}">All rows</a>
                         </div>
                     </div>
                 </div>

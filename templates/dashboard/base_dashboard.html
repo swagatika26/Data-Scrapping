@@ -111,20 +111,16 @@
             to { opacity: 1; transform: translateX(0); }
         }
         
+        #dashboard-sidebar.is-expanded .logo-wrap {
+            justify-content: flex-start;
+            padding-left: 2.5rem;
+            padding-right: 1.5rem;
+        }
+        
         /* Layout adjustments for expanded state */
         #dashboard-sidebar.is-expanded .sidebar-link {
             justify-content: flex-start;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-        }
-        #dashboard-sidebar .sidebar-header {
-            justify-content: center;
-            padding-left: 0;
-            padding-right: 0;
-        }
-        #dashboard-sidebar.is-expanded .sidebar-header {
-            justify-content: flex-start;
-            padding-left: 1.5rem;
+            padding-left: 3rem;
             padding-right: 1.5rem;
         }
         #dashboard-sidebar .sidebar-link {
@@ -195,7 +191,7 @@
             <!-- Logo & Menu -->
             <div>
                 <!-- Logo - Click to Toggle -->
-                <div class="h-24 flex items-center justify-center sidebar-header cursor-pointer hover:bg-white/5 transition-colors" onclick="toggleSidebar()" title="Click to toggle sidebar">
+                <div class="h-24 flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors logo-wrap" onclick="toggleSidebar()" title="Click to toggle sidebar">
                     <div class="flex items-center gap-3">
                         <!-- New Logo Design -->
                         <div class="relative w-10 h-10 shrink-0 rounded-full bg-[#0B1120] border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-brand/50 transition-colors shadow-[0_0_15px_rgba(0,212,197,0.2)]">

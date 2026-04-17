@@ -37,6 +37,36 @@ class ScraperService:
                 time.sleep(wait_s + random.uniform(0.15, 0.55))
         self._domain_last_request_at[host] = time.time()
 
+    def _is_probably_blocked(self, text):
+        """
+        Detect common anti-bot / access-denied responses so we can switch
+        early to the browser fallback instead of treating the page as valid HTML.
+        """
+        if not text:
+            return False
+        sample = str(text).lower()[:200000]
+        block_markers = [
+            "access denied",
+            "temporarily blocked",
+            "forbidden",
+            "verify you are human",
+            "checking your browser",
+            "just a moment",
+            "captcha",
+            "cf-chl",
+            "cloudflare",
+            "datadome",
+            "security check",
+            "unusual traffic",
+            "automated access",
+            "bot protection",
+            "press and hold",
+            "/captcha/",
+            "challenge-form",
+            "why did this happen",
+        ]
+        return any(marker in sample for marker in block_markers)
+
 
 
     def _schema_config(self, content_type):
@@ -227,6 +257,7 @@ class ScraperService:
         try:
             html_content = None
             options = options or {}
+            warnings = []
             req_timeout = int(options.get('timeout', 30))
             retry_limit = max(1, int(options.get('retry_limit', 3)))
             min_delay_per_domain = float(options.get('min_delay_per_domain', 4.0))
@@ -272,6 +303,7 @@ class ScraperService:
                             response = session.get(url, headers=headers, timeout=req_timeout, proxies=proxies, allow_redirects=True)
                             if response.status_code in (401, 403, 429) or self._is_probably_blocked(response.text):
                                 logger.warning(f"Requests blocked (Status: {response.status_code}), switching to Playwright...")
+                                warnings.append(f"requests_blocked:{response.status_code}")
                                 break
                             response.raise_for_status()
                             html_content = response.content
@@ -280,8 +312,10 @@ class ScraperService:
                             attempt += 1
                     if not html_content and last_exc:
                         logger.warning(f"Requests failed after {retry_limit} attempts: {last_exc}, switching to Playwright...")
+                        warnings.append(f"requests_failed:{last_exc}")
                 except Exception as e:
                     logger.warning(f"Requests failed: {e}, switching to Playwright...")
+                    warnings.append(f"requests_exception:{e}")
             
             if not html_content:
                 self._throttle(url, min_delay_per_domain)
@@ -301,7 +335,8 @@ class ScraperService:
                     "count": 0,
                     "blocked_by_security": True,
                     "error_code": "NAVIGATION_FAILED",
-                    "error": "The site blocked or prevented loading (both Requests and Browser). Try enabling JS rendering, slowing request rate, or using a proxy / a less protected page."
+                    "error": "The site blocked or prevented loading (both Requests and Browser). Try enabling JS rendering, slowing request rate, or using a proxy / a less protected page.",
+                    "warnings": warnings,
                 }
             
             soup = BeautifulSoup(html_content, 'html.parser')
@@ -322,14 +357,16 @@ class ScraperService:
                         "title": "LinkedIn Login Wall",
                         "products": [],
                         "count": 0,
-                        "error": "LinkedIn restricts automated scraping. The page returned a login wall, so no usable data can be extracted."
+                            "error": "LinkedIn restricts automated scraping. The page returned a login wall, so no usable data can be extracted.",
+                            "warnings": warnings,
                     }
                 return {
                     "url": url,
                     "title": "LinkedIn Restricted",
                     "products": [],
                     "count": 0,
-                    "error": "LinkedIn restricts automated scraping. Please use an approved API or a public export for reliable data."
+                    "error": "LinkedIn restricts automated scraping. Please use an approved API or a public export for reliable data.",
+                    "warnings": warnings,
                 }
 
             products = []
@@ -719,14 +756,19 @@ class ScraperService:
                     if enable_ai:
                         from apps.scraper.services.ai_service import AIService
                         ai_products = AIService.extract_structured_data(str(soup), prompt_override=schema.get("prompt"))
+                        if ai_products is None:
+                            warnings.append("ai_extract_failed")
                         if ai_products and isinstance(ai_products, list):
                             normalized = AIService.normalize_items(ai_products, schema_hint=schema.get("normalize_hint"))
                             ai_products = normalized if normalized else ai_products
+                            if normalized is None:
+                                warnings.append("ai_normalize_failed")
 
                         if ai_products and isinstance(ai_products, list):
                             logger.info(f"Gemini AI extracted {len(ai_products)} items.")
                 except Exception as ai_e:
                     logger.error(f"AI Service integration error: {ai_e}")
+                    warnings.append(f"ai_exception:{ai_e}")
 
                 if enable_ai and ai_products and isinstance(ai_products, list):
                     ai_rows = []
@@ -1147,6 +1189,7 @@ class ScraperService:
                         "blocked_by_security": True,
                         "error_code": "SECURITY_BLOCK",
                         "error": "Scraping blocked by security check (Captcha/Cloudflare). Try enabling JS rendering, slowing request rate, or using a proxy.",
+                            "warnings": warnings,
                     }
 
                 # Find paragraphs/divs with significant text
@@ -1187,7 +1230,8 @@ class ScraperService:
                 "url": url,
                 "title": soup.title.get_text(strip=True) if soup.title else "Scraped Page",
                 "products": products,
-                "count": len(products)
+                "count": len(products),
+                "warnings": warnings,
             }
             
         except Exception as e:
@@ -1197,7 +1241,8 @@ class ScraperService:
                 "title": "Error Scraping Page",
                 "products": [],
                 "count": 0,
-                "error": str(e)
+                "error": str(e),
+                "warnings": warnings if 'warnings' in locals() else [],
             }
 
     def validate_url(self, url):

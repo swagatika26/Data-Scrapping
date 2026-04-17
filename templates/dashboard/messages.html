@@ -3,12 +3,6 @@
 
 {% block title %}Messages - ScrapyX{% endblock %}
 
-{% block extra_css %}
-<style>
-#messages-scroll { scrollbar-gutter: stable both-edges; }
-</style>
-{% endblock %}
-
 {% block content %}
 <header class="sticky top-0 z-20 glass border-b border-white/5 px-8 py-4 flex items-center justify-between">
   <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
@@ -21,7 +15,7 @@
 
 <div class="p-8 h-[calc(100vh-4rem)] overflow-y-hidden">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-    <div class="glass-card rounded-2xl p-4 border border-white/10 flex flex-col overflow-hidden min-h-0">
+    <div class="glass-card rounded-2xl p-4 border border-white/10 flex flex-col overflow-hidden">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-lg font-bold text-white">Inbox</h2>
         <button type="button" data-notifications-toggle class="text-brand text-xs font-bold">New <span data-notifications-dot class="inline-block w-1.5 h-1.5 rounded-full bg-red-500 align-middle ml-1"></span></button>
@@ -29,7 +23,7 @@
       <div class="relative mb-3">
         <input type="text" class="w-full bg-dark-bg border border-white/10 rounded-xl px-4 py-2 text-sm text-gray-400" placeholder="Search conversations...">
       </div>
-      <div class="flex-1 overflow-y-auto space-y-2 min-h-0">
+      <div class="flex-1 overflow-y-auto space-y-2">
         {% for t in threads %}
         <a href="{% url 'messages' %}?thread={{ t.id }}" class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all {% if selected_thread == t.id %}bg-white/5 border border-white/10{% else %}hover:bg-white/5 border border-transparent hover:border-white/10{% endif %}">
           <div class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand shrink-0">
@@ -47,7 +41,7 @@
         {% endfor %}
       </div>
     </div>
-    <div class="lg:col-span-2 glass-card rounded-2xl p-4 border border-white/10 flex flex-col h-full overflow-hidden min-h-0">
+    <div class="lg:col-span-2 glass-card rounded-2xl p-4 border border-white/10 flex flex-col h-full">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand">
           <i class="fa-solid fa-user-shield"></i>
@@ -57,7 +51,7 @@
           <div class="text-[11px] text-green-400">Active now</div>
         </div>
       </div>
-      <div id="messages-scroll" class="flex-1 overflow-y-auto space-y-3 pb-3 min-h-0 pl-2 pr-4 md:pr-6">
+      <div class="flex-1 overflow-y-auto space-y-3 pb-3">
         {% for m in thread_messages %}
         {% if m.author == 'admin' %}
         <div class="flex items-start gap-3">
@@ -66,20 +60,20 @@
           </div>
           <div class="max-w-[80%] bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-sm text-gray-300">
             <div>{{ m.message }}</div>
-            <div class="text-[10px] text-gray-500 mt-1">{{ m.timestamp|date:"H:i" }}</div>
+            <div class="text-[10px] text-gray-500 mt-1"><span class="chat-time" data-utc="{{ m.timestamp|date:'c' }}">--:--</span></div>
           </div>
         </div>
         {% else %}
         <div class="flex items-start gap-3 justify-end">
           <div class="max-w-[80%] bg-brand/10 border border-brand/20 rounded-2xl px-4 py-2 text-sm text-white">
             <div>{{ m.message }}</div>
-            <div class="text-[10px] text-gray-300 mt-1 text-right">{{ m.timestamp|date:"H:i" }}</div>
+            <div class="text-[10px] text-gray-300 mt-1 text-right"><span class="chat-time" data-utc="{{ m.timestamp|date:'c' }}">--:--</span></div>
           </div>
         </div>
         {% endif %}
         {% endfor %}
       </div>
-      <form method="post" action="{% url 'user_message_reply' %}" class="mt-3 flex items-center gap-3 shrink-0">
+      <form method="post" action="{% url 'user_message_reply' %}" class="mt-3 flex items-center gap-3">
         {% csrf_token %}
         <input type="hidden" name="thread_id" value="{{ selected_thread }}">
         <input type="text" name="message" class="flex-1 bg-dark-bg border border-white/10 rounded-xl px-4 py-2 text-sm text-gray-300" placeholder="Type a message...">
@@ -90,15 +84,52 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
 {% block scripts %}
-{{ block.super }}
 <script>
   (function () {
-    const scroller = document.getElementById('messages-scroll');
-    if (scroller) {
-      scroller.scrollTop = scroller.scrollHeight;
+    function toISTParts(d) {
+      const s = d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+      return new Date(s);
+    }
+    function formatIST(iso) {
+      if (!iso || typeof iso !== 'string') return '';
+      const utc = new Date(iso);
+      if (isNaN(utc.getTime())) {
+        console.debug('Invalid timestamp', iso);
+        return '';
+      }
+      const tsIST = toISTParts(utc);
+      const nowIST = toISTParts(new Date());
+      const isSameDay = tsIST.getFullYear() === nowIST.getFullYear() &&
+                        tsIST.getMonth() === nowIST.getMonth() &&
+                        tsIST.getDate() === nowIST.getDate();
+      const yest = new Date(nowIST);
+      yest.setDate(nowIST.getDate() - 1);
+      const isYesterday = tsIST.getFullYear() === yest.getFullYear() &&
+                          tsIST.getMonth() === yest.getMonth() &&
+                          tsIST.getDate() === yest.getDate();
+      const timeStr = tsIST.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true });
+      if (isSameDay) return timeStr;
+      if (isYesterday) return 'Yesterday';
+      const dateStr = tsIST.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+      return dateStr + ', ' + timeStr;
+    }
+    function applyChatTimes() {
+      const nodes = document.querySelectorAll('.chat-time[data-utc]');
+      nodes.forEach(n => {
+        const raw = n.getAttribute('data-utc');
+        const fmt = formatIST(raw);
+        console.debug('UTC:', raw, 'IST:', fmt);
+        if (fmt) n.textContent = fmt;
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', applyChatTimes);
+    } else {
+      applyChatTimes();
     }
   })();
 </script>
-{% endblock %}
 {% endblock %}

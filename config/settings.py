@@ -12,6 +12,8 @@ dotenv.load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -33,11 +35,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.sites',  # Required for django-allauth
     
     # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     
     # Local apps
     'core',
@@ -54,6 +61,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # Required for django-allauth
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Custom middleware can be added here
@@ -108,9 +116,11 @@ DATABASES = {
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 SERPAPI_KEY = os.getenv('SERPAPI_KEY')
 GOOGLE_CSE_ID = os.getenv('GOOGLE_CSE_ID')
-OLLAMA_HOST = os.getenv('OLLAMA_HOST', 'http://127.0.0.1:11434')
-OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'mistral')
-DEEPSEEK_MODEL = os.getenv('DEEPSEEK_MODEL', 'deepseek-r1:7b')
+
+# AI Service Configuration
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OLLAMA_API_URL = os.getenv('OLLAMA_API_URL', 'http://localhost:11434')
+AI_SERVICE_DEBUG = os.getenv('AI_SERVICE_DEBUG', 'False') == 'True'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -191,11 +201,6 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local')
 # Fallback to console backend in development if SMTP not configured
 if DEBUG and not EMAIL_HOST_USER:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST_USER = 'swagatikamohanty286@gmail.com'
-EMAIL_HOST_PASSWORD = 'zepz ukjb ugob ebbs'
-
-# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
-# DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local')
 
 # CORS Configuration
 CORS_ALLOW_ALL_ORIGINS = True # For development only, configure properly for production
@@ -211,3 +216,105 @@ CELERY_RESULT_SERIALIZER = 'json'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'home'
+
+# Authentication Backends for django-allauth
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Django-allauth Configuration
+SITE_ID = 1
+
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+# ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+        'APP': {
+            'client_id': (os.getenv('GOOGLE_OAUTH2_CLIENT_ID') or os.getenv('GOOGLE_CLIENT_ID', '')),
+            'secret': (os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET') or os.getenv('GOOGLE_CLIENT_SECRET', '')),
+        },
+    },
+}
+
+# Skip the "Sign in via Google" intermediate confirmation page and go straight to Google
+SOCIALACCOUNT_LOGIN_ON_GET = True
+# Auto-create user accounts on first Google login to avoid social signup interstitials
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+
+# In development, skip email verification and send users straight to the dashboard after Google signup
+if DEBUG:
+    ACCOUNT_EMAIL_VERIFICATION = 'none'
+    ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+    ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+
+# Google OAuth Environment Variables (support both legacy and new names)
+GOOGLE_OAUTH2_CLIENT_ID = os.getenv('GOOGLE_OAUTH2_CLIENT_ID') or os.getenv('GOOGLE_CLIENT_ID', '')
+GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET') or os.getenv('GOOGLE_CLIENT_SECRET', '')
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'reset_password_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR / 'reset_password.log',
+            'formatter': 'standard',
+        },
+        'scraper_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR / 'scraper.log',
+            'formatter': 'standard',
+        },
+        'ai_service_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR / 'ai_service.log',
+            'formatter': 'standard',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'reset_password': {
+            'handlers': ['reset_password_file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'apps.scraper.services.scraper_service': {
+            'handlers': ['scraper_file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'apps.scraper.services.ai_service': {
+            'handlers': ['ai_service_file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

@@ -1747,18 +1747,38 @@ def run_scrape_api(request):
             if result.get('error'):
                 job.status = 'FAILED'
                 job.save()
-                ScrapeLog.objects.create(job=job, level='ERROR', message='Job failed', metadata={'error': result.get('error')})
+                ScrapeLog.objects.create(
+                    job=job,
+                    level='ERROR',
+                    message='Job failed',
+                    metadata={
+                        'error': result.get('error'),
+                        'error_code': result.get('error_code'),
+                        'blocked_by_security': bool(result.get('blocked_by_security')),
+                        'warnings': result.get('warnings', []),
+                    }
+                )
                 return JsonResponse({
                     'status': 'error', 
                     'message': result.get('error'),
                     'error_code': result.get('error_code'),
                     'blocked_by_security': bool(result.get('blocked_by_security')),
+                    'warnings': result.get('warnings', []),
                 })
             elif result.get('count', 0) == 0:
                 # Even if no technical error, 0 items is a "logical" failure for the user
                 job.status = 'FAILED'
                 job.save()
-                ScrapeLog.objects.create(job=job, level='ERROR', message='Job failed', metadata={'error': 'No data extracted'})
+                ScrapeLog.objects.create(
+                    job=job,
+                    level='ERROR',
+                    message='Job failed',
+                    metadata={
+                        'error': 'No data extracted',
+                        'warnings': result.get('warnings', []),
+                        'ai_used': bool(result.get('ai_used')),
+                    }
+                )
                 return JsonResponse({
                     'status': 'error', 
                     'message': 'No data could be extracted from this page. It might be protected or empty.'

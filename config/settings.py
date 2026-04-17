@@ -12,6 +12,8 @@ dotenv.load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -226,7 +228,7 @@ SITE_ID = 1
 
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -277,7 +279,19 @@ LOGGING = {
         'reset_password_file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'reset_password.log',
+            'filename': LOG_DIR / 'reset_password.log',
+            'formatter': 'standard',
+        },
+        'scraper_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR / 'scraper.log',
+            'formatter': 'standard',
+        },
+        'ai_service_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR / 'ai_service.log',
             'formatter': 'standard',
         },
         'console': {
@@ -290,6 +304,16 @@ LOGGING = {
         'reset_password': {
             'handlers': ['reset_password_file', 'console'],
             'level': 'DEBUG',
+            'propagate': False,
+        },
+        'apps.scraper.services.scraper_service': {
+            'handlers': ['scraper_file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'apps.scraper.services.ai_service': {
+            'handlers': ['ai_service_file', 'console'],
+            'level': 'INFO',
             'propagate': False,
         },
     },

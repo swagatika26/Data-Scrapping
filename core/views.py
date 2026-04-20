@@ -1368,6 +1368,16 @@ class CustomPasswordResetView(DjangoPasswordResetView):
                 logger.warning(f"Password reset requested for non-existent email={email}")
         except Exception:
             logger.exception("Password reset logging failed")
+        self.extra_email_context = {
+            **(self.extra_email_context or {}),
+            'domain': self.request.get_host(),
+            'protocol': 'https' if self.request.is_secure() else 'http',
+        }
+        logger.info(
+            "Password reset email context domain=%s protocol=%s",
+            self.extra_email_context['domain'],
+            self.extra_email_context['protocol'],
+        )
         return super().form_valid(form)
 
 

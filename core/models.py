@@ -12,6 +12,9 @@ class ActivityLog(models.Model):
     def __str__(self):
         return f"{self.action} - {self.timestamp:%Y-%m-%d %H:%M:%S}"
 
+    class Meta:
+        db_table = 'core_activitylog'
+
 
 class TrafficLog(models.Model):
     path = models.CharField(max_length=255)
@@ -23,6 +26,9 @@ class TrafficLog(models.Model):
     def __str__(self):
         return f"{self.path} - {self.timestamp:%Y-%m-%d %H:%M:%S}"
 
+    class Meta:
+        db_table = 'core_trafficlog'
+
 
 class Conversation(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='conversations', on_delete=models.CASCADE)
@@ -32,6 +38,9 @@ class Conversation(models.Model):
 
     def __str__(self):
         return f"Conversation {self.pk} - {self.user_id}"
+
+    class Meta:
+        db_table = 'core_conversation'
 
 
 class Message(models.Model):
@@ -46,6 +55,9 @@ class Message(models.Model):
     def __str__(self):
         return f"Msg {self.pk} in Conv {self.conversation_id}"
 
+    class Meta:
+        db_table = 'core_message'
+
 
 class Notification(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='notifications', on_delete=models.CASCADE)
@@ -56,3 +68,6 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notif {self.pk} for {self.user_id}"
+
+    class Meta:
+        db_table = 'core_notification'

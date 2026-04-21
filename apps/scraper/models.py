@@ -21,6 +21,9 @@ class ScraperJob(models.Model):
     def __str__(self):
         return f"{self.url} - {self.status}"
 
+    class Meta:
+        db_table = 'scraper_scraperjob'
+
 class ScrapedData(models.Model):
     """
     Model to store scraped data.
@@ -31,6 +34,9 @@ class ScrapedData(models.Model):
 
     def __str__(self):
         return f"Data for Job {self.job_id}"
+
+    class Meta:
+        db_table = 'scraper_scrapeddata'
 
 class ScrapeLog(models.Model):
     LEVEL_CHOICES = (
@@ -47,3 +53,6 @@ class ScrapeLog(models.Model):
 
     def __str__(self):
         return f"{self.job_id} - {self.level}"
+
+    class Meta:
+        db_table = 'scraper_scrapelog'

@@ -1353,32 +1353,74 @@ def password_reset_otp(request):
 
 class CustomPasswordResetView(DjangoPasswordResetView):
     """
-    Custom password reset view with logging support.
-    Logs all password reset requests and email sending attempts.
+    Custom password reset view with logging support and direct SMTP.
+    Logs all password reset requests and ensures reliable email delivery.
     """
     def form_valid(self, form):
         email = form.cleaned_data.get('email')
         logger.info(f"Password reset requested for email={email}")
+        
         try:
             User = get_user_model()
             user = User.objects.filter(email__iexact=email).first()
+            
             if user:
                 logger.info(f"Password reset requested for existing user id={user.id}")
+                
+                # Send password reset using Django's email system with HTML template
+                try:
+                    from django.contrib.auth.tokens import default_token_generator
+                    from django.utils.http import urlsafe_base64_encode
+                    from django.utils.encoding import force_bytes
+                    from django.template.loader import render_to_string
+                    from django.core.mail import EmailMultiAlternatives
+                    from django.conf import settings
+                    
+                    # Generate reset token
+                    token = default_token_generator.make_token(user)
+                    uid = urlsafe_base64_encode(force_bytes(user.pk))
+                    
+                    # Prepare context for template
+                    context = {
+                        'user': user,
+                        'uid': uid,
+                        'token': token,
+                        'protocol': 'https' if self.request.is_secure() else 'http',
+                        'domain': self.request.get_host(),
+                        'title': 'Password Reset',
+                    }
+                    
+                    # Render HTML email
+                    html_content = render_to_string('emails/otp_email.html', context, request=self.request)
+                    
+                    # Create email message
+                    subject = f'{settings.EMAIL_SUBJECT_PREFIX}Password Reset'
+                    from_email = settings.EMAIL_HOST_USER
+                    to_email = email
+                    
+                    # Send HTML email
+                    email = EmailMultiAlternatives(subject, '', from_email, [to_email])
+                    email.attach_alternative(html_content, "text/html")
+                    email.send()
+                    
+                    logger.info(f"Password reset HTML email sent to {email}")
+                    
+                except Exception as e:
+                    logger.error(f"HTML email failed, falling back to Django: {e}")
+                    # Fallback to Django's email system
+                    self.extra_email_context = {
+                        **(self.extra_email_context or {}),
+                        'domain': self.request.get_host(),
+                        'protocol': 'https' if self.request.is_secure() else 'http',
+                    }
+                    return super().form_valid(form)
             else:
                 logger.warning(f"Password reset requested for non-existent email={email}")
+                
         except Exception:
             logger.exception("Password reset logging failed")
-        self.extra_email_context = {
-            **(self.extra_email_context or {}),
-            'domain': self.request.get_host(),
-            'protocol': 'https' if self.request.is_secure() else 'http',
-        }
-        logger.info(
-            "Password reset email context domain=%s protocol=%s",
-            self.extra_email_context['domain'],
-            self.extra_email_context['protocol'],
-        )
-        return super().form_valid(form)
+            
+        return redirect('password_reset_done')
 
 
 @never_cache
@@ -1422,48 +1464,199 @@ def update_password(request):
     
     return redirect('settings_section', section='security')
 
-@user_required
 def download_invoice(request, invoice_id):
     """
-    Generates and downloads a dummy invoice text file.
+    Generates and downloads a professional PDF invoice with advanced design.
     """
-    # Create invoice content
-    today = timezone.now().strftime('%b %d, %Y')
-    content = f"""
-INVOICE {invoice_id}
-Date: {today}
-Status: PAID
-
-Bill To:
-{request.user.first_name} {request.user.last_name}
-{request.user.email}
-
---------------------------------------------------
-Description                  Amount
---------------------------------------------------
-Professional Plan (Monthly)  $49.00
---------------------------------------------------
-Total                        $49.00
-
-Thank you for your business!\nScrapyX
-    """
+    # Check authentication
+    if not request.user.is_authenticated:
+        return HttpResponse('Authentication required', status=401)
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.lib import colors
+    from reportlab.pdfgen import canvas
+    from io import BytesIO
+    import os
     
-    response = HttpResponse(content, content_type='text/plain')
-    response['Content-Disposition'] = f'attachment; filename="invoice_{invoice_id.replace("#", "")}.txt"'
+    # Create PDF buffer
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
+    
+    # Styles
+    styles = getSampleStyleSheet()
+    
+    # Custom styles
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        spaceAfter=30,
+        textColor=colors.HexColor('#00d4c5'),
+        alignment=1  # Center
+    )
+    
+    header_style = ParagraphStyle(
+        'HeaderStyle',
+        parent=styles['Heading2'],
+        fontSize=16,
+        spaceAfter=20,
+        textColor=colors.HexColor('#1f2937'),
+        alignment=0
+    )
+    
+    normal_style = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['Normal'],
+        fontSize=11,
+        spaceAfter=12,
+        textColor=colors.HexColor('#374151')
+    )
+    
+    # Build PDF content
+    story = []
+    
+    # Company Header
+    story.append(Paragraph("SCRAPYX", title_style))
+    story.append(Spacer(1, 20))
+    
+    # Invoice details table
+    invoice_data = [
+        ['Invoice Number:', invoice_id],
+        ['Invoice Date:', timezone.now().strftime('%b %d, %Y')],
+        ['Status:', 'PAID'],
+    ]
+    
+    invoice_table = Table(invoice_data, colWidths=[2*inch, 3*inch])
+    invoice_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f9fafb')),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor('#374151')),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 11),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#e5e7eb'))
+    ]))
+    
+    story.append(invoice_table)
+    story.append(Spacer(1, 30))
+    
+    # Bill To section
+    story.append(Paragraph("Bill To:", header_style))
+    
+    bill_to_data = [
+        ['Name:', f"{request.user.first_name} {request.user.last_name}"],
+        ['Email:', request.user.email],
+        ['Address:', '123 Web Street, Tech City, TC 12345'],
+    ]
+    
+    bill_to_table = Table(bill_to_data, colWidths=[1*inch, 4*inch])
+    bill_to_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f9fafb')),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor('#374151')),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 11),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#e5e7eb'))
+    ]))
+    
+    story.append(bill_to_table)
+    story.append(Spacer(1, 30))
+    
+    # Invoice Items
+    story.append(Paragraph("Invoice Details:", header_style))
+    
+    items_data = [
+        ['Description', 'Quantity', 'Unit Price', 'Total'],
+        ['Professional Plan (Monthly)', '1', '$49.00', '$49.00'],
+        ['', '', '', ''],
+        ['', '', 'Subtotal:', '$49.00'],
+        ['', '', 'Tax (0%):', '$0.00'],
+        ['', '', 'Total:', '$49.00'],
+    ]
+    
+    items_table = Table(items_data, colWidths=[3*inch, 1*inch, 1.5*inch, 1.5*inch])
+    items_table.setStyle(TableStyle([
+        # Header row
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#00d4c5')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        
+        # Data rows
+        ('BACKGROUND', (0, 1), (-1, 1), colors.HexColor('#f9fafb')),
+        ('TEXTCOLOR', (0, 1), (-1, 1), colors.HexColor('#374151')),
+        ('ALIGN', (0, 1), (-1, 1), 'LEFT'),
+        ('ALIGN', (1, 1), (-1, 1), 'CENTER'),
+        ('ALIGN', (2, 1), (-1, 1), 'RIGHT'),
+        ('FONTNAME', (0, 1), (-1, 1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, 1), 11),
+        
+        # Total rows
+        ('BACKGROUND', (0, 4), (-1, -1), colors.HexColor('#f3f4f6')),
+        ('TEXTCOLOR', (0, 4), (-1, -1), colors.HexColor('#1f2937')),
+        ('ALIGN', (0, 4), (-1, -1), 'RIGHT'),
+        ('FONTNAME', (0, 4), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 4), (-1, -1), 11),
+        
+        # Grid
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#e5e7eb')),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('TOPPADDING', (0, 0), (-1, -1), 12),
+    ]))
+    
+    story.append(items_table)
+    story.append(Spacer(1, 40))
+    
+    # Footer
+    story.append(Paragraph("Thank you for your business!", normal_style))
+    story.append(Paragraph("ScrapyX - Professional Web Scraping Solutions", normal_style))
+    story.append(Paragraph("support@scrapyx.com | www.scrapyx.com", normal_style))
+    
+    # Build PDF
+    doc.build(story)
+    
+    # Get PDF value
+    buffer.seek(0)
+    pdf_content = buffer.getvalue()
+    buffer.close()
+    
+    # Create response
+    response = HttpResponse(pdf_content, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="invoice_{invoice_id.replace("#", "")}.pdf"'
     return response
 
 @user_required
 def dashboard(request):
     """
-    Renders the user dashboard with real data.
+    Renders the user dashboard with real data and handles time period filtering.
     """
+    # Get time period from request
+    period = request.GET.get('period', '24h')
+    
     # Get user's scrape jobs
     user_jobs = ScraperJob.objects.filter(user=request.user)
     
-    # Calculate stats
-    total_scrapes = user_jobs.count()
-    successful_scrapes = user_jobs.filter(status='COMPLETED').count()
-    failed_scrapes = user_jobs.filter(status='FAILED').count()
+    # Filter jobs based on time period
+    now = timezone.now()
+    if period == '24h':
+        filtered_jobs = user_jobs.filter(created_at__gte=now - timezone.timedelta(hours=24))
+    elif period == 'weekly':
+        filtered_jobs = user_jobs.filter(created_at__gte=now - timezone.timedelta(weeks=1))
+    elif period == 'monthly':
+        filtered_jobs = user_jobs.filter(created_at__gte=now - timezone.timedelta(days=30))
+    elif period == 'yearly':
+        filtered_jobs = user_jobs.filter(created_at__gte=now - timezone.timedelta(days=365))
+    else:
+        filtered_jobs = user_jobs.filter(created_at__gte=now - timezone.timedelta(hours=24))
+    
+    # Calculate stats for the filtered period
+    total_scrapes = filtered_jobs.count()
+    successful_scrapes = filtered_jobs.filter(status='COMPLETED').count()
+    failed_scrapes = filtered_jobs.filter(status='FAILED').count()
     
     # Calculate usage (assuming daily limit of 1000)
     daily_limit = 1000
@@ -1472,9 +1665,33 @@ def dashboard(request):
     usage_percentage = min(int((usage_today / daily_limit) * 100), 100)
     remaining_credits = daily_limit - usage_today
     
-    # Get recent activities
-    recent_activities = user_jobs.order_by('-created_at')[:5]
+    # Get recent activities for the filtered period
+    recent_activities = filtered_jobs.order_by('-created_at')[:5]
     
+    # Handle AJAX requests
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Return JSON data for AJAX requests
+        activities_data = []
+        for activity in recent_activities:
+            activities_data.append({
+                'id': str(activity.id),
+                'url': activity.url,
+                'status': activity.status,
+                'items_scraped': activity.items_scraped,
+                'created_at': activity.created_at.isoformat(),
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'stats': {
+                'total_scrapes': total_scrapes,
+                'successful_scrapes': successful_scrapes,
+                'failed_scrapes': failed_scrapes,
+            },
+            'recent_activity': activities_data,
+        })
+    
+    # Regular page render
     context = {
         'total_scrapes': total_scrapes,
         'successful_scrapes': successful_scrapes,
@@ -1484,6 +1701,7 @@ def dashboard(request):
         'daily_limit': daily_limit,
         'remaining_credits': remaining_credits,
         'recent_activities': recent_activities,
+        'current_period': period,
     }
     return render(request, 'dashboard/index.html', context)
 
@@ -3508,19 +3726,14 @@ def admin_user_delete(request, user_id):
                     user.avatar.delete(save=False)
             except Exception:
                 pass
-            # Purge related data explicitly (CASCADE handles most, but clear logs/sessions too)
-            from apps.scraper.models import ScraperJob
-            from core.models import ActivityLog, TrafficLog
-            ScraperJob.objects.filter(user=user).delete()
-            ActivityLog.objects.filter(user=user).delete()
-            TrafficLog.objects.filter(user=user).delete()
-            # Kill active sessions for the user
-            for session in Session.objects.filter(expire_date__gte=timezone.now()):
-                data = session.get_decoded()
-                if str(data.get('_auth_user_id')) == str(user.id):
-                    session.delete()
-            _log_activity(request, 'admin_user_delete', user=request.user, metadata={'target_user_id': user_id})
-            user.delete()
+            # Simple deletion using Django's built-in cascade mechanism
+            # The pre_delete signal handles all the cleanup automatically
+            try:
+                user.delete()
+                messages.success(request, f'User {user.username} deleted successfully.')
+            except Exception as e:
+                messages.error(request, f'Error deleting user: {str(e)}')
+                return redirect('admin_dashboard_section', section='users')
     return redirect('admin_dashboard_section', section='users')
 
 @admin_required

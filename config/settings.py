@@ -22,7 +22,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-key')
 
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,192.168.29.214,10.138.8.160').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,192.168.29.214,10.233.176.160').split(',')
 
 
 # Application definition
@@ -194,9 +194,21 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'no-reply@scrapyx.local')
+
+# Email settings for better deliverability
+EMAIL_TIMEOUT = 30
+EMAIL_SUBJECT_PREFIX = '[ScrapyX] '
+
+# Custom email headers to avoid spam filters
+EMAIL_HEADERS = {
+    'X-Priority': '3',
+    'X-Mailer': 'ScrapyX',
+    'Reply-To': os.getenv('EMAIL_HOST_USER', 'no-reply@scrapyx.local'),
+}
 
 # Fallback to console backend in development if SMTP not configured
 if DEBUG and not EMAIL_HOST_USER:
@@ -265,6 +277,9 @@ if DEBUG:
 # Google OAuth Environment Variables (support both legacy and new names)
 GOOGLE_OAUTH2_CLIENT_ID = os.getenv('GOOGLE_OAUTH2_CLIENT_ID') or os.getenv('GOOGLE_CLIENT_ID', '')
 GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET') or os.getenv('GOOGLE_CLIENT_SECRET', '')
+
+# Password Reset Settings
+PASSWORD_RESET_TIMEOUT = 300  # 5 minutes in seconds
 
 # Logging Configuration
 LOGGING = {

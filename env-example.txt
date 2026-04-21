@@ -1,0 +1,28 @@
+# Django Settings
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Email Configuration (REQUIRED for password reset)
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-gmail-app-password
+DEFAULT_FROM_EMAIL=your-email@gmail.com
+
+# Database
+DB_NAME=scrapyx
+DB_USER=postgres
+DB_PASSWORD=your-password
+DB_HOST=localhost
+DB_PORT=5432
+
+# API Keys
+GOOGLE_API_KEY=your-google-api-key
+SERPAPI_KEY=your-serpapi-key
+OPENAI_API_KEY=your-openai-api-key
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# Celery
+CELERY_BROKER_URL=redis://localhost:6379/0
